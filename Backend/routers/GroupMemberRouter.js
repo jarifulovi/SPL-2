@@ -1,5 +1,6 @@
 import express from 'express';
 import GroupMember from '../classes/GroupMembers.js';
+import Group from '../models/Group.js';
 
 const router = express.Router();
 
@@ -64,7 +65,7 @@ router.post('/removeMember', async (req, res) => {
 
 
 router.post('/getAllGroupMembers', async (req, res) => {
-    // Get all group members
+   
     const { group_id } = req.body;
     const groupMember = new GroupMember(group_id);
     try {
@@ -85,7 +86,7 @@ router.post('/getAllGroupMembers', async (req, res) => {
 
 
 router.post('/getAllGroupsOfMember', async (req, res) => {
-    // Get all group members
+    
     const { user_id } = req.body;
     const groupMember = new GroupMember();
     try {
@@ -124,6 +125,35 @@ router.post('/getAllGroupAdmins', async (req, res) => {
         });
     }
 });
+
+router.post('/getUserRole', async (req, res) => {
+
+    const { user_id, group_id } = req.body;
+    if (!user_id || !group_id) {
+        return res.status(400).json({
+            success: false,
+            message: 'user_id and group_id are required',
+        });
+    }
+
+
+    const groupMember = new GroupMember(group_id);
+    try {
+        const result = await groupMember.getUserRole(user_id);
+        res.status(200).json({
+            success: true,
+            message: 'Member role retrieved successfully',
+            data: result
+        });
+    } catch (error) {
+        console.error('Error during retrieving member role:', error.message);
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+
+})
 
 
 router.post('/updateMemberRole', async (req, res) => {

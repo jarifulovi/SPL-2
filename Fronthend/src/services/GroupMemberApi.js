@@ -26,6 +26,10 @@ const getAllGroupAdmins = async (group_id) => {
     return await Fetch.fetchData('http://localhost:3000/getAllGroupAdmins', 'POST', {group_id});
 }
 
+const getUserRole = async (user_id, group_id) => {
+    return await Fetch.fetchData('http://localhost:3000/getUserRole','POST', {user_id, group_id});
+}
+
 const updateMemberRole = async (user_id, group_id, role) => {
     return await Fetch.fetchData('http://localhost:3000/updateMemberRole', 'POST', {user_id, group_id, role});
 }
@@ -37,6 +41,7 @@ export default {
     getAllGroupMembers,
     getAllGroupsOfMember,
     getAllGroupAdmins,
+    getUserRole,
     updateMemberRole
 }
 

@@ -139,10 +139,17 @@ class GroupMembers {
         }
     }
 
-    async isMember(user_id) {
+    async getUserRole(user_id) {
         const userGroup = await UserGroup.findOne({ user_id: user_id, group_id: this.group_id });
-        return userGroup !== null;
+        if (!userGroup) {
+            return { isMember: false, isAdmin: false };
+        }
+        return {
+            isMember: true,
+            isAdmin: userGroup.role === 'admin',
+        };
     }
+    
     
 
     async _getMembersByRole(role) {

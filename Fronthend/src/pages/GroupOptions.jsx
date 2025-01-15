@@ -5,23 +5,95 @@ import { Button } from "../components/ui/button"
 import { Flex, Box, Text, Input, VStack, HStack, IconButton } from "@chakra-ui/react"
 import { useColorModeValue } from "../components/ui/color-mode";
 
-import PageLayout from "../components/Others/PageLayout";
 import MemberItem from "../components/Others/MemberItem";
+
+import GroupMemberApi from "../services/GroupMemberApi";
+
+
+const checkAdminStatus = async (user_id, group_id, navigate) => {
+  try {
+    const result = await GroupMemberApi.getUserRole(user_id, group_id);
+    if (!result.data.isAdmin) {
+      navigate('/');
+    }
+    console.log('admin checked');
+  } catch (error) {
+    console.error(error.message);
+    navigate('/');
+  }
+};
+
+
+const retrieveGroupMembers = async (group_id, setMembers) => {
+  try {
+    const result = await GroupMemberApi.getAllGroupMembers(group_id);
+    setMembers(result.data);
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+
+const handleMakeAdmin = async (member) => {
+  // Current user already admin
+  // Don't work on admins
+  console.log('New admin: ',member.name);
+}
+
+
+const handleRemoveMember = async (member) => {
+  // Except current user and admins
+  console.log('Removed : ',member.name);
+}
+
+
+const MemberCard = ({ member, onMakeAdmin, onRemoveMember }) => {
+  return (
+    <HStack width="100%" justify="space-between" align="center">
+      <Box flex="1">
+        <MemberItem member={member} />
+      </Box>
+      <HStack spacing={2}>
+        <Button onClick={() => onMakeAdmin(member)}>Make Admin</Button>
+        <IconButton aria-label="Remove member" onClick={() => onRemoveMember(member)}>
+          <IoPersonRemoveSharp />
+        </IconButton>
+      </HStack>
+    </HStack>
+  );
+};
 
 
 // Only accessible to admins joined in a group
+// Needs to check admin before any operation
 const GroupOptions = () => {
 
   const containerColor = useColorModeValue('gray.200', 'gray.800');
 
   const location = useLocation();
   const navigate = useNavigate();
-
+  const user_id = localStorage.getItem('user_id');
   const { group } = location.state || {};
+  const group_id = group?.group_id;
+
+  const [members, setMembers] = useState([]);
   // Check if the user is admin of the group
-  // Retrieve group members + profile pic
-  // Render each group members with handler
-  // 
+  // Retrieve group members
+  useEffect(() => {
+    if (!user_id || !group_id) {
+      navigate('/');
+      return;
+    }
+
+    const fetchData = async () => {
+      await checkAdminStatus(user_id, group_id, navigate);
+      await retrieveGroupMembers(group_id, setMembers);
+    };
+
+    fetchData();
+  }, [user_id, group_id, navigate]);
+  
+
 
   
   return (
@@ -33,18 +105,16 @@ const GroupOptions = () => {
         </Text>
         {/* Member management content */}
         <VStack align="start" spacing={3}>
-          <Button width="100%">View All Users</Button>
-          <HStack width="100%" justify="space-between" align="center">
-            <Box flex="1">
-              <MemberItem member={{ name: "Jhon Doe", email: "@gmail.com" }} />
-            </Box>
-            <HStack spacing={2}>
-              <Button>Make Admin</Button>
-              <IconButton><IoPersonRemoveSharp /></IconButton>
-            </HStack>
-          </HStack>
           
-          <Button width="100%">Manage Roles</Button>
+          {members.map((member, index) => (
+            <MemberCard
+              key={index}
+              member={member}
+              onMakeAdmin={handleMakeAdmin}
+              onRemoveMember={handleRemoveMember}
+            />
+          ))}
+          
         </VStack>
 
       </Box>
