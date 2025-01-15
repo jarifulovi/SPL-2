@@ -24,7 +24,7 @@ async function storeNotification(io, members, notificationType, sender, group_id
     }
 }
 
-async function storeAndEmitNotification(io, user_id, socket_id, notificationType, sender, group_id, content, extraData = {}) {
+async function storeAndEmitNotifToUser(io, user_id, socket_id, notificationType, sender, group_id, content, extraData = {}) {
     try {
        
         const notification = new NotificationClass(notificationType, sender, group_id);
@@ -43,21 +43,22 @@ async function storeAndEmitNotification(io, user_id, socket_id, notificationType
         console.log(`${notificationType} notification sent to userId: ${user_id}`);
     } catch (error) {
         console.error(`Error sending ${notificationType} notification to userId: ${user_id}`, error.message);
+        throw new Error(error.message);
     }
 }
 
 export default {
     
-    storeDiscussionNotification: (io, members, sender, group_id, discussion_topic, content) => {
+    storeAndEmitDiscussionNotif: (io, members, sender, group_id, discussion_topic, content) => {
         return storeNotification(io, members, 'discussion_topic', sender, group_id, content, { discussion_topic });
     },
 
-    storeVideoConferenceNotification: (io, members, sender, group_id, content) => {
+    storeAndEmitVideoConferenceNotif: (io, members, sender, group_id, content) => {
         return storeNotification(io, members, 'video_conferencing', sender, group_id, content);
     },
 
-    storeFileUploadNotification: (io, members, sender, group_id, content, file_name) => {
+    storeAndEmitFileUploadNotif: (io, members, sender, group_id, content, file_name) => {
         return storeNotification(io, members, 'file_shared', sender, group_id, content, { file_name });
     },
-    storeAndEmitNotification,
+    storeAndEmitNotification: storeAndEmitNotifToUser,
 };

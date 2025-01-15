@@ -34,7 +34,7 @@ const SetupSocket = (io) => {
                      
             const memberIds = await GroupMemberUtils.retrieveGroupMemberIds(group_id);
             const notificationContent =  `${sender} started a discussion ${discussion_topic} in ${group_id}`;
-            await NotificationUtils.storeDiscussionNotification(io, memberIds, sender, group_id, discussion_topic, notificationContent);
+            await NotificationUtils.storeAndEmitDiscussionNotif(io, memberIds, sender, group_id, discussion_topic, notificationContent);
         });
 
         // Closing discussion handling
@@ -53,7 +53,7 @@ const SetupSocket = (io) => {
             
             const memberIds = await GroupMemberUtils.retrieveGroupMemberIds(group_id);
             const notificationContent = `${sender} shared a file ${file.name} in ${group_id}`;
-            await NotificationUtils.storeFileUploadNotification(io, memberIds, sender, group_id, notificationContent, file.name);
+            await NotificationUtils.storeAndEmitFileUploadNotif(io, memberIds, sender, group_id, notificationContent, file.name);
         });
 
         // Video conference start
@@ -65,7 +65,7 @@ const SetupSocket = (io) => {
            
             const memberIds = await GroupMemberUtils.retrieveGroupMemberIds(group_id);
             const notificationContent = `${sender} started a video conference in ${group_id}`;
-            await NotificationUtils.storeVideoConferenceNotification(io, memberIds, sender, group_id, notificationContent);
+            await NotificationUtils.storeAndEmitVideoConferenceNotif(io, memberIds, sender, group_id, notificationContent);
                 
         });
 
@@ -108,10 +108,14 @@ const SetupSocket = (io) => {
         // SenderId : Admin who sends the invitation
         socket.on('groupInvite', async (user_id, group_id, sender) => {
             // Retrieve group name if needed
-            const content = `${sender} invited you to join the group : ${group_id}`;
-            const socket_id = userSocketMap.get(user_id);
-            await NotificationUtils.storeAndEmitNotification(io, user_id, socket_id, 'invitation', sender, group_id, content);
-            
+            try {
+                const content = `${sender} invited you to join the group : ${group_id}`;
+                const socket_id = userSocketMap.get(user_id);
+                await NotificationUtils.storeAndEmitNotification(io, user_id, socket_id, 'invitation', sender, group_id, content);
+                
+            } catch (error) {
+                socket.emit('errorNotification', { message: error.message });
+            }
         });
 
 
