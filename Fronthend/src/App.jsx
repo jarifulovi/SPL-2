@@ -2,12 +2,12 @@ import { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import LoginPageNew from './pages/LoginPageNew';
 import RegistrationPageNew from './pages/RegistrationPageNew';
-import ConditionalNavBar from './components/sideBar/ConditionalBar';
 import MainPage from './pages/MainPage';
 import ProfilePage from './pages/ProfilePage';
 import UpdateProfilePage from './pages/UpdateProfilePage';
 import GroupChatPage from './pages/GroupChatPage';
 import CreateGroup from './pages/CreateGroup';
+import UpdateGroup from './pages/UpdateGroup';
 import GroupDetails from './pages/GroupDetails';
 import GroupOptions from './pages/GroupOptions';
 
@@ -40,6 +40,7 @@ function App() {
                       <Route path="/" element={<MainPage />} />
                       <Route path="/groupDetails" element={<ProtectedGroupRoute><GroupDetails /></ProtectedGroupRoute>} />  
                       <Route path="/groupOptions" element={<ProtectedGroupRoute><GroupOptions /></ProtectedGroupRoute>} />    
+                      <Route path="/updateGroup" element={<ProtectedGroupRoute><UpdateGroup /></ProtectedGroupRoute>} />
 
                       {/* Logged in Routes wrapped with ProtectedRoute */}
                       <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />

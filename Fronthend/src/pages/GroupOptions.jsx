@@ -1,6 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { useState, useEffect, useContext } from "react"
-import { IoPersonRemoveSharp } from "react-icons/io5";
+import { useState, useEffect, useContext, useRef } from "react"
 import { Button } from "../components/ui/button"
 import { Flex, Box, Text, Input, VStack, HStack, IconButton } from "@chakra-ui/react"
 import { useColorModeValue } from "../components/ui/color-mode";
@@ -11,6 +10,7 @@ import MemberCardOption from "../components/Others/MemberCardOption";
 import CustomDialog from "../components/Buttons/CustomDialog";
 
 import GroupMemberApi from "../services/GroupMemberApi";
+import GroupApi from "../services/GroupApi";
 import { SocketContext } from "../utils/SocketContext";
 
 
@@ -43,12 +43,13 @@ const checkAdminStatus = async (user_id, group_id, navigate) => {
 };
 
 
-const retrieveGroupMembers = async (group_id, setMembers) => {
+const retrieveGroupMembers = async (group_id, setMembers, navigate) => {
   try {
     const result = await GroupMemberApi.getAllGroupMembers(group_id);
     setMembers(result.data);
   } catch (error) {
-    console.log(error.message);
+    // Group might not exist
+    navigate("/groups");
   }
 }
 
@@ -56,11 +57,17 @@ const retrieveGroupMembers = async (group_id, setMembers) => {
 const handleMakeAdmin = async (member, group_id) => {
   
   if(isCurrentUser(member.user_id)) {
-    console.log('This is you');
+    toaster.create({
+      description: "You are already an admin",
+      type: "info"
+    });
     return;
   }
   if(member.role === 'admin') {
-    console.log('Already an admin');
+    toaster.create({
+      description: "Already an admin",
+      type: "info"
+    });
     return;
   }
 
@@ -85,11 +92,17 @@ const handleMakeAdmin = async (member, group_id) => {
 const handleRemoveMember = async (member, group_id) => {
   // Except current user and admins
   if(isCurrentUser(member.user_id)) {
-    console.log('This is you');
+    toaster.create({
+      description: "Cannot remove yourself",
+      type: "info"
+    });
     return;
   }
   if(member.role === 'admin') {
-    console.log('Cannot remove an admin');
+    toaster.create({
+      description: "Cannot remove an admin",
+      type: "info"
+    });
     return;
   }
 
@@ -111,6 +124,24 @@ const handleRemoveMember = async (member, group_id) => {
 }
 
 
+const handleDeleteGroup = async (group_id, navigate) => {
+  try {
+    const result = await GroupApi.removeGroup(group_id);
+    if(result.success) {
+      toaster.create({
+        description: result.message,
+        type: "success"
+      });
+    }
+  } catch (error) {
+    toaster.create({
+      description: error.message,
+      type: "error"
+    });
+  }
+  console.log("Deleted group : ", group_id);
+  navigate("/groups");
+}
 
 
 // Only accessible to admins joined in a group
@@ -126,9 +157,32 @@ const GroupOptions = () => {
   const group_id = group?.group_id;
   const [members, setMembers] = useState([]);
   const { onEvent, emitEvent } = useContext(SocketContext);
+  const [ invitationMember, setInvitationMember ] = useState("");
+
+
+  const fetchData = async () => {
+    if (!user_id || !group_id) {
+      navigate('/');
+      return false;
+    }
+    await checkAdminStatus(user_id, group_id, navigate);
+    await retrieveGroupMembers(group_id, setMembers, navigate);
+
+    return true;
+  };
+
+  // Utility to perform operations with validation
+  const performWithValidation = async (operation) => {
+    const isValid = await fetchData();
+    if (isValid) {
+      console.log('validation checked');
+      await operation();
+      //window.location.reload();
+    }
+  };
+
 
   // Invitation functions
-  const [ invitationMember, setInvitationMember ] = useState("");
   const handleInputChange = (e) => {
     setInvitationMember(e.target.value);
   };
@@ -159,20 +213,9 @@ const GroupOptions = () => {
   
 
   // Functions of first mount
-  useEffect(() => {
-    if (!user_id || !group_id) {
-      navigate('/');
-      return;
-    }
-
-    const fetchData = async () => {
-      await checkAdminStatus(user_id, group_id, navigate);
-      await retrieveGroupMembers(group_id, setMembers);
-    };
-
+  useEffect(() => { 
     fetchData();
-    console.log(members);
-  }, [user_id, group_id, navigate]);
+  }, []);
   
 
   // Handle invitation error event
@@ -201,8 +244,8 @@ const GroupOptions = () => {
             <MemberCardOption
               key={index}
               member={member}
-              onMakeAdmin={() => handleMakeAdmin(member, group_id)}
-              onRemoveMember={() => handleRemoveMember(member, group_id)}
+              onMakeAdmin={() => performWithValidation(() => handleMakeAdmin(member, group_id))}
+              onRemoveMember={() => performWithValidation(() => handleRemoveMember(member, group_id))}
             />
           ))}
           
@@ -220,7 +263,7 @@ const GroupOptions = () => {
             </Text>
             {/* Update/Delete content */}
             <VStack align="start" spacing={3}>
-              <Button width="100%">Update Group</Button>
+              <Button width="100%" onClick={() => navigate("/updateGroup",{ state: {group_id} })}>Update Group</Button>
               <Input
                 width="100%"
                 placeholder="Enter user ID"
@@ -229,10 +272,16 @@ const GroupOptions = () => {
               />
               <Button 
                 width="100%" 
-                onClick={() => handleInvite()}
+                onClick={() => performWithValidation(() => handleInvite())}
               >Invite Member
               </Button>
-              <Button width="100%">Delete Group</Button>
+              <CustomDialog 
+                triggerButton={<Button width="100%">Delete Group</Button>}
+                dialogTitle="Group Deletion"
+                dialogBody="Are you sure you want to delete this group"
+                onConfirm={() => performWithValidation(() => handleDeleteGroup(group_id, navigate))}
+              />
+             
             </VStack>
           </Box>
 
@@ -257,6 +306,4 @@ export default GroupOptions;
 
 
 // Task to do letter
-// Before performing any operation call the first mount 
-// Implement delete group
-// Find a way to update group
+// Update rendering after udpdating 
