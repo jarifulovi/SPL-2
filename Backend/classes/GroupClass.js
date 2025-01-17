@@ -8,10 +8,12 @@ import Chat from "../models/Chat.js";
 
 class GroupClass {
 
-    constructor(group_name, group_description, group_status, group_image, created_by) {     
+    constructor(group_name, group_description, group_status, type, topics, group_image, created_by) {     
         this.group_name = group_name || '';
         this.group_description = group_description || '';
         this.group_status = group_status || 'public';
+        this.type = type || '';
+        this.topics = topics || '';
         this.group_image = group_image || '';
         this.created_by = created_by || '';
     }
@@ -31,6 +33,8 @@ class GroupClass {
                 group_name: this.group_name,
                 group_description: this.group_description,
                 group_status: this.group_status,
+                type: this.type,
+                topics: this.topics,
                 group_image: this.group_image,
                 created_by: this.created_by
             });
@@ -80,7 +84,9 @@ class GroupClass {
                 { 
                     group_name : this.group_name,
                     group_description : this.group_description, 
-                    group_status : this.group_status, 
+                    group_status : this.group_status,
+                    type: this.type,
+                    topics: this.topics,
                     group_image : this.group_image
                 },
                 { new: true }

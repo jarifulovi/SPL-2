@@ -18,6 +18,8 @@ const CreateGroup = () => {
         group_name: '',
         group_description: '',
         group_status: 'public',
+        type: '',
+        topics: [],
         group_image: '',
         user_id: user_id
     });

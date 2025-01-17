@@ -8,9 +8,9 @@ const upload = multer();
 
 router.post('/createGroup', async (req, res) => {
     
-    const { user_id, group_name, group_description, group_status, group_image } = req.body;
+    const { user_id, group_name, group_description, group_status, type, topics, group_image } = req.body;
     console.log(req.body);
-    const group = new GroupClass(group_name, group_description, group_status, group_image, user_id);
+    const group = new GroupClass(group_name, group_description, group_status, type, topics, group_image, user_id);
     try {
         const data = await group.createGroup();
         res.status(200).json({
@@ -52,8 +52,8 @@ router.post('/retrieveGroupInfo', async (req, res) => {
 
 router.post('/updateGroup', async (req, res) => {
     
-    const { group_id, group_name, group_description, group_status, group_image, user_id } = req.body;
-    const group = new GroupClass(group_name, group_description, group_status, group_image, user_id);
+    const { group_id, group_name, group_description, group_status, type, topics, group_image, user_id } = req.body;
+    const group = new GroupClass(group_name, group_description, group_status, type, topics, group_image, user_id);
     try {
         const data = await group.updateGroup(group_id);
         res.status(200).json({
