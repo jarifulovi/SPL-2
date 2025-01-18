@@ -8,9 +8,25 @@ import { toaster } from '../ui/toaster';
 
 // param : member { user_id, name, email, profile_pic }
 
-const MemberItem = ({ member = {}, onSelectMember = ()=>{} }) => {
+const onSelectMember = (member, navigate) => {
+  
+  const currentUserId = localStorage.getItem('user_id');
+  const profileUserId = member.user_id;
+
+  if(currentUserId === profileUserId) {
+    navigate("/profile");
+  } else {
+    navigate("/othersProfile", {
+      state: { profileUserId },
+    });
+  }
+  
+}
+
+const MemberItem = ({ member = {} }) => {
 
   const gradientColor = "linear-gradient(45deg, #56d8e4, #4050dc)";
+  const navigate = useNavigate();
 
   return (
     <Box
@@ -19,7 +35,7 @@ const MemberItem = ({ member = {}, onSelectMember = ()=>{} }) => {
       width="100%"
       mb={2}
       cursor="pointer"
-      onClick={() => onSelectMember(member)} 
+      onClick={() => onSelectMember(member, navigate)} 
       _hover={{ bg: gradientColor}}
     >
       <HStack p={2}>

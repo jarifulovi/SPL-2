@@ -16,7 +16,7 @@ import {Button} from '../ui/button';
 
 import CustomAvatar from './CustomAvatar';
 
-const ProfileCard = ({ profilePicUrl, user_id, name, email, bio, skills }) => {
+const ProfileCard = ({ profilePicUrl, user_id, name, email, bio, skills, otherUser = false }) => {
 
     const navigate = useNavigate();
     return (
@@ -68,14 +68,18 @@ const ProfileCard = ({ profilePicUrl, user_id, name, email, bio, skills }) => {
                     ))}
                 </Stack>
 
-                
-                <Button
-                    w='full'
-                    mt={4}
-                    onClick={() => navigate('/updateProfile')}
-                >
+                {/* Add otherUser button in future */}
+                { !otherUser ? (
+                    <Button
+                        w='full'
+                        mt={4}
+                        onClick={() => navigate('/updateProfile')}
+                    >
                     Update
-                </Button>
+                    </Button>
+                    ) : <></>
+                }
+                
                 
             </Box>
         </Center>

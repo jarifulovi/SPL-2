@@ -4,6 +4,7 @@ import LoginPageNew from './pages/LoginPageNew';
 import RegistrationPageNew from './pages/RegistrationPageNew';
 import MainPage from './pages/MainPage';
 import ProfilePage from './pages/ProfilePage';
+import OthersProfilePage from './pages/OthersProfilePage';
 import UpdateProfilePage from './pages/UpdateProfilePage';
 import GroupChatPage from './pages/GroupChatPage';
 import CreateGroup from './pages/CreateGroup';
@@ -13,7 +14,7 @@ import GroupOptions from './pages/GroupOptions';
 
 
 import ProtectedRoute from './components/Context/ProtectedRoute';
-import ProtectedGroupRoute from './components/Context/ProtectedGroupRoute';
+import ProtectedUrlRoute from './components/Context/ProtectedUrlRoute';
 import AuthProvider from './components/Context/AuthProvider';
 
 import { Toaster } from './components/ui/toaster';
@@ -38,9 +39,10 @@ function App() {
                 
                   <Routes>
                       <Route path="/" element={<MainPage />} />
-                      <Route path="/groupDetails" element={<ProtectedGroupRoute><GroupDetails /></ProtectedGroupRoute>} />  
-                      <Route path="/groupOptions" element={<ProtectedGroupRoute><GroupOptions /></ProtectedGroupRoute>} />    
-                      <Route path="/updateGroup" element={<ProtectedGroupRoute><UpdateGroup /></ProtectedGroupRoute>} />
+                      <Route path="/groupDetails" element={<ProtectedUrlRoute requiredFields={['group']}><GroupDetails /></ProtectedUrlRoute>} />  
+                      <Route path="/groupOptions" element={<ProtectedUrlRoute requiredFields={['group']}><GroupOptions /></ProtectedUrlRoute>} />    
+                      <Route path="/updateGroup" element={<ProtectedUrlRoute requiredFields={['group']}><UpdateGroup /></ProtectedUrlRoute>} />
+                      <Route path="/othersProfile" element={<ProtectedUrlRoute requiredFields={['profileUserId']}><OthersProfilePage /></ProtectedUrlRoute>} />
 
                       {/* Logged in Routes wrapped with ProtectedRoute */}
                       <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />

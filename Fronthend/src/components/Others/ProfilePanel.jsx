@@ -1,10 +1,12 @@
 import { Box, Text, Stack, Badge } from '@chakra-ui/react';
 import { useColorModeValue } from '../ui/color-mode';
 
-const ProfilePanel = ({ profile }) => {
+const ProfilePanel = ({ profile, otherUser = false }) => {
 
   // Check if the profile object is empty or has no data
   const isEmptyProfile = !profile || Object.keys(profile).length === 0;
+  const noDataText = "No profile data available. Please update your profile.";
+  const hiddenDataText = "Profile data has been hidden by user.";
 
   return (
     <Box
@@ -26,7 +28,7 @@ const ProfilePanel = ({ profile }) => {
           borderRadius="md"
         >
           <Text fontSize="lg" color={useColorModeValue('gray.700', 'gray.300')}>
-            No profile data available. Please update your profile.
+            {otherUser ? hiddenDataText : noDataText}
           </Text>
         </Box>
       ) : (
