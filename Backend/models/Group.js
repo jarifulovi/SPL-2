@@ -7,7 +7,7 @@ const StudyGroupSchema = new Schema({
   group_description: { type: String },
   group_size: { type: Number, default: 1 },
   group_status: { type: String, enum: ['public', 'private'], default: 'public' },
-  type: { type: String, enum: ['study', 'project', 'research'], default: 'study' },
+  type: { type: String },
   topics: [{ type: String }],
   groupImage: { type: String }, // URL or path to the group image
   created_by: { type: String, ref: 'User', required: true }, // Reference to User schema

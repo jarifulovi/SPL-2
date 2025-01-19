@@ -8,15 +8,15 @@ const ProfileSchema = new Schema({
     profile_picture: { type: String }, // Store URL or path to the profile picture
     address: { type: String },
     bio: { type: String },
-    department: { type: String },
     education: { type: String },
+    hobby: { type: String },
     role: { type: String, enum: ['student', 'teacher'] },
     is_visible: { type: Boolean, default: true },
 
     // Student-specific fields
     course_of_study: { type: String },
     current_year_or_semester: { type: String },
-    hobby: { type: String },
+    department: { type: String },
     skills: { type: [String] },
     grade_sheet: { type: String },
     resume: { type: String },

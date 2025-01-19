@@ -11,7 +11,7 @@ router.put('/updateProfile', async (req, res) => {
     const profileServce = new UserProfileService();
 
     try {
-        await profileServce.createOrUpdateProfile(profileData);
+        await profileServce.updateProfile(profileData);
         res.status(201).json({
             success: true,
             message: 'Profile updated successfully',

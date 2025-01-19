@@ -1,9 +1,40 @@
 import { Box, Text, Stack, Badge } from '@chakra-ui/react';
 import { useColorModeValue } from '../ui/color-mode';
 
+
+const getProfileField = (field, label) => {
+  return (
+    <Stack direction="row" spacing={2} mb={3}>
+      <Text fontWeight="bold">{label}:</Text>
+      <Text>{field || 'Not provided'}</Text>
+    </Stack>
+  );
+};
+
+const getArrayField = (values, label) => {
+  return (
+    <Stack direction="row" spacing={2} mb={3}>
+      <Text fontWeight="bold">{label}:</Text>
+      {values && values.length > 0 ? (
+        <Stack direction="row" spacing={2} wrap="wrap">
+          {values.map((value, index) => (
+            <Badge key={index} colorScheme="green" fontSize="sm">
+              {value}
+            </Badge>
+          ))}
+        </Stack>
+      ) : (
+        <Text>Not provided</Text>
+      )}
+    </Stack>
+  );
+};
+
+// ProfilePanel both uses in own profile and others profile
+// Empty profile if is_visible == false
+// If otherUser == true && empty then profile hidden activates 
 const ProfilePanel = ({ profile, otherUser = false }) => {
 
-  // Check if the profile object is empty or has no data
   const isEmptyProfile = !profile || Object.keys(profile).length === 0;
   const noDataText = "No profile data available. Please update your profile.";
   const hiddenDataText = "Profile data has been hidden by user.";
@@ -34,127 +65,37 @@ const ProfilePanel = ({ profile, otherUser = false }) => {
       ) : (
         // If the profile is not empty, render the profile data
         <>
-          {/* Date of Birth */}
-          {profile.date_of_birth && (
-            <Stack direction="row" spacing={2} mb={3}>
-              <Text fontWeight="bold">Date of Birth:</Text>
-              <Text>{new Date(profile.date_of_birth).toLocaleDateString()}</Text>
-            </Stack>
-          )}
-
-          {/* Gender */}
-          {profile.gender && (
-            <Stack direction="row" spacing={2} mb={3}>
-              <Text fontWeight="bold">Gender:</Text>
-              <Text>{profile.gender}</Text>
-            </Stack>
-          )}
-
-          {/* Phone Number */}
-          {profile.phone_number && (
-            <Stack direction="row" spacing={2} mb={3}>
-              <Text fontWeight="bold">Phone:</Text>
-              <Text>{profile.phone_number}</Text>
-            </Stack>
-          )}
-
-          {/* Address */}
-          {profile.address && (
-            <Stack direction="row" spacing={2} mb={3}>
-              <Text fontWeight="bold">Address:</Text>
-              <Text>{profile.address}</Text>
-            </Stack>
-          )}
-
-          {/* Department */}
-          {profile.department && (
-            <Stack direction="row" spacing={2} mb={3}>
-              <Text fontWeight="bold">Department:</Text>
-              <Text>{profile.department}</Text>
-            </Stack>
-          )}
-
-          {/* Education */}
-          {profile.education && (
-            <Stack direction="row" spacing={2} mb={3}>
-              <Text fontWeight="bold">Education:</Text>
-              <Text>{profile.education}</Text>
-            </Stack>
-          )}
-
-          {/* Role */}
-          {profile.role && (
-            <Stack direction="row" spacing={2} mb={3}>
-              <Text fontWeight="bold">Role:</Text>
-              <Text>{profile.role}</Text>
-            </Stack>
-          )}
+          {getProfileField(profile.date_of_birth && new Date(profile.date_of_birth).toLocaleDateString(), 'Date of Birth')}     
+          {getProfileField(profile.gender, 'Gender')}
+          {getProfileField(profile.phone_number, 'Phone')}
+          {getProfileField(profile.address, 'Address')}
+          {getProfileField(profile.education, 'Education')}
+          {getProfileField(profile.hobby, 'Hobby')}
+          {getProfileField(profile.role, 'Role')}
 
           {/* Student-specific fields */}
-          {profile.course_of_study && (
-            <Stack direction="row" spacing={2} mb={3}>
-              <Text fontWeight="bold">Course of Study:</Text>
-              <Text>{profile.course_of_study}</Text>
-            </Stack>
-          )}
-
-          {profile.current_year_or_semester && (
-            <Stack direction="row" spacing={2} mb={3}>
-              <Text fontWeight="bold">Current Year/Semester:</Text>
-              <Text>{profile.current_year_or_semester}</Text>
-            </Stack>
-          )}
-
-          {profile.hobby && (
-            <Stack direction="row" spacing={2} mb={3}>
-              <Text fontWeight="bold">Hobby:</Text>
-              <Text>{profile.hobby}</Text>
-            </Stack>
-          )}
-
-          {/* Grade Sheet */}
-          {profile.grade_sheet && (
-            <Stack direction="row" spacing={2} mb={3}>
-              <Text fontWeight="bold">Grade Sheet:</Text>
-              <Text>{profile.grade_sheet}</Text>
-            </Stack>
-          )}
-
-          {/* Resume */}
-          {profile.resume && (
-            <Stack direction="row" spacing={2} mb={3}>
-              <Text fontWeight="bold">Resume:</Text>
-              <Text>{profile.resume}</Text>
-            </Stack>
-          )}
+          {profile.role === 'student' && (
+            <>
+              {getProfileField(profile.course_of_study, 'Course of Study')}
+              {getProfileField(profile.current_year_or_semester, 'Current Year/Semester')}
+              {getProfileField(profile.department, 'Department')}
+              {getArrayField(profile.skills, 'Skills')}
+              {/* Grade Sheet and resume */}
+              {getProfileField(profile.grade_sheet, 'Grade Sheet')}
+              {getProfileField(profile.resume, 'Resume')}
+            </>
+          )}   
 
           {/* Teacher-specific fields */}
-          {profile.subjects && profile.subjects.length > 0 && (
-            <Stack direction="row" spacing={2} mb={3}>
-              <Text fontWeight="bold">Subjects:</Text>
-              <Stack direction="row" spacing={2} wrap="wrap">
-                {profile.subjects.map((subject, index) => (
-                  <Badge key={index} colorScheme="green" fontSize="sm">
-                    {subject}
-                  </Badge>
-                ))}
-              </Stack>
-            </Stack>
+          {profile.role === 'teacher' && (
+            <>
+              {getArrayField(profile.subjects, 'Subjects')}
+              {getArrayField(profile.qualifications, 'Qualifications')}
+              {getProfileField(profile.designation, 'Designation')}
+              {getProfileField(profile.experience, 'Experience')}
+            </>
           )}
 
-          {profile.designation && (
-            <Stack direction="row" spacing={2} mb={3}>
-              <Text fontWeight="bold">Designation:</Text>
-              <Text>{profile.designation}</Text>
-            </Stack>
-          )}
-
-          {profile.experience && (
-            <Stack direction="row" spacing={2} mb={3}>
-              <Text fontWeight="bold">Experience:</Text>
-              <Text>{profile.experience} years</Text>
-            </Stack>
-          )}
         </>
       )}
     </Box>

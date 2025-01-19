@@ -1,6 +1,7 @@
 import PasswordService from "./PasswordService.js";
 import SessionService from "./SessionService.js";
 import UserClass from "./User.js";
+import UserProfileService from "./UserProfileService.js";
 import UserService from "./UserService.js";
 
 
@@ -37,6 +38,8 @@ class AuthService {
             const hashedPassword = await passwordService.hashPassword();
             const userService = new UserService();
             await userService.addUser(name,email,hashedPassword);
+            const profileService = new UserProfileService();
+            await profileService.createProfile(email);
         } catch (error) {
             console.error('Error during registration:', error.message);
             throw new Error('Error during registration');

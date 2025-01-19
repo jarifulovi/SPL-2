@@ -8,36 +8,84 @@ class UserProfileService {
 
     }
 
+   
+    async doesUserExist(user_id) {
+        return User.exists({ user_id });
+    }
 
-    async createOrUpdateProfile(profileData) {
-        const profileClass = new ProfileClass(profileData);
-    
+ 
+    async doesProfileExist(user_id) {
+        return Profile.exists({ user_id });
+    }
+
+   
+    validateUpdateFields(updateFields) {
+        if (Object.keys(updateFields).length === 0) {
+            return false; // No fields to update
+        }
+        return true;
+    }
+
+    async createProfile(email) {
         try {
-            const userExists = await profileClass.isUserExist();
-            if (!userExists) {
-                throw new Error("User does not exist. Cannot create or update profile.");
+            // Retrieve the User document by email
+            const user = await User.findOne({ email });
+            if (!user) {
+                throw new Error("User does not exist. Cannot create profile.");
             }
     
-            const isProfileExist = await profileClass.isProfileExist();
+            const user_id = user.user_id;
     
-            if (isProfileExist) {
-                // Update the existing profile
-                const updatedProfile = await Profile.findOneAndUpdate(
-                    { user_id: profileData.user_id },
-                    { $set: profileData },
-                    { new: true }
-                );
-                return updatedProfile;
-            } else {
-                // Create a new profile
-                const newProfile = new Profile(profileData);
-                await newProfile.save();
-                return newProfile;
+            // Check if the profile already exists
+            if (await this.doesProfileExist(user_id)) {
+                throw new Error("Profile already exists for this user.");
             }
+    
+            // Create a new profile with default values
+            const defaultProfileData = {
+                user_id,
+                is_visible: true,
+            };
+    
+            const newProfile = new Profile(defaultProfileData);
+            await newProfile.save();
+    
+            return newProfile;
         } catch (error) {
-            throw new Error(error.message || "Error during creating or updating profile");
+            throw new Error(error.message || "Error during profile creation");
         }
     }
+    
+    
+
+
+    async updateProfile(profileData) {
+        try {
+            // Check if the profile exists
+            if (!(await this.doesProfileExist(profileData.user_id))) {
+                throw new Error("Profile does not exist. Cannot update.");
+            }
+    
+            // Exclude `user_id` from update fields
+            const { user_id, ...updateFields } = profileData;
+    
+            if (Object.keys(updateFields).length === 0) {
+                throw new Error("No fields provided for update.");
+            }
+    
+            // Update the profile
+            const updatedProfile = await Profile.findOneAndUpdate(
+                { user_id },
+                { $set: updateFields },
+                { new: true }
+            );
+    
+            return updatedProfile;
+        } catch (error) {
+            throw new Error(error.message || "Error during profile update");
+        }
+    }
+    
     
 
     async getProfileInfo(userId, currentUserId) {
