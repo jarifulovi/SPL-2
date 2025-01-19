@@ -108,8 +108,25 @@ router.post('/logout', async (req, res) => {
         });
     }
     
-
 });
+
+router.post("/updatePassword", async (req, res) => {
+    try {
+        const { email, oldPassword, newPassword } = req.body;
+        const authService = new AuthService();
+        await authService.updatePassword(email, oldPassword, newPassword);
+
+        res.status(201).json({
+            success: true,
+            message: 'User successfully updated password',
+        });
+    } catch (error) {
+        res.status(400).json({
+            success: false,
+            message: error.message || 'An error occurred during updating password'
+        });
+    }
+})
 
 // Will add forgot password mechanism
 

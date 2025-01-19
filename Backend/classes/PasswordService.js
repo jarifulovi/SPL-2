@@ -12,7 +12,7 @@ class PasswordService {
             const storedPassword = await this.retrieveHashedPassword(email);
             return await this.isValidPassword(storedPassword);
         } catch (error) {
-            console.log("error checking");
+            throw new Error("Incorrect password");
         }
     }
     
@@ -54,6 +54,17 @@ class PasswordService {
 
     async changePassword(email,newPassword) {
         try {
+            const user = await User.findOne({ email });
+            if (!user) {
+                throw new Error('User not found');
+            }
+
+            
+            const isMatch = await this.checkPassword(email);
+            if (!isMatch) {
+                throw new Error('Incorrect current password');
+            }
+          
             
             this.password = newPassword;
             const hashPassword = await this.hashPassword();
@@ -65,8 +76,8 @@ class PasswordService {
             
             return hashPassword;
         } catch (error) {
-            console.error('Error adding password :', error);
-            throw new Error('Unable to add password');
+            console.error('Error updating password :', error.message);
+            throw new Error(error.message);
         }
             
     }

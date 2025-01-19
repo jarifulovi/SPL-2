@@ -66,6 +66,16 @@ class AuthService {
             throw new Error('Error during logout');
         }
     }
+
+    // Check if old password matches
+    async updatePassword(email, oldPassword, newPassword) {
+        try {
+            const passwordService = new PasswordService(oldPassword);
+            await passwordService.changePassword(email, newPassword);
+        } catch (error) {
+            throw new Error(error.message || 'Failed to update password');
+        }
+    }
     
 }
 
