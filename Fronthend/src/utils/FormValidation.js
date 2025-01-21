@@ -91,6 +91,20 @@ function validateUpdateProfile(data) {
     return validateForm(data, fields);
 }
 
+function validateChangePassword(data) {
+    const fields = [
+        { name: 'Password', key: 'old_password', validation: validatePassword },
+        { name: 'Password', key: 'new_password', validation: validatePassword },
+        { name: 'ConfirmPassword', key: 'confirmPassword', validation: (value) => value === data.new_password }
+    ];
+    return validateForm(data,fields);
+}
+
+
+// Field: 
+//       name : Error message name ( can use generic name above )
+//       key  : field name in the formdata ( must be same )
+
 export default {
     validateName,
     validateEmail,
@@ -99,6 +113,7 @@ export default {
     validateRegisterForm,
     validateCreateGroupForm,
     validateUpdateProfile,
+    validateChangePassword
 }
 
   

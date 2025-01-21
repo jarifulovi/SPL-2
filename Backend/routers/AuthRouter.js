@@ -112,9 +112,9 @@ router.post('/logout', async (req, res) => {
 
 router.post("/updatePassword", async (req, res) => {
     try {
-        const { email, oldPassword, newPassword } = req.body;
+        const { email, old_password, new_password } = req.body;
         const authService = new AuthService();
-        await authService.updatePassword(email, oldPassword, newPassword);
+        await authService.updatePassword(email, old_password, new_password);
 
         res.status(201).json({
             success: true,

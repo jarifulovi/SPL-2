@@ -5,7 +5,7 @@ import RegistrationPageNew from './pages/RegistrationPageNew';
 import MainPage from './pages/MainPage';
 import ProfilePage from './pages/ProfilePage';
 import OthersProfilePage from './pages/OthersProfilePage';
-import UpdateProfilePage from './pages/UpdateProfilePage';
+import AccountSettingsPage from './pages/AccountSettingsPage';
 import GroupChatPage from './pages/GroupChatPage';
 import CreateGroup from './pages/CreateGroup';
 import UpdateGroup from './pages/UpdateGroup';
@@ -45,8 +45,8 @@ function App() {
                       <Route path="/othersProfile" element={<ProtectedUrlRoute requiredFields={['profileUserId']}><OthersProfilePage /></ProtectedUrlRoute>} />
 
                       {/* Logged in Routes wrapped with ProtectedRoute */}
+                      <Route path="/accountSettings" element={<ProtectedRoute><AccountSettingsPage /></ProtectedRoute>} />
                       <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
-                      <Route path="/updateProfile" element={<ProtectedRoute><UpdateProfilePage /></ProtectedRoute>} />
                       <Route path="/groups" element={<ProtectedRoute><GroupChatPage></GroupChatPage></ProtectedRoute>} />
                       <Route path="/createGroup" element={<ProtectedRoute><CreateGroup /></ProtectedRoute>} />
                       <Route path="/files" element={<ProtectedRoute><h1>Files</h1></ProtectedRoute>} />

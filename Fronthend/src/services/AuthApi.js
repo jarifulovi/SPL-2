@@ -13,6 +13,10 @@ const isAuthenticated = async (email) => {
     return await Fetch.fetchData('http://localhost:3000/isAuthenticated', 'POST', { email }, true);
 };
 
+const updatePassword = async (formData) => {
+    return await Fetch.fetchData('http://localhost:3000/updatePassword','POST', formData);
+}
+
 const logOut = async (email) => {
     return await Fetch.fetchData('http://localhost:3000/logout', 'POST', { email });
 };
@@ -22,5 +26,6 @@ export default {
     registerUser,
     loginUser,
     isAuthenticated,
+    updatePassword,
     logOut
 }

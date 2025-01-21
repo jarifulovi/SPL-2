@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Text, Input, Button, Heading, VStack, HStack } from '@chakra-ui/react';
-import { toaster } from '../components/ui/toaster';
+import { toaster } from '../ui/toaster';
 
-import AuthFlexContainer from '../components/Auth/AuthFlexContainer';
-import CustomFormInput from '../components/Auth/CustomFormInput';
-import RadioButton from '../components/Buttons/RadioButton';
-import UploadFile from '../components/Others/UploadFile';
+import AuthFlexContainer from '../Auth/AuthFlexContainer';
+import CustomFormInput from '../Auth/CustomFormInput';
+import RadioButton from '../Buttons/RadioButton';
+import UploadFile from '../Others/UploadFile';
 
-import FormValidation from '../utils/FormValidation';
-import ProfileApi from '../services/ProfileApi'; 
+import FormValidation from '../../utils/FormValidation';
+import ProfileApi from '../../services/ProfileApi'; 
 
 
 

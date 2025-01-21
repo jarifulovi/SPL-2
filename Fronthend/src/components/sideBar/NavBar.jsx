@@ -94,6 +94,11 @@ const NavBar = ({ profilePicUrl, notifications = [] }) => {
                 onClick: () => navigateTo("/profile"),
               },
               {
+                value: "accountSettings",
+                label: "Settings",
+                onClick: () => navigateTo("/accountSettings"),
+              },
+              {
                 value: "logout",
                 label: "Logout",
                 onClick: handleLogout,
