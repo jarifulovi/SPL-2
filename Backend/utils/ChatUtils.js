@@ -19,11 +19,11 @@ async function postMessage(io, group_id, sender, content, type = 'text_message')
     }
 }
 
-async function postDiscussion(io, group_id, sender, content) {
+async function postDiscussion(io, group_id, sender, content, topic, discussionStatus) {
     try {
         
         const groupChat = new GroupChat(group_id);
-        const savedDiscussion = await groupChat.postDiscussion(sender, content);
+        const savedDiscussion = await groupChat.postDiscussion(sender, content, topic, discussionStatus);
 
        
         io.to(group_id).emit('chatMessage', savedDiscussion);

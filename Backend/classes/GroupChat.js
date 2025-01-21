@@ -9,7 +9,7 @@ class GroupChat {
         this.group_id = group_id;
     }
 
-    async postMessage(sender, content, type = 'text_message') {
+    async postMessage(sender, content, type = 'text_message', additionalFields = {}) {
         try {
             
             const validTypes = ['text_message', 'link', 'discussion_topic', 'files', 'video_conferencing', 'join_group'];
@@ -18,14 +18,26 @@ class GroupChat {
             }
     
             
-            const newChat = new Chat({
+            const chatData = {
                 group_id: this.group_id,
                 sender,
                 content,
                 type,
-            });
+            };
     
-            
+            // Add additional fields for specific types
+            if (type === 'discussion_topic') {
+                const { topic, discussionStatus } = additionalFields;
+    
+                if (!topic || !discussionStatus) {
+                    throw new Error('Missing required fields for discussion_topic');
+                }
+    
+                chatData.topic = topic;
+                chatData.discussionStatus = discussionStatus;
+            }
+    
+            const newChat = new Chat(chatData);
             const savedChat = await newChat.save();
     
             return savedChat;
@@ -52,8 +64,8 @@ class GroupChat {
         }
     }
 
-    async postDiscussion(sender, content) {
-        return await this.postMessage(sender, content, 'discussion_topic');
+    async postDiscussion(sender, content, topic, discussionStatus) {
+        return await this.postMessage(sender, content, 'discussion_topic', { topic, discussionStatus });
     }
     
     async retrieveAllChat() {

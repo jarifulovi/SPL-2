@@ -30,7 +30,7 @@ const SetupSocket = (io) => {
         socket.on('newDiscussion', async (group_id, sender, discussion_topic) => {
 
             const content = `${sender} started a discussion on ${discussion_topic}`;
-            await ChatUtils.postDiscussion(io, group_id, sender, content);
+            await ChatUtils.postDiscussion(io, group_id, sender, content, discussion_topic, 'open');
                      
             const memberIds = await GroupMemberUtils.retrieveGroupMemberIds(group_id);
             const notificationContent =  `${sender} started a discussion ${discussion_topic} in ${group_id}`;
@@ -40,7 +40,7 @@ const SetupSocket = (io) => {
         // Closing discussion handling
         socket.on('closeDiscussion', async (group_id, sender, discussionTopic) => {
             const content = "Discussion on " + discussionTopic + " has been closed";
-            await ChatUtils.postDiscussion(io, group_id, sender, content);
+            await ChatUtils.postDiscussion(io, group_id, sender, content, discussionTopic, 'closed');
         });
 
         // When a file is uploaded in a group, notify the user

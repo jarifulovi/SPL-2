@@ -8,6 +8,16 @@ const ChatSchema = new Schema({
     enum: ['text_message', 'link', 'discussion_topic', 'files', 'video_conferencing', 'join_group'], 
     required: true 
   },
+  // Additional field for discussion_topic
+  topic: {
+    type: String,
+    required: function() { return this.type === 'discussion_topic'; },
+  },
+  discussionStatus: {
+    type: String,
+    enum: ['open', 'closed'],
+    required: function() { return this.type === 'discussion_topic'; },
+  },
   content: { type: String }, 
   sender: { type: String, ref: 'User', required: true },
   file: { type: String }, 

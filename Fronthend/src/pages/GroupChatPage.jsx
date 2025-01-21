@@ -3,12 +3,39 @@ import { Box, HStack, Flex, VStack, Text, Button, Input } from '@chakra-ui/react
 
 import GroupItem from '../components/Others/GroupItem';
 import ChatItem from '../components/Others/ChatItem';
+import CustomDialog from '../components/Buttons/CustomDialog';
 
 import GroupMemberApi from '../services/GroupMemberApi';
 import GroupChatApi from '../services/GroupChatApi';
 import { SocketContext } from '../utils/SocketContext';
+import { use } from 'react';
 
 const tolerance = 2;  // For checking scroll bottom
+
+
+// Check active discussion status
+const checkActiveDiscussion = (messages, setActiveDiscussion, setActiveDiscTopic) => {
+
+  for (let message of messages) {
+    if (message && message.type === 'discussion_topic') {
+      if (message.discussionStatus === 'open') {
+        setActiveDiscussion(true);
+        setActiveDiscTopic(message.topic);
+        return;
+      }
+      if (message.discussionStatus === 'closed') {
+        setActiveDiscussion(false);
+        return;
+      }
+    }
+  }
+
+  // If no active discussion is found, set the state to false
+  setActiveDiscussion(false);
+  setActiveDiscTopic(null);
+};
+
+
 
 
 const retAndUpdateGroups = async (user_id, setGroupsData) => {
@@ -99,8 +126,9 @@ const GroupChatPage = () => {
 
         // Select default group
         setSelectedGroup(data[0]); 
-        await retAndUpdateChats(data[0].group_id, setMessages); 
+        const initialMessages = await retAndUpdateChats(data[0].group_id, setMessages); 
         await retAndUpdateGroupMembers(data[0].group_id, setGroupMembersMap, user_id, setIsAdmin);
+        checkActiveDiscussion(initialMessages, setActiveDiscussion, setActiveDiscTopic);
       }
     };
     fetchGroups();
@@ -138,8 +166,9 @@ const GroupChatPage = () => {
     setSelectedGroup(group);
     console.log('Group : ', group.group_name, " is selected");
 
-    await retAndUpdateChats(group.group_id, setMessages);
+    const updatedMessages = await retAndUpdateChats(group.group_id, setMessages);
     await retAndUpdateGroupMembers(group.group_id, setGroupMembersMap, user_id, setIsAdmin);
+    checkActiveDiscussion(updatedMessages, setActiveDiscussion, setActiveDiscTopic);
   };
 
 
@@ -150,6 +179,27 @@ const GroupChatPage = () => {
       setSendMessage('');
     }
   };
+
+  // ***** Discussion fields ****** //
+  const [ discussion_topic, setDiscussion_topic ] = useState('');
+  const [ isActiveDiscussion, setActiveDiscussion ] = useState(false);
+  const [ activeDiscTopic, setActiveDiscTopic ] = useState('');
+  const handlePostDiscussion = async () => {
+    if (discussion_topic.trim()) {
+      console.log(discussion_topic);
+      emitEvent('newDiscussion', selectedGroup.group_id, user_id, discussion_topic.trim());
+      setActiveDiscussion(true);
+      setDiscussion_topic('');
+    }
+  }
+
+  const handleCloseDiscussion = async () => {
+    console.log(activeDiscTopic);
+    emitEvent('closeDiscussion', selectedGroup.group_id, user_id, activeDiscTopic);
+    setActiveDiscTopic('');
+    setActiveDiscussion(false);
+  }
+  // ***** Discussion fields ****** //
 
 
   const handleScroll = () => {
@@ -238,9 +288,37 @@ const GroupChatPage = () => {
             value={sendMessage}
             onChange={(e) => setSendMessage(e.target.value)}
           />
-          <Button onClick={sendChatMessage}>
+          <Button onClick={sendChatMessage} colorPalette='purple'>
             Send
           </Button>
+          { isAdmin ? (
+            isActiveDiscussion ? (
+              <Button
+                colorScheme="red"
+                onClick={handleCloseDiscussion}
+              >
+                Close Disc
+              </Button>
+            ) : (
+              <CustomDialog
+                triggerButton={<Button>Disc</Button>}
+                dialogTitle='Post a discussion with topic'
+                dialogBody={
+                  <Input 
+                    value={discussion_topic} 
+                    onChange={(e) => setDiscussion_topic(e.target.value)}
+                    placeholder='Enter discussion topic...'
+                  />
+                  }
+                confirmButtonText='Post'
+                confirmButtonColor='blue'
+                onConfirm={handlePostDiscussion}
+              />
+            )
+          ) : 
+            (<></>)
+          }
+          
         </HStack>
       
       </Box>
