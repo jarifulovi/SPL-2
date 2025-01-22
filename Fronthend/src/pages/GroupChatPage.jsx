@@ -187,7 +187,7 @@ const GroupChatPage = () => {
   const handlePostDiscussion = async () => {
     if (discussion_topic.trim()) {
       console.log(discussion_topic);
-      emitEvent('newDiscussion', selectedGroup.group_id, user_id, discussion_topic.trim());
+      emitEvent('newDiscussion', selectedGroup.group_id, user_id, name, selectedGroup.group_name, discussion_topic.trim());
       setActiveDiscussion(true);
       setDiscussion_topic('');
     }

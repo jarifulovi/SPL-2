@@ -1,15 +1,13 @@
 import NotificationClass from "../classes/Notification.js";
 
 
-async function storeNotification(io, members, notificationType, sender, group_id, content, extraData = {}) {
+async function storeNotification(io, members, notificationType, sender, group_id, content) {
     try {
         
         const notification = new NotificationClass(notificationType, sender, group_id);
-
-       
-        members.forEach(memberId => {
-            notification.storeNotification(memberId, extraData); 
-        });
+        await Promise.all(
+            members.map(memberId => notification.storeNotification(memberId, content))
+        );
 
         
         io.to(group_id).emit('notification', {
@@ -24,11 +22,11 @@ async function storeNotification(io, members, notificationType, sender, group_id
     }
 }
 
-async function storeAndEmitNotifToUser(io, user_id, socket_id, notificationType, sender, group_id, content, extraData = {}) {
+async function storeAndEmitNotifToUser(io, user_id, socket_id, notificationType, sender, group_id, content) {
     try {
        
         const notification = new NotificationClass(notificationType, sender, group_id);
-        await notification.storeNotification(user_id, extraData);
+        await notification.storeNotification(user_id, content);
         
         if (socket_id) {
             io.to(socket_id).emit('notification', {
@@ -49,16 +47,16 @@ async function storeAndEmitNotifToUser(io, user_id, socket_id, notificationType,
 
 export default {
     
-    storeAndEmitDiscussionNotif: (io, members, sender, group_id, discussion_topic, content) => {
-        return storeNotification(io, members, 'discussion_topic', sender, group_id, content, { discussion_topic });
+    storeAndEmitDiscussionNotif: (io, members, sender, group_id, content) => {
+        return storeNotification(io, members, 'discussion_topic', sender, group_id, content);
     },
 
     storeAndEmitVideoConferenceNotif: (io, members, sender, group_id, content) => {
         return storeNotification(io, members, 'video_conferencing', sender, group_id, content);
     },
 
-    storeAndEmitFileUploadNotif: (io, members, sender, group_id, content, file_name) => {
-        return storeNotification(io, members, 'file_shared', sender, group_id, content, { file_name });
+    storeAndEmitFileUploadNotif: (io, members, sender, group_id, content) => {
+        return storeNotification(io, members, 'file_shared', sender, group_id, content);
     },
     storeAndEmitNotification: storeAndEmitNotifToUser,
 };

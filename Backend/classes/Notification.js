@@ -10,10 +10,8 @@ class NotificationClass {
     }
 
     // Generic method to send a notification
-    async storeNotification(user_id, data = {}) {
+    async storeNotification(user_id, content) {
 
-        
-        let content = this.findContent(data);
 
         try {
             if(!user_id){
@@ -61,50 +59,6 @@ class NotificationClass {
         }
     }
 
-
-    findContent(data) {
-
-        let content = '';
-        if (this.type === 'invitation') content = this.sendGroupInviteNotification(data);
-        else if (this.type === 'discussion_topic') content = this.sendDiscussionNotification(data);
-        else if (this.type === 'join_request') content = this.sendGroupJoinRequestNotification(data);
-        else if (this.type === 'join_group') content = this.sendGroupJoinNotification(data);
-        else if (this.type === 'file_shared') content = this.sendFileSharedNotification(data);
-        else if (this.type === 'video_conferencing') content = this.sendVideoConferencingNotification(data);
-        else throw new Error('Invalid notification type');
-
-        return content;
-    }
-    
-    sendGroupJoinNotification(data) {
-        const { group_name = "" } = data;
-        return `You successfully joined the ${group_name || this.group_id}`;
-    }
-
-    sendGroupJoinRequestNotification(data) {
-        const { group_name = "", sender_name = "" } = data;
-        return `${sender_name || this.sender} requested to join the ${group_name || this.group_id}`;
-    }
-
-    sendGroupInviteNotification(data) {
-        const { group_name = "", sender_name = "" } = data;
-        return `${sender_name || this.sender} invited you to join the ${group_name || this.group_id}`;
-    }
-
-    sendDiscussionNotification(data) {
-        const { discussion_topic = "", group_name = "", sender_name = "" } = data;
-        return `${sender_name || this.sender} started a discussion "${discussion_topic}" in ${group_name || this.group_id}`;
-    }
-
-    sendFileSharedNotification(data) {
-        const { file_name = "", group_name = "", sender_name = "" } = data;
-        return `${sender_name || this.sender} shared a file "${file_name}" in ${group_name || this.group_id}`;
-    }
-
-    sendVideoConferencingNotification(data) {
-        const { group_name = "", sender_name = "" } = data;
-        return `${sender_name || this.sender} started a video conference in ${group_name || this.group_id}`; 
-    }
 }
 
 export default NotificationClass;

@@ -30,7 +30,7 @@ const NotificationItem = ({ type, content, receiveDate }) => {
     <Box
       w="100%"
       p={2}
-      bg={typeColors[type] || 'gray.200'}
+      //bg={typeColors[type] || 'gray.200'}
       borderRadius="md"
       boxShadow="md"
       mb={2}

@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { useEffect, useState, useContext  } from 'react';
 import  NavBar  from './NavBar';
 import {
   DrawerActionTrigger,
@@ -20,8 +21,8 @@ import { IoBookOutline } from "react-icons/io5";
 import { FaUserCircle } from 'react-icons/fa';
 import MenuButton from '../Buttons/MenuButton';
 
-import { useState } from 'react';
 import NotificationApi from '../../services/NotificationApi';
+import { SocketContext } from '../../utils/SocketContext';
 
 
 const SideBar = () => {
@@ -29,23 +30,27 @@ const SideBar = () => {
   // First retrieve user_id,email,notifications
   const user_id = localStorage.getItem('user_id');
   const email = localStorage.getItem('email');
-  console.log('User ID:', user_id);
-  console.log('Email:', email);
 
-  let notifications = [];
+  const { onEvent, emitEvent } = useContext(SocketContext);
+  const [ notifications, setNotifications ] = useState([]);
+  
+
 
   const fetchNotifications = async () => {
     try {
       const response = await NotificationApi.fetchNotifications(user_id);
-      notifications = response.data;
+      setNotifications(response.data);
       console.log('Notifications:', notifications);
     } catch (error) {
       console.error('Error fetching notifications:', error);
-      notifications = [];
+      setNotifications([]);
     }
   };
 
-  //fetchNotifications();
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
+  
 
   const navigate = useNavigate();
  

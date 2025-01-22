@@ -153,8 +153,10 @@ const GroupOptions = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const user_id = localStorage.getItem('user_id');
+  const name = localStorage.getItem('name');
   const { group } = location.state || {};
   const group_id = group?.group_id;
+  const group_name = group?.group_name;
   const [members, setMembers] = useState([]);
   const { onEvent, emitEvent } = useContext(SocketContext);
   const [ invitationMember, setInvitationMember ] = useState("");
@@ -200,7 +202,7 @@ const GroupOptions = () => {
     if (!member) {
       
       console.log(`Inviting member with user_id: ${invitationMember}`);
-      emitEvent("groupInvite", invitationMember, group_id, user_id);
+      emitEvent("groupInvite", invitationMember, group_id, user_id, name, group_name);
     } else {
       toaster.create({
         description: "User is already in the group",
