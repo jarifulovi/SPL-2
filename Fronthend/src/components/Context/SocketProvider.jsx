@@ -56,10 +56,16 @@ const SocketProvider = ({ children }) => {
     }
   };
 
+  const offEvent = (event, callback) => {
+    if (socket) {
+        socket.off(event, callback);
+    }
+  };
+
 
 
   return (
-    <SocketContext.Provider value={{ socket: socketInstance, connectSocket, disconnectSocket, emitEvent, onEvent }}>
+    <SocketContext.Provider value={{ socket: socketInstance, connectSocket, disconnectSocket, emitEvent, onEvent, offEvent }}>
       {children}
     </SocketContext.Provider>
   );

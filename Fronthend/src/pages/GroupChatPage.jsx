@@ -114,7 +114,7 @@ const GroupChatPage = () => {
   const user_id = localStorage.getItem('user_id');
   const name = localStorage.getItem('name');
   
-  const { onEvent, emitEvent } = useContext(SocketContext);
+  const { onEvent, offEvent, emitEvent } = useContext(SocketContext);
 
 
   // Fetch data when the component mounts
@@ -137,28 +137,18 @@ const GroupChatPage = () => {
   // Listening for new chat messages
   useEffect(() => {
     const handleNewChatMessage = (newMessage) => {
-      setMessages((prevMessages) => {
-        // Check if the new message is already in the messages list
-        const isDuplicate = prevMessages.some(
-          (msg) => msg.chat_id === newMessage.chat_id
-        );
-        
-        if (!isDuplicate) {
-          return [newMessage, ...prevMessages];
-        }
-        
-        return prevMessages;
-      });
+      setMessages((prevMessages) => [newMessage, ...prevMessages]);
     };
-  
-    onEvent('chatMessage', handleNewChatMessage);
-  
+
     
+    onEvent('chatMessage', handleNewChatMessage);
+
+   
     return () => {
-      
+      offEvent('chatMessage', handleNewChatMessage);
     };
   }, [onEvent]);
-  
+
 
 
   // When a group is clicked
@@ -174,7 +164,7 @@ const GroupChatPage = () => {
 
   // Function to handle sending the message
   const sendChatMessage = async () => {
-    if (sendMessage.trim()) {
+    if (sendMessage.trim() && groupsData.length > 0) {
       emitEvent('chatMessage', selectedGroup.group_id, user_id, sendMessage.trim());
       setSendMessage('');
     }

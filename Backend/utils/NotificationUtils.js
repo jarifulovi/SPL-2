@@ -32,6 +32,7 @@ async function storeAndEmitNotifToUser(io, user_id, socket_id, notificationType,
             io.to(socket_id).emit('notification', {
                 content: content,
                 type: notificationType,
+                group_id: group_id,
                 receive_date: new Date(),
             });
         } else {

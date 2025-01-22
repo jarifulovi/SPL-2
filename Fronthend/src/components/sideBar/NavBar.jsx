@@ -74,6 +74,7 @@ const NavBar = ({ profilePicUrl, notifications = [] }) => {
                   type={notification.type}
                   content={notification.content}
                   receiveDate={notification.receive_date}
+                  group_id={notification.group_id}
                 />
               ))
             ) : (

@@ -31,7 +31,7 @@ const SideBar = () => {
   const user_id = localStorage.getItem('user_id');
   const email = localStorage.getItem('email');
 
-  const { onEvent, emitEvent } = useContext(SocketContext);
+  const { onEvent, offEvent, emitEvent } = useContext(SocketContext);
   const [ notifications, setNotifications ] = useState([]);
   
 
@@ -47,9 +47,26 @@ const SideBar = () => {
     }
   };
 
+
+  // On first mount
   useEffect(() => {
     fetchNotifications();
   }, []);
+
+
+  // Listening for new notifications
+  useEffect(() => {
+    const handleNewNotification = (newNotification) => {
+      setNotifications((prev) => [...prev, newNotification]);
+    };
+
+    onEvent('notification', handleNewNotification);
+
+    return () => {
+      offEvent('notification', handleNewNotification);
+    };
+  }, []);
+
   
 
   const navigate = useNavigate();
@@ -59,39 +76,6 @@ const SideBar = () => {
   }
 
   const profilePicUrl = "https://gratisography.com/wp-content/uploads/2024/11/gratisography-augmented-reality-1170x780.jpg";
-  const dummy = [
-    {
-      type: 'invitation',
-      content: 'You have been invited to join the group "Group 1"',
-      receive_date: '2024-04-01T12:00:00Z',
-    },
-    {
-      type: 'discussion_topic',
-      content: 'Discussion topic: "Introduction to React"',
-      receive_date: '2024-04-02T15:30:00Z',
-    },
-    {
-      type: 'join_request',
-      content: 'User "John Doe" wants to join your group',
-      receive_date: '2024-04-03T09:45:00Z',
-    },
-    {
-      type: 'join_group',
-      content: 'User "Alice Smith" has joined the group "Group 2"',
-      receive_date: '2024-04-04T18:20:00Z',
-    },
-    {
-      type: 'file_shared',
-      content: 'File "Project Report" has been shared in the group "Group 3"',
-      receive_date: '2024-04-05T11:10:00Z',
-    },
-    {
-      type: 'video_conferencing',
-      content: 'Video conferencing session scheduled for "Group 4"',
-      receive_date: new Date(),
-    },
-  ]
-
   
 
   return (
