@@ -17,7 +17,7 @@ const GroupCard = ({ group = {}, onClick = ()=>{} }) => {
         onClick={onClick}
         >
       <Image
-        src={group.groupImage}
+        src={group.group_image}
         alt="Couldn't fetch image"
         height="150px"
         objectFit="cover"

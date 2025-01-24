@@ -9,7 +9,7 @@ const StudyGroupSchema = new Schema({
   group_status: { type: String, enum: ['public', 'private'], default: 'public' },
   type: { type: String },
   topics: [{ type: String }],
-  groupImage: { type: String }, // URL or path to the group image
+  group_image: { type: String }, // URL or path to the group image
   created_by: { type: String, ref: 'User', required: true }, // Reference to User schema
   created_at: { type: Date, default: Date.now },
 });

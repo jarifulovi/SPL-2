@@ -21,7 +21,7 @@ const group = {
   group_description: "A group for collaborative learning.",
   group_size: 4,
   group_status: "public",
-  groupImage: ""
+  group_image: ""
 };
 
 
