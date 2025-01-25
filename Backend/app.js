@@ -81,6 +81,7 @@ import group from './routers/GroupRouter.js';
 import groupMembers from './routers/GroupMemberRouter.js';
 import notification from './routers/NotificationRouter.js';
 import groupChat from './routers/GroupChatRouter.js';
+import groupSearch from './routers/GroupSearchRouter.js';
 
 app.use('/', authentication);
 app.use('/', profile);
@@ -88,6 +89,7 @@ app.use('/', group);
 app.use('/', groupMembers);
 app.use('/', notification);
 app.use('/', groupChat);
+app.use('/', groupSearch);
 
 
 // ----------------------------

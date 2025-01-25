@@ -41,7 +41,7 @@ function App() {
                       <Route path="/" element={<MainPage />} />
                       <Route path="/groupDetails" element={<ProtectedUrlRoute requiredFields={['group']}><GroupDetails /></ProtectedUrlRoute>} />  
                       <Route path="/groupOptions" element={<ProtectedUrlRoute requiredFields={['group']}><GroupOptions /></ProtectedUrlRoute>} />    
-                      <Route path="/updateGroup" element={<ProtectedUrlRoute requiredFields={['group']}><UpdateGroup /></ProtectedUrlRoute>} />
+                      <Route path="/updateGroup" element={<ProtectedUrlRoute requiredFields={['group_id']}><UpdateGroup /></ProtectedUrlRoute>} />
                       <Route path="/othersProfile" element={<ProtectedUrlRoute requiredFields={['profileUserId']}><OthersProfilePage /></ProtectedUrlRoute>} />
 
                       {/* Logged in Routes wrapped with ProtectedRoute */}

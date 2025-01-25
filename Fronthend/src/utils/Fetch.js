@@ -1,5 +1,7 @@
 
 
+const baseUrl = "http://localhost:3000";
+
 const fetchData = async (url, method, data = null, credentials = false) => {
     try {
         const response = await fetch(url, {
@@ -22,5 +24,6 @@ const fetchData = async (url, method, data = null, credentials = false) => {
 
 
 export default {
+    baseUrl,
     fetchData
 }
