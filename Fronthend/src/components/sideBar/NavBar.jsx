@@ -71,10 +71,7 @@ const NavBar = ({ profilePicUrl, notifications = [] }) => {
               notifications.map((notification, index) => (
                 <NotificationItem
                   key={index}
-                  type={notification.type}
-                  content={notification.content}
-                  receiveDate={notification.receive_date}
-                  group_id={notification.group_id}
+                  notification={notification}
                 />
               ))
             ) : (

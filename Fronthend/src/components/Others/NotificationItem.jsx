@@ -7,40 +7,12 @@ import NotificationApi from '../../services/NotificationApi';
 import GroupMemberApi from '../../services/GroupMemberApi';
 
 
-const handleRemoveNotif = async (user_id, content, receive_date, navigate) => {
-  try {
-    const result = await NotificationApi.deleteNotification(user_id, content, receive_date);
-    if(result.success) {
-      // reload page
-      navigate(0);
-    }
-  } catch (error) {
-    toaster.create({
-      description: error.message,
-      type: "error"
-    });
-  }
-}
 
-const handleAddMember = async (user_id, group_id, navigate) => {
-  try {
-    const result = await GroupMemberApi.addMember(user_id, group_id);
-    if(result.success) {
-      console.log('Member added to group');
-    }
-  } catch (error) {
-    toaster.create({
-      description: error.message,
-      type: "error"
-    });
-  }
-}
-
-
-const NotificationItem = ({ type, content, receiveDate, group_id = '' }) => {
+const NotificationItem = ({ notification }) => {
   
   const user_id = localStorage.getItem('user_id');
   const navigate = useNavigate();
+
   const typeColors = {
       invitation: 'blue.200',
       discussion_topic: 'green.200',
@@ -50,26 +22,24 @@ const NotificationItem = ({ type, content, receiveDate, group_id = '' }) => {
       video_conferencing: 'red.200',
   };
 
-  const handleAccept = async () => {
-      // type = join_request
-      // Remove the nofitication from the list
-      // Add the user to the group
-      if(type === 'join_request') {
-
+  const handleAction = async (actionType) => {
+    try {
+      if (actionType === 'accept') {
+        if (notification.type === 'join_request') {
+          await GroupMemberApi.addMember(notification.sender, notification.group_id);
+        } else if (notification.type === 'invitation' && notification.group_id) {
+          await GroupMemberApi.addMember(user_id, notification.group_id);
+        }
       }
+      await NotificationApi.deleteNotification(user_id, notification.content, notification.receive_date);
+      navigate(0);
 
-      // type = invitation
-      // Remove the nofitication from the list
-      // Add the user to the group
-      if(type === 'invitation' && group_id) {
-        await handleAddMember(user_id, group_id);
-        await handleRemoveNotif(user_id, content, receiveDate, navigate);
-      }
-      
-  };
-
-  const handleReject = async () => {
-    await handleRemoveNotif(user_id, content, receiveDate, navigate);
+    } catch (error) {
+      toaster.create({
+        description: error.message,
+        type: 'error',
+      });
+    }
   };
 
   return (
@@ -81,12 +51,12 @@ const NotificationItem = ({ type, content, receiveDate, group_id = '' }) => {
       boxShadow="md"
       mb={2}
     >
-      <Text fontSize="md">{content}</Text>
-      <Text fontSize="xs" color="gray.500">{new Date(receiveDate).toLocaleString()}</Text>
-      {(type === 'join_request' || type === 'invitation') && (
+      <Text fontSize="md">{notification.content}</Text>
+      <Text fontSize="xs" color="gray.500">{new Date(notification.receive_date).toLocaleString()}</Text>
+      {(notification.type === 'join_request' || notification.type === 'invitation') && (
         <Flex mt={2} justify="space-between">
-          <Button bg="green" size="sm" onClick={handleAccept}>Accept</Button>
-          <Button bg="red" size="sm" onClick={handleReject}>Reject</Button>
+          <Button bg="green" size="sm" onClick={() => handleAction('accept')}>Accept</Button>
+          <Button bg="red" size="sm" onClick={() => handleAction('reject')}>Reject</Button>
         </Flex>
       )}
     </Box>

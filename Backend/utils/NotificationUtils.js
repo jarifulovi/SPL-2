@@ -26,14 +26,15 @@ async function storeAndEmitNotifToUser(io, user_id, socket_id, notificationType,
     try {
        
         const notification = new NotificationClass(notificationType, sender, group_id);
-        await notification.storeNotification(user_id, content);
+        const storedNotification = await notification.storeNotification(user_id, content);
         
         if (socket_id) {
             io.to(socket_id).emit('notification', {
                 content: content,
                 type: notificationType,
                 group_id: group_id,
-                receive_date: new Date(),
+                sender: sender,
+                receive_date: storedNotification.receive_date || new Date(),
             });
         } else {
             console.warn(`No active socket found for userId: ${user_id}`);
