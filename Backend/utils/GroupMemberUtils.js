@@ -21,7 +21,7 @@ async function connectUserToGroups(user_id, socket) {
         const groups = await groupMember.getAllGroupsOfMember(user_id);
         
         if (!groups || groups.length === 0) {
-            console.log(`User ${user_id} is not part of any groups.`);
+            //console.log(`User ${user_id} is not part of any groups.`);
             return;
         }
 
@@ -30,7 +30,7 @@ async function connectUserToGroups(user_id, socket) {
        
         groupIds.forEach(groupId => {
             socket.join(groupId);
-            console.log(`User ${user_id} connected to group: ${groupId}`);
+            //console.log(`User ${user_id} connected to group: ${groupId}`);
         });
 
     } catch (error) {
@@ -46,7 +46,7 @@ async function disconnectUserFromGroups(user_id, socket) {
         const groups = await groupMember.getAllGroupsOfMember(user_id);
         
         if (!groups || groups.length === 0) {
-            console.log(`User ${user_id} is not part of any groups.`);
+            //console.log(`User ${user_id} is not part of any groups.`);
             return; // No groups to leave
         }
 
@@ -55,7 +55,7 @@ async function disconnectUserFromGroups(user_id, socket) {
         
         groupIds.forEach(groupId => {
             socket.leave(groupId);
-            console.log(`User ${user_id} disconnected from group: ${groupId}`);
+            //console.log(`User ${user_id} disconnected from group: ${groupId}`);
         });
 
     } catch (error) {

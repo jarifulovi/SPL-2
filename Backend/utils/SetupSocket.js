@@ -13,10 +13,10 @@ const SetupSocket = (io) => {
     console.log('Socket.IO server started');
 
     io.on('connection', (socket) => {
-        console.log('User has logged in');
+        //console.log('User has logged in');
 
         socket.on('connectGroup', async (user_id) => {
-            console.log('A user connected:', socket.id);
+            //console.log('A user connected:', socket.id);
             userSocketMap.set(user_id, socket.id);         
             await GroupMemberUtils.connectUserToGroups(user_id, socket);
         });
@@ -122,7 +122,7 @@ const SetupSocket = (io) => {
         // When user logout from the page
         socket.on('disconnect', async () => {
             const user_id = [...userSocketMap].find(([key, value]) => value === socket.id)?.[0];
-            console.log('User disconnected:', socket.id);
+            //console.log('User disconnected:', socket.id);
 
             if(user_id) {
                 userSocketMap.delete(user_id);

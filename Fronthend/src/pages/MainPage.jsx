@@ -143,7 +143,7 @@ const MainPage = () => {
                 <GroupCard
                   key={index} 
                   group={group}
-                  onClick={(e) => console.log(e)} 
+                  isUserInGroup={true}
                 />
               ))
             ) : (

@@ -10,6 +10,22 @@ class GroupMembers {
         this.admins = [];
     }
 
+    async isMemberOfGroup(user_id) {
+        try {
+            
+            const membership = await UserGroup.findOne({
+                user_id: user_id,
+                group_id: this.group_id,
+            });
+            
+            // Return true if membership exists, otherwise false
+            return !!membership;
+        } catch (error) {
+            throw new Error("Unable to check group membership");
+        }
+    }
+    
+
     async addAdmin(user_id) {
         return this.joinMember(user_id, 'admin');
     }

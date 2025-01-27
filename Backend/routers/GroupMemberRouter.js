@@ -4,6 +4,27 @@ import GroupMember from '../classes/GroupMembers.js';
 const router = express.Router();
 
 
+router.post('/isMember', async (req, res) => {
+    try {
+        const { user_id, group_id } = req.body;
+        const groupMember = new GroupMember(group_id);
+        const result = await groupMember.isMemberOfGroup(user_id);
+
+        res.status(200).json({
+            success: true,
+            message: 'Member checked successfully',
+            data: result,
+        });
+    } catch (error) {
+        console.error('Error during checking member:', error.message);
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+})
+
+
 router.post('/addMember', async (req, res) => {
     // Add member to group
     const { user_id, group_id, role } = req.body;

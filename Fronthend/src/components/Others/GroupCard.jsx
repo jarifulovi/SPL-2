@@ -1,9 +1,24 @@
-import { Button, Card, Image, Text } from "@chakra-ui/react"
+import { Button, Card, Image, Text, HStack, VStack } from "@chakra-ui/react"
+import { useNavigate } from "react-router-dom";
 
 
 // group is a object of class
+const defaultOnClick = (group, navigate) => {
+  navigate("/groupDetails", {
+    state: {
+      group,
+    }
+  });
+}
 
-const GroupCard = ({ group = {}, onClick = ()=>{} }) => {
+
+const GroupCard = ({ group = {}, onClick, handleJoin = ()=>{}, isUserInGroup = false }) => {
+  
+  const navigate = useNavigate();
+
+  // Set a default onClick if not provided
+  const handleClick = onClick || (() => defaultOnClick(group, navigate));
+
   return (
     <Card.Root 
         width="300px" 
@@ -14,7 +29,7 @@ const GroupCard = ({ group = {}, onClick = ()=>{} }) => {
             boxShadow: "lg",
             transition: "transform 0.3s ease, box-shadow 0.3s ease",
         }}
-        onClick={onClick}
+        onClick={handleClick}
         >
       <Image
         src={group.group_image}
@@ -30,10 +45,16 @@ const GroupCard = ({ group = {}, onClick = ()=>{} }) => {
         
       </Card.Body>
       <Card.Footer gap="2">
-        <Text>
-            Status  : {group.group_status} {" "}
-            Members : {group.group_size}
-        </Text>
+        <VStack width="full">
+          <HStack width="full" justify="space-between">
+            <Text>Status : {group.group_status} {" "}</Text>
+            <Text>Members: {group.group_size}</Text>
+          </HStack>
+
+          {isUserInGroup ? null : <Button width="full" onClick={handleJoin}>Join</Button>}
+ 
+        </VStack>
+       
       </Card.Footer>
     </Card.Root>
   )

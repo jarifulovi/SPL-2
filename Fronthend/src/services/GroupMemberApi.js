@@ -1,10 +1,13 @@
 import Fetch from "../utils/Fetch";
 
 
+const isMember = async (user_id, group_id) => {
+    return await Fetch.fetchData(Fetch.baseUrl + '/isMember', 'POST', { user_id, group_id});
+}
+
 const addMember = async (user_id, group_id) => {
     return await Fetch.fetchData('http://localhost:3000/addMember', 'POST', {user_id, group_id, role: 'member'});
 }
-
 
 const addAdmin = async (user_id, group_id) => {
     return await Fetch.fetchData('http://localhost:3000/addAdmin', 'POST', {user_id, group_id, role: 'admin'});
@@ -35,6 +38,7 @@ const updateMemberRole = async (user_id, group_id, role) => {
 }
 
 export default {
+    isMember,
     addMember,
     addAdmin,
     removeMember,
