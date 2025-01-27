@@ -11,6 +11,8 @@ import { IoMdNotificationsOutline } from "react-icons/io";
 
 import CustomAvatar from '../Others/CustomAvatar';
 import NotificationItem from '../Others/NotificationItem';
+import NavBarContainer from './NavBarContainer';
+
 import AuthApi from '../../services/AuthApi';
 import { SocketContext } from '../../utils/SocketContext';
 
@@ -35,78 +37,69 @@ const NavBar = ({ profilePicUrl, notifications = [] }) => {
   };
 
   return (
-    <Box 
-      as="nav" 
-      p={4} 
-      boxShadow="md" 
-      h="70px"
-      position="sticky" 
-      top="0" 
-      zIndex="sticky"
-    >
-      <Flex align="center" justify="space-between">
-        <Flex gap={4}> 
-          {/* Side bar button was there */}
-          <DrawerTrigger asChild>
-            <IconButton>
-              <FiAlignJustify />
-            </IconButton>
-          </DrawerTrigger>
+    <NavBarContainer>
+      <Flex gap={4}> 
+        {/* Side bar button was there */}
+        <DrawerTrigger asChild>
+          <IconButton>
+            <FiAlignJustify />
+          </IconButton>
+        </DrawerTrigger>
 
-          <Text textStyle="3xl" fontWeight="bold">
-            Study Sync
-          </Text>
+        <Text textStyle="3xl" fontWeight="bold">
+          Study Sync
+        </Text>
 
-          <PopOver trigger={<IconButton><IoIosArrowDropdown/></IconButton>}>
-            <Button width="90%" onClick={() => navigateTo("/createGroup")}>Create Group</Button>
-            <Button width="90%" onClick={() => navigateTo("/")}>Search Group</Button>
-          </PopOver>
-        </Flex>
-
-        <Flex gap={4}>
-          <PopOver trigger={<IconButton><IoMdNotificationsOutline/></IconButton>}>
-            {/* Extract all notifications here */}
-            
-            {notifications.length > 0 ? (
-              notifications.map((notification, index) => (
-                <NotificationItem
-                  key={index}
-                  notification={notification}
-                />
-              ))
-            ) : (
-              <Box p={2}>No notifications</Box>
-            )}
-          </PopOver>
-          
-          <DropDown
-            trigger={
-              <Button p={0} bg="transparent" borderRadius="full">
-                <CustomAvatar src={profilePicUrl} size="sm" />
-              </Button>
-            }
-            menuItems={[
-              {
-                value: "profile",
-                label: "Profile",
-                onClick: () => navigateTo("/profile"),
-              },
-              {
-                value: "accountSettings",
-                label: "Settings",
-                onClick: () => navigateTo("/accountSettings"),
-              },
-              {
-                value: "logout",
-                label: "Logout",
-                onClick: handleLogout,
-              },
-            ]}
-          />
-
-        </Flex>
+        <PopOver trigger={<IconButton><IoIosArrowDropdown/></IconButton>}>
+          <Button width="90%" onClick={() => navigateTo("/createGroup")}>Create Group</Button>
+          <Button width="90%" onClick={() => navigateTo("/")}>Search Group</Button>
+        </PopOver>
       </Flex>
-    </Box>
+
+      <Flex gap={4}>
+        <PopOver trigger={<IconButton><IoMdNotificationsOutline/></IconButton>}>
+          {/* Extract all notifications here */}
+          
+          {notifications.length > 0 ? (
+            notifications.map((notification, index) => (
+              <NotificationItem
+                key={index}
+                notification={notification}
+              />
+            ))
+          ) : (
+            <Box p={2}>No notifications</Box>
+          )}
+        </PopOver>
+        
+        <DropDown
+          trigger={
+            <Button p={0} bg="transparent" borderRadius="full">
+              <CustomAvatar src={profilePicUrl} size="sm" />
+            </Button>
+          }
+          menuItems={[
+            {
+              value: "profile",
+              label: "Profile",
+              onClick: () => navigateTo("/profile"),
+            },
+            {
+              value: "accountSettings",
+              label: "Settings",
+              onClick: () => navigateTo("/accountSettings"),
+            },
+            {
+              value: "logout",
+              label: "Logout",
+              onClick: handleLogout,
+              isDanger: true,
+            },
+          ]}
+        />
+
+      </Flex>
+    </NavBarContainer>
   );
 };
 

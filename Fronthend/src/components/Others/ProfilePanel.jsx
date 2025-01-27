@@ -1,34 +1,10 @@
-import { Box, Text, Stack, Badge } from '@chakra-ui/react';
+import { Box, Text } from '@chakra-ui/react';
 import { useColorModeValue } from '../ui/color-mode';
 
+import DetailField from '../Fragments/DetailField';
+import DetailArrayField from '../Fragments/DetailArrayField';
 
-const getProfileField = (field, label) => {
-  return (
-    <Stack direction="row" spacing={2} mb={3}>
-      <Text fontWeight="bold">{label}:</Text>
-      <Text>{field || 'Not provided'}</Text>
-    </Stack>
-  );
-};
 
-const getArrayField = (values, label) => {
-  return (
-    <Stack direction="row" spacing={2} mb={3}>
-      <Text fontWeight="bold">{label}:</Text>
-      {values && values.length > 0 ? (
-        <Stack direction="row" spacing={2} wrap="wrap">
-          {values.map((value, index) => (
-            <Badge key={index} colorScheme="green" fontSize="sm">
-              {value}
-            </Badge>
-          ))}
-        </Stack>
-      ) : (
-        <Text>Not provided</Text>
-      )}
-    </Stack>
-  );
-};
 
 // ProfilePanel both uses in own profile and others profile
 // Empty profile if is_visible == false
@@ -65,34 +41,36 @@ const ProfilePanel = ({ profile, otherUser = false }) => {
       ) : (
         // If the profile is not empty, render the profile data
         <>
-          {getProfileField(profile.date_of_birth && new Date(profile.date_of_birth).toLocaleDateString(), 'Date of Birth')}     
-          {getProfileField(profile.gender, 'Gender')}
-          {getProfileField(profile.phone_number, 'Phone')}
-          {getProfileField(profile.address, 'Address')}
-          {getProfileField(profile.education, 'Education')}
-          {getProfileField(profile.hobby, 'Hobby')}
-          {getProfileField(profile.role, 'Role')}
+          <DetailField field={profile.date_of_birth && new Date(profile.date_of_birth).toLocaleDateString()} label="Date of Birth" />
+          <DetailField field={profile.gender} label="Gender" />
+          <DetailField field={profile.phone_number} label="Phone" />
+          <DetailField field={profile.address} label="Address" />
+          <DetailField field={profile.education} label="Education" />
+          <DetailField field={profile.hobby} label="Hobby" />
+          <DetailField field={profile.role} label="Role" />
+
 
           {/* Student-specific fields */}
           {profile.role === 'student' && (
             <>
-              {getProfileField(profile.course_of_study, 'Course of Study')}
-              {getProfileField(profile.current_year_or_semester, 'Current Year/Semester')}
-              {getProfileField(profile.department, 'Department')}
-              {getArrayField(profile.skills, 'Skills')}
-              {/* Grade Sheet and resume */}
-              {getProfileField(profile.grade_sheet, 'Grade Sheet')}
-              {getProfileField(profile.resume, 'Resume')}
+              <DetailField field={profile.course_of_study} label="Course of Study" />
+              <DetailField field={profile.current_year_or_semester} label="Current Year/Semester" />
+              <DetailField field={profile.department} label="Department" />
+              <DetailArrayField field={profile.skills} label="Skills" />
+              {/* Grade Sheet and Resume */}
+              <DetailField field={profile.grade_sheet} label="Grade Sheet" />
+              <DetailField field={profile.resume} label="Resume" />
+
             </>
           )}   
 
           {/* Teacher-specific fields */}
           {profile.role === 'teacher' && (
             <>
-              {getArrayField(profile.subjects, 'Subjects')}
-              {getArrayField(profile.qualifications, 'Qualifications')}
-              {getProfileField(profile.designation, 'Designation')}
-              {getProfileField(profile.experience, 'Experience')}
+              <DetailArrayField field={profile.subjects} label="Subjects" />
+              <DetailArrayField field={profile.qualifications} label="Qualifications" />
+              <DetailField field={profile.designation} label="Designation" />
+              <DetailField field={profile.experience} label="Experience" />
             </>
           )}
 
