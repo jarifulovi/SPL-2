@@ -1,5 +1,5 @@
 import React from 'react';
-import { HStack, Box, Button, IconButton, Text, Spacer } from '@chakra-ui/react';
+import { HStack, Box, Button, IconButton, Text, Spacer, Badge } from '@chakra-ui/react';
 import CustomAvatar from './CustomAvatar';
 import { useColorModeValue } from '../ui/color-mode';
 import { PiDotsThreeOutlineVertical } from "react-icons/pi";
@@ -41,6 +41,9 @@ const MemberItem = ({ member = {} }) => {
       <HStack p={2}>
         <CustomAvatar size="sm" src={member.profile_pic}/>
         <Text fontWeight="semibold">{member.name}</Text>
+        {member?.role === 'admin' && <Badge>Admin</Badge>}
+
+        
         <Spacer></Spacer>
         <Text>{member.email}</Text>
       </HStack>
