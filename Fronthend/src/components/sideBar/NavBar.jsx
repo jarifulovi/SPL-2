@@ -54,7 +54,7 @@ const NavBar = ({ profilePicUrl, notifications = [] }) => {
           </DrawerTrigger>
 
           <Text textStyle="3xl" fontWeight="bold">
-            Study Sinc
+            Study Sync
           </Text>
 
           <PopOver trigger={<IconButton><IoIosArrowDropdown/></IconButton>}>

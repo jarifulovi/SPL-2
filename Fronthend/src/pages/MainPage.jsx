@@ -13,6 +13,11 @@ import GroupSearchApi from "../services/GroupSearchApi";
 
 
 
+const stringToArrayParse = (value) => {
+  // topics separated by comma
+  return value.split(",");
+}
+
 
 const MainPage = () => {
 
@@ -21,25 +26,34 @@ const MainPage = () => {
   const [formData, setFormData] = useState({
     memberSize: 50,
     type: '',
-    topics: '',
+    topics: [],
     groupName: '',
   });
 
  
   const handleFilterChange = (field) => (e) => {
+
+    let value = e.target.value;
+    if(field === 'topics') {
+      value = stringToArrayParse(value);
+    }
     setFormData((prev) => ({
       ...prev,
-      [field]: e.target.value,
+      [field]: value,
     }));
+    
   };
 
   
   const handleMemberSizeChange = (newValue) => {
-    setFormData((prev) => ({
-      ...prev,
-      memberSize: newValue[0], // SliderInput provides an array
-    }));
+    if (Array.isArray(newValue) && newValue.length > 0) {
+      setFormData((prev) => ({
+        ...prev,
+        memberSize: newValue[0],  // SliderInput provides an array
+      }));
+    }
   };
+  
 
   // retrieve all groups for view
   useEffect(() => {
@@ -58,7 +72,7 @@ const MainPage = () => {
 
   const handleSearch = async () => {
     try {
-      
+      console.log(formData);
       const result = await GroupSearchApi.searchGroups(formData);
       if(result.success) {
         setAllGroups(result.data);
@@ -112,6 +126,7 @@ const MainPage = () => {
               <Input
                 value={formData.topics}
                 onChange={handleFilterChange('topics')}
+                placeholder="Add comma separated values"
               />
             </HStack>
           </PopOver>
