@@ -11,6 +11,7 @@ import CreateGroup from './pages/CreateGroup';
 import UpdateGroup from './pages/UpdateGroup';
 import GroupDetails from './pages/GroupDetails';
 import GroupOptions from './pages/GroupOptions';
+import FileRepository from './pages/FileRepository';
 
 
 import ProtectedRoute from './components/Context/ProtectedRoute';
@@ -49,7 +50,7 @@ function App() {
                       <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
                       <Route path="/groups" element={<ProtectedRoute><GroupChatPage></GroupChatPage></ProtectedRoute>} />
                       <Route path="/createGroup" element={<ProtectedRoute><CreateGroup /></ProtectedRoute>} />
-                      <Route path="/files" element={<ProtectedRoute><h1>Files</h1></ProtectedRoute>} />
+                      <Route path="/files" element={<ProtectedRoute><FileRepository /></ProtectedRoute>} />
                   </Routes>
                   
               </AuthProvider>
