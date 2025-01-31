@@ -1,9 +1,10 @@
+import User from "../models/User.js";
 import PasswordService from "./PasswordService.js";
 import SessionService from "./SessionService.js";
 import UserClass from "./User.js";
 import UserProfileService from "./UserProfileService.js";
 import UserService from "./UserService.js";
-
+import EmailUtils from '../utils/EmailUtils.js';
 
 class AuthService {
 
@@ -67,13 +68,52 @@ class AuthService {
         }
     }
 
-    // Check if old password matches
+    
     async updatePassword(email, oldPassword, newPassword) {
         try {
             const passwordService = new PasswordService(oldPassword);
             await passwordService.changePassword(email, newPassword);
         } catch (error) {
             throw new Error(error.message || 'Failed to update password');
+        }
+    }
+
+    async forgotPassword(email) {
+
+        try {
+            const user = await User.findOne({ email: email });
+            if(!user) {
+                throw new Error('User does not exist');
+            }
+            
+            const passwordService = new PasswordService();
+            const token = await passwordService.createResetToken(email);
+            const resetUrl = `http://localhost/reset-password?token=${token}`;
+            const subject = 'Reset Password Request';
+            const text = `To reset your password, click the link below or copy-paste it into your browser: ${resetUrl}`;
+
+            await EmailUtils.sendEmail(email, subject, text);
+        } catch (error) {
+            console.log(error.message);
+            throw new Error(error.message || 'Error during forgot password');
+        }
+        
+    }
+
+    async resetPassword(email, newPassword, token) {
+        try {
+            const user = await User.findOne({ email: email });
+            if(!user) {
+                throw new Error('User does not exist');
+            }
+
+            const passwordService = new PasswordService();
+            await passwordService.verifyResetToken(token, user);
+            await passwordService.changePasswordAndClearToken(user, newPassword);
+            
+        } catch (error) {
+            console.log(error.message);
+            throw new Error(error.message || 'Error during reset password');
         }
     }
     

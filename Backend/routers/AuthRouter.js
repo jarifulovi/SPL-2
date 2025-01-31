@@ -128,6 +128,52 @@ router.post("/updatePassword", async (req, res) => {
     }
 })
 
-// Will add forgot password mechanism
+
+router.post('/forgotPassword', async (req, res) => {
+    try {
+        const { email } = req.body;
+        const authService = new AuthService();
+        await authService.forgotPassword(email);
+
+        res.status(201).json({
+            success: true,
+            message: 'Reset Password Email send successfully',
+        });
+    } catch (error) {
+        res.status(400).json({
+            success: false,
+            message: error.message || 'An error occurred during forgot password'
+        });
+    }
+    
+});
+
+router.post('/resetPassword', async (req, res) => {
+    try {
+        const { email, newPassword} = req.body;
+        const { token } = req.query;
+
+        
+        if (!token) {
+            return res.status(400).json({
+                success: false,
+                message: 'Token is required',
+            });
+        }
+
+        const authService = new AuthService();
+        await authService.resetPassword(email, newPassword, token);
+
+        res.status(201).json({
+            success: true,
+            message: 'Reset Password finished successfully',
+        });
+    } catch (error) {
+        res.status(400).json({
+            success: false,
+            message: error.message || 'An error occurred during reset password'
+        });
+    }
+});
 
 export default router;

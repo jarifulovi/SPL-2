@@ -1,9 +1,10 @@
 import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
+import crypto from 'crypto';
 
 class PasswordService {
 
-    constructor(password) {
+    constructor(password = '') {
         this.password = password;
     }
 
@@ -82,17 +83,66 @@ class PasswordService {
             
     }
 
-    resetPassword() {
-        this.password = '123456';
+    // Forgot password methods
+    generateResetToken() {
+        return crypto.randomBytes(32).toString('hex');  
     }
 
-    generateOTP() {
-
+    async createResetToken(email) {
+        const token = this.generateResetToken();
+        const expiry = new Date();
+        expiry.setHours(expiry.getHours() + 1);
+    
+        await User.findOneAndUpdate(
+            { email }, 
+            { 
+                reset_token: token, 
+                reset_token_expiry: expiry 
+            },
+            { new: true }
+        );
+    
+        return token;
     }
+    
 
-    sendResetPasswordEmail(email) {
-
+    async verifyResetToken(token, user) {
+        try {
+            
+            if (user.reset_token !== token) {
+                throw new Error('Token not found or incorrect');
+            }
+            
+            const currentTime = new Date();
+            if (currentTime > new Date(user.reset_token_expiry)) {
+                throw new Error('Token has expired');
+            }
+    
+            return true;
+        } catch (error) {
+            throw new Error(error.message || 'Error verifying reset token');
+        }
     }
+    
+    
+
+    async changePasswordAndClearToken(user, newPassword) {
+        try {
+            this.password = newPassword;
+            const hashedPassword = await this.hashPassword();
+
+            user.password = hashedPassword;
+            user.reset_token = null;
+            user.reset_token_expiry = null;
+    
+            
+            await user.save();
+        } catch (error) {
+            throw new Error(error.message || 'Error invalidating reset token');
+        }
+    }
+    
+
 }
 
 export default PasswordService;
