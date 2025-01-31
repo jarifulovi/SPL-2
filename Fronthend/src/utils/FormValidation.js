@@ -107,6 +107,14 @@ function validateForgotPassword(data) {
     return validateForm(data, fields);
 };
 
+function validateResetPassword(data) {
+    const fields = [
+        { name: 'Email', key: 'email', validation: validateEmail },
+        { name: 'Password', key: 'new_password', validation: validatePassword },
+    ];
+    return validateForm(data, fields);
+}
+
 // Field: 
 //       name : Error message name ( can use generic name above )
 //       key  : field name in the formdata ( must be same )
@@ -120,7 +128,8 @@ export default {
     validateCreateGroupForm,
     validateUpdateProfile,
     validateChangePassword,
-    validateForgotPassword
+    validateForgotPassword,
+    validateResetPassword,
 }
 
   

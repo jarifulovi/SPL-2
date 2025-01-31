@@ -2,23 +2,31 @@ import Fetch from "../utils/Fetch";
 
 // utils/api.js
 const registerUser = async (formData) => {
-    return await Fetch.fetchData('http://localhost:3000/register', 'POST', formData);
+    return await Fetch.fetchData(Fetch.baseUrl + '/register', 'POST', formData);
 };
 
 const loginUser = async (formData) => {
-    return await Fetch.fetchData('http://localhost:3000/login', 'POST', formData, true);
+    return await Fetch.fetchData(Fetch.baseUrl + '/login', 'POST', formData, true);
 };
 
 const isAuthenticated = async (email) => {
-    return await Fetch.fetchData('http://localhost:3000/isAuthenticated', 'POST', { email }, true);
+    return await Fetch.fetchData(Fetch.baseUrl + '/isAuthenticated', 'POST', { email }, true);
 };
 
 const updatePassword = async (formData) => {
-    return await Fetch.fetchData('http://localhost:3000/updatePassword','POST', formData);
+    return await Fetch.fetchData(Fetch.baseUrl + '/updatePassword','POST', formData);
 }
 
 const logOut = async (email) => {
-    return await Fetch.fetchData('http://localhost:3000/logout', 'POST', { email });
+    return await Fetch.fetchData(Fetch.baseUrl + '/logout', 'POST', { email });
+};
+
+const forgotPassword = async (email) => {
+    return await Fetch.fetchData(Fetch.baseUrl + '/forgotPassword', 'POST', { email });
+};
+
+const resetPassword = async (formData) => {
+    return await Fetch.fetchData(Fetch.baseUrl + '/resetPassword', 'POST', { email: formData.email, newPassword: formData.new_password, token: formData.token });
 };
 
 
@@ -27,5 +35,7 @@ export default {
     loginUser,
     isAuthenticated,
     updatePassword,
-    logOut
+    logOut,
+    forgotPassword,
+    resetPassword,
 }

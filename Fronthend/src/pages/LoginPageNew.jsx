@@ -98,11 +98,12 @@ const LoginPageNew = () => {
                     </Link>
                 </Text>
                 <Text fontSize="sm" textAlign="center">
-                    Forgot Password ?{' '}
+                    Forgot your password?{' '}
                     <Link as={RouterLink} to="/forgotPassword" color="blue.500">
-                        Change it
+                        Reset it here
                     </Link>
                 </Text>
+
 
                 <ColorModeToggle></ColorModeToggle>
             </VStack>

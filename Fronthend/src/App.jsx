@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import LoginPageNew from './pages/LoginPageNew';
 import RegistrationPageNew from './pages/RegistrationPageNew';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 import MainPage from './pages/MainPage';
 import ProfilePage from './pages/ProfilePage';
 import OthersProfilePage from './pages/OthersProfilePage';
@@ -33,6 +34,7 @@ function App() {
         <Route path="/login" element={<LoginPageNew />} />
         <Route path="/register" element={<RegistrationPageNew />} />
         <Route path="/forgotPassword" element={<ForgotPasswordPage /> } />
+        <Route path="reset-password" element={<ResetPasswordPage /> } />
 
         {/* App routes with AuthProvider */}
         <Route

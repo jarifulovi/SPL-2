@@ -41,6 +41,7 @@ class AuthService {
             await userService.addUser(name,email,hashedPassword);
             const profileService = new UserProfileService();
             await profileService.createProfile(email);
+            await EmailUtils.sendWelcomeEmail(email);
         } catch (error) {
             console.error('Error during registration:', error.message);
             throw new Error('Error during registration');
@@ -88,11 +89,8 @@ class AuthService {
             
             const passwordService = new PasswordService();
             const token = await passwordService.createResetToken(email);
-            const resetUrl = `http://localhost/reset-password?token=${token}`;
-            const subject = 'Reset Password Request';
-            const text = `To reset your password, click the link below or copy-paste it into your browser: ${resetUrl}`;
-
-            await EmailUtils.sendEmail(email, subject, text);
+            
+            await EmailUtils.sendResetPasswordLink(email, token);
         } catch (error) {
             console.log(error.message);
             throw new Error(error.message || 'Error during forgot password');

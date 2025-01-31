@@ -150,8 +150,7 @@ router.post('/forgotPassword', async (req, res) => {
 
 router.post('/resetPassword', async (req, res) => {
     try {
-        const { email, newPassword} = req.body;
-        const { token } = req.query;
+        const { email, newPassword, token} = req.body;
 
         
         if (!token) {
