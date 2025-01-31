@@ -131,7 +131,7 @@ const MainPage = () => {
             </HStack>
           </PopOver>
   
-          {/* Extract all group here */}
+          {/* Rendering each group */}
           <Flex
             flexWrap="wrap" 
             justify="center"
@@ -143,7 +143,7 @@ const MainPage = () => {
                 <GroupCard
                   key={index} 
                   group={group}
-                  isUserInGroup={true}
+                  isUserInGroup={true}  // To hide the join button
                 />
               ))
             ) : (

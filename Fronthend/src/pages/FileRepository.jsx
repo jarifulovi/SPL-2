@@ -56,16 +56,16 @@ const Folder = ({ children, content = '', onClick = ()=>{} }) => {
 
 const RenderFileItems = ({ onBack = ()=>{} }) => {
     return (
-        <Flex direction="column" align="center" p={5}>
-            <Text fontSize="xl" mb={4}>
+        <Flex direction="column" align="center" width="80%" p={5}>
+            <Text fontSize="2xl" mb={4}>
                 Files
             </Text>
             {/* Placeholder bars for file items */}
             {[...Array(5)].map((_, index) => (
                 <Box
                     key={index}
-                    width="300px"
-                    height="20px"
+                    width="100%"
+                    height="40px"
                     bg="gray.300"
                     borderRadius="md"
                     mb={3}

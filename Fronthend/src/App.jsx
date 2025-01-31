@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import LoginPageNew from './pages/LoginPageNew';
 import RegistrationPageNew from './pages/RegistrationPageNew';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import MainPage from './pages/MainPage';
 import ProfilePage from './pages/ProfilePage';
 import OthersProfilePage from './pages/OthersProfilePage';
@@ -31,6 +32,7 @@ function App() {
         {/* Auth routes */}
         <Route path="/login" element={<LoginPageNew />} />
         <Route path="/register" element={<RegistrationPageNew />} />
+        <Route path="/forgotPassword" element={<ForgotPasswordPage /> } />
 
         {/* App routes with AuthProvider */}
         <Route

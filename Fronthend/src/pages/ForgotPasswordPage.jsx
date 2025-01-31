@@ -18,14 +18,15 @@ import AuthFlexContainer from '../components/Auth/AuthFlexContainer';
 import FormValidation from '../utils/FormValidation';
 import AuthApi from '../services/AuthApi';
 
-import { SocketContext } from '../utils/SocketContext';
 
-const LoginPageNew = () => {
+const ForgotPasswordPage = () => {
+
     const [formData, setFormData] = useState({
         email: '',
-        password: ''
     });
     const [errors, setErrors] = useState({});
+    const navigate = useNavigate();
+
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -35,39 +36,25 @@ const LoginPageNew = () => {
         }));
     };
 
-    const { connectSocket, emitEvent } = useContext(SocketContext);
-    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
-        const formErrors = FormValidation.validateLoginForm(formData);
+        const formErrors = FormValidation.validateForgotPassword(formData);
         if (Object.keys(formErrors).length === 0) {
-            const result = await AuthApi.loginUser(formData);
-            if(result.success) {
-                localStorage.setItem('user_id', result.data.user_id);
-                localStorage.setItem('name', result.data.name);
-                localStorage.setItem('email', formData.email);
-                connectSocket();
-                emitEvent('connectGroup', result.data.user_id);
-                navigate('/');
-            } else {
-                toaster.create({
-                    description: result.message,
-                    type: "error",
-                });
-            }
+            console.log(formData);
+            // Send email, check email, gen token url, send url in email
+            setErrors([]);
         } else {
-            // Set errors if validation fails
             setErrors(formErrors);
         }
-    };
+        
+    }
 
     return (
         <AuthFlexContainer>
             <Heading mb="4" textAlign='center'>Study Sync</Heading>
-            <Heading mb="4" textAlign='center'>Log in to your study sync account</Heading>
-
+            <Heading mb="4" textAlign='center'>Forgot Password</Heading>
+            
             <VStack as="form" spacing="4" onSubmit={handleSubmit}>
 
                 <CustomFormInput
@@ -78,17 +65,9 @@ const LoginPageNew = () => {
                     error={errors.email}
                     type="email"
                 />
-                <CustomFormInput
-                    name="password"
-                    label="Password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    error={errors.password}
-                    type="password"
-                />
-
+                
                 <Button type="submit" colorScheme="blue" width="full">
-                    Log In
+                    Send Reset Link
                 </Button>
 
                 <Text fontSize="sm" textAlign="center" mt="4">
@@ -97,21 +76,11 @@ const LoginPageNew = () => {
                         Sign up
                     </Link>
                 </Text>
-                <Text fontSize="sm" textAlign="center">
-                    Forgot Password ?{' '}
-                    <Link as={RouterLink} to="/forgotPassword" color="blue.500">
-                        Change it
-                    </Link>
-                </Text>
 
                 <ColorModeToggle></ColorModeToggle>
             </VStack>
-          
         </AuthFlexContainer>
-               
     );
 };
 
-
-
-export default LoginPageNew;
+export default ForgotPasswordPage;

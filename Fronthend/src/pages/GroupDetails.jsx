@@ -35,7 +35,7 @@ const GroupDetails = () => {
   
 
   useEffect(() => {
-    const checkIsMember = async () => {
+    const load = async () => {
       try {
         const result = await CompositeApi.loadGroupDetails(user_id, group);
         console.log(result.data.groupMembers);
@@ -49,11 +49,14 @@ const GroupDetails = () => {
         setIsMember(false);
       }
     }
-    checkIsMember();
+    if(user_id) {
+      load();
+    }
+    
   }, []);
   
   const handleGroupJoin = async () => {
-    if(group) {
+    if(group && user_id) {
       // created_by is the admin
       emitEvent('groupJoinRequest', group.created_by, group.group_id, user_id, name, group.group_name);
     }
@@ -102,11 +105,14 @@ const GroupDetails = () => {
             <Text fontSize="lg" fontWeight="bold" mb={4}>
               Members
             </Text>
-            <VStack>
-              {groupMembers.map((member, index) => (
-                <MemberItem key={index} member={member} />
-              ))}
-            </VStack>
+            {groupMembers && groupMembers.length > 0 ? (
+              <VStack>
+                {groupMembers.map((member, index) => (
+                  <MemberItem key={index} member={member} />
+                ))}
+              </VStack>
+            ) : null
+            }
 
           </Box>
           </>
