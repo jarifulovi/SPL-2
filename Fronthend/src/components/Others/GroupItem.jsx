@@ -52,11 +52,6 @@ const GroupItem = ({ group, selectedGroup, onSelectGroup, isAdmin = false }) => 
       const result = await GroupMemberApi.removeMember(user_id, group.group_id);
 
       if(result.success) {
-        toaster.create({
-          description: result.message,
-          type: "success",
-        });
-
         navigate(0);
       }
     } catch (error) {

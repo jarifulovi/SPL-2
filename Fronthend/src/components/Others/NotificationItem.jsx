@@ -1,34 +1,29 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Box, Text, Button, Flex } from '@chakra-ui/react';
 import { toaster, Toaster } from '../ui/toaster';
+import { useColorModeValue } from '../ui/color-mode';
 import { useNavigate } from 'react-router-dom';
 
 import NotificationApi from '../../services/NotificationApi';
-import GroupMemberApi from '../../services/GroupMemberApi';
+import { SocketContext } from '../../utils/SocketContext';
 
 
 
 const NotificationItem = ({ notification }) => {
   
   const user_id = localStorage.getItem('user_id');
+  const name = localStorage.getItem('name');
   const navigate = useNavigate();
+  const { onEvent, offEvent, emitEvent } = useContext(SocketContext);
 
-  const typeColors = {
-      invitation: 'blue.200',
-      discussion_topic: 'green.200',
-      join_request: 'yellow.200',
-      join_group: 'purple.200',
-      file_shared: 'orange.200',
-      video_conferencing: 'red.200',
-  };
 
   const handleAction = async (actionType) => {
     try {
       if (actionType === 'accept') {
         if (notification.type === 'join_request') {
-          await GroupMemberApi.addMember(notification.sender, notification.group_id);
+          emitEvent('groupJoin', notification.sender, notification.group_id, 'member', '', '');
         } else if (notification.type === 'invitation' && notification.group_id) {
-          await GroupMemberApi.addMember(user_id, notification.group_id);
+          emitEvent('groupJoin', user_id, notification.group_id, 'member', name, '');
         }
       }
       await NotificationApi.deleteNotification(user_id, notification.content, notification.receive_date);
@@ -42,14 +37,18 @@ const NotificationItem = ({ notification }) => {
     }
   };
 
+  const bg = useColorModeValue('gray.200', 'gray.800');
+  const boxShadow = useColorModeValue('md', 'lg');
+  const hoverbg = useColorModeValue('gray.300', 'gray.700');
   return (
     <Box
       w="100%"
       p={2}
-      //bg={typeColors[type] || 'gray.200'}
+      bg={bg}
       borderRadius="md"
-      boxShadow="md"
+      boxShadow={boxShadow}
       mb={2}
+      _hover={{ bg: hoverbg }}
     >
       <Text fontSize="md">{notification.content}</Text>
       <Text fontSize="xs" color="gray.500">{new Date(notification.receive_date).toLocaleString()}</Text>
