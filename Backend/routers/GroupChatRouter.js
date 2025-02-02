@@ -1,145 +1,76 @@
 import express from 'express';
 import GroupChat from '../classes/GroupChat.js';
+import RouterUtils from '../utils/RouterUtils.js';
 
 const router = express.Router();
 
+
+const getGroupChat = (group_id) => {
+    if (!group_id) throw new Error('Group ID is required');
+    return new GroupChat(group_id);
+};
+
 // Route to post a new message
 router.post('/postMessage', async (req, res) => {
-    try {
-        const { group_id, sender, content, type } = req.body;
-        const groupChat = new GroupChat(group_id);
-        const result = await groupChat.postMessage(sender, content, type);
-
-        res.status(201).json({
-            success: true,
-            message: 'Message posted successfully',
-            data: result,
-        });
-    } catch (error) {
-        res.status(400).json({
-            success: false,
-            message: error.message || 'Failed to post message',
-        });
-    }
+    
+    const { group_id, sender, content, type } = req.body;
+    RouterUtils.handleBasicRequest(req, res, () => 
+        getGroupChat(group_id).postMessage(sender, content, type)
+    );
 });
 
 
 router.delete('/removeChat', async (req, res) => {
-    try {
-        const { group_id, chat_id } = req.body;
-        const groupChat = new GroupChat(group_id);
-        await groupChat.removeChat(chat_id);
 
-        res.status(200).json({
-            success: true,
-            message: 'Chat removed successfully',
-        });
-    } catch (error) {
-        res.status(400).json({
-            success: false,
-            message: error.message || 'Failed to remove chat',
-        });
-    }
+    const { group_id, chat_id } = req.body;
+    RouterUtils.handleBasicRequest(req, res, () => 
+        getGroupChat(group_id).removeChat(chat_id)
+    );
 });
 
 // Route to post a discussion
 router.post('/postDiscussion', async (req, res) => {
-    try {
-        const { group_id, sender, content } = req.body;
-        const groupChat = new GroupChat(group_id);
-        const result = await groupChat.postDiscussion(sender, content);
-
-        res.status(201).json({
-            success: true,
-            message: 'Discussion posted successfully',
-            data: result,
-        });
-    } catch (error) {
-        res.status(400).json({
-            success: false,
-            message: error.message || 'Failed to post discussion',
-        });
-    }
+    
+    const { group_id, sender, content } = req.body;
+    RouterUtils.handleBasicRequest(req, res, () => 
+        getGroupChat(group_id).postDiscussion(sender, content)
+    );
 });
 
 // Route to retrieve all chats
 router.post('/retrieveAllChats', async (req, res) => {
-    try {
-        const { group_id } = req.body;
-        const groupChat = new GroupChat(group_id);
-        const result = await groupChat.retrieveAllChat();
-
-        res.status(200).json({
-            success: true,
-            message: 'Chats retrieved successfully',
-            data: result,
-        });
-    } catch (error) {
-        res.status(400).json({
-            success: false,
-            message: error.message || 'Failed to retrieve chats',
-        });
-    }
+    
+    const { group_id } = req.body;
+    RouterUtils.handleBasicRequest(req, res, () => 
+        getGroupChat(group_id).retrieveAllChat()
+    );
 });
 
 
 router.post('/retrieveLatestChats', async (req, res) => {
-    try {
-        const { group_id } = req.body;
-        const groupChat = new GroupChat(group_id);
-        const result = await groupChat.retrieveLatestChat();
 
-        res.status(200).json({
-            success: true,
-            message: 'Latest chats retrieved successfully',
-            data: result,
-        });
-    } catch (error) {
-        res.status(400).json({
-            success: false,
-            message: error.message || 'Failed to retrieve latest chats',
-        });
-    }
+    const { group_id } = req.body;
+    RouterUtils.handleBasicRequest(req, res, () => 
+        getGroupChat(group_id).retrieveLatestChat()
+    );
 });
 
 
 router.post('/retrieveAllDiscussions', async (req, res) => {
-    try {
-        const { group_id } = req.body;
-        const groupChat = new GroupChat(group_id);
-        const result = await groupChat.retrieveAllDiscussion();
-
-        res.status(200).json({
-            success: true,
-            message: 'Discussions retrieved successfully',
-            data: result,
-        });
-    } catch (error) {
-        res.status(400).json({
-            success: false,
-            message: error.message || 'Failed to retrieve discussions',
-        });
-    }
+    
+    const { group_id } = req.body;
+    RouterUtils.handleBasicRequest(req, res, () => 
+        getGroupChat(group_id).retrieveAllDiscussion()
+    );
 });
 
 
 router.post('/checkDiscussion', async (req, res) => {
-    try {
-        const { group_id, content } = req.body;
-        const groupChat = new GroupChat(group_id);
-        const exists = await groupChat.checkDiscussionExists(content);
-
-        res.status(200).json({
-            success: true,
-            message: exists ? 'Discussion exists' : 'Discussion does not exist',
-            data: { exists },
-        });
-    } catch (error) {
-        res.status(400).json({
-            success: false,
-            message: error.message || 'Failed to check discussion existence',
-        });
-    }
+    
+    const { group_id, content } = req.body;
+    RouterUtils.handleBasicRequest(req, res, () => 
+        getGroupChat(group_id).checkDiscussionExists(content)
+    );
 });
 
 export default router;

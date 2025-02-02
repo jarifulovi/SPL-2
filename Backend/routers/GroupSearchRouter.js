@@ -1,44 +1,30 @@
 import express from 'express';
 import GroupSearch from '../classes/GroupSearch.js';
+import RouterUtils from '../utils/RouterUtils.js';
 
 const router = express.Router();
 
 
+
+const getGroupSearch = (type = '', topics = [], group_size = 50) => {
+    return new GroupSearch(type, topics, group_size);
+};
+
+
 router.post('/retrieveAllGroups', async (req, res) => {
-    try {
-        const groupSearch = new GroupSearch();
-        const allGroups = await groupSearch.retrieveAllGroups();
-        res.status(201).json({
-            success: true,
-            message: 'Successfully retrieved all groups',
-            data: allGroups,
-        });
-    } catch (error) {
-        res.status(400).json({
-            success: false,
-            message: error.message || 'An error occurred during retrieving all groups'
-        });
-    }
+
+    RouterUtils.handleBasicRequest(req, res, () => 
+        getGroupSearch().retrieveAllGroups()
+    );
 });
 
 
 router.post('/searchGroup', async (req, res) => {
-    try {
-        const { type, topics, group_size, group_name } = req.body;
-        const groupSearch = new GroupSearch(type, topics, group_size);
-        const searchedGroups = await groupSearch.searchGroup(group_name);
-
-        res.status(201).json({
-            success: true,
-            message: 'Successfully retrieved searched groups',
-            data: searchedGroups,
-        });
-    } catch (error) {
-        res.status(400).json({
-            success: false,
-            message: error.message || 'An error occurred during retrieving searched groups'
-        });
-    }
+    
+    const { type, topics, group_size, group_name } = req.body;
+    RouterUtils.handleBasicRequest(req, res, () => 
+        getGroupSearch(type, topics, group_size).searchGroup(group_name)
+    );
 });
 
 

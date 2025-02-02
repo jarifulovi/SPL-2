@@ -3,9 +3,6 @@ import Chat from "../models/Chat.js";
 class GroupChat {
 
     constructor(group_id) {
-        if (!group_id) {
-            throw new Error('Group ID is required');
-        }
         this.group_id = group_id;
     }
 
