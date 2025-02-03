@@ -17,7 +17,7 @@ router.post('/fetchNotification', async (req, res) => {
     const { user_id } = req.body;
     RouterUtils.handleBasicRequest(req, res, () => 
         Notification.find({ user_id })
-        .sort({ createdAt: -1 }) 
+        .sort({ receive_date: -1 }) 
         .limit(20) 
         .exec()
     );

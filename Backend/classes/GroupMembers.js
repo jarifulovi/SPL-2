@@ -46,7 +46,7 @@ class GroupMembers {
                 { $inc: {group_size: 1} },
                 { new: true, session }
             );
-            console.log(updatedGroup);
+            
 
             if (!updatedGroup) {
                 throw new Error('Group not found');

@@ -28,7 +28,6 @@ class NotificationClass {
                 content: content,
                 sender: this.sender,
                 group_id: this.group_id,
-                receive_date: new Date()
             });
 
             const savedNotification = await newNotification.save();
@@ -41,14 +40,20 @@ class NotificationClass {
     }
 
     async deleteNotification(user_id, content, receive_date) {
-
         
         try {
+            const receiveDateObj = new Date(receive_date); 
+
             const notification = await Notification.findOneAndDelete({
                 user_id: user_id,
                 content: content,
-                receive_date: receive_date
+                receive_date: {
+                    $gte: new Date(receiveDateObj.getTime() - 100), 
+                    $lt: new Date(receiveDateObj.getTime() + 100)
+                }
             });
+
+            
 
             if (!notification) {
                 throw new Error('Notification not found');

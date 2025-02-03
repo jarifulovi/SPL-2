@@ -180,6 +180,7 @@ const GroupChatPage = () => {
       emitEvent('newDiscussion', selectedGroup.group_id, user_id, name, selectedGroup.group_name, discussion_topic.trim());
       setActiveDiscussion(true);
       setDiscussion_topic('');
+      setActiveDiscTopic(discussion_topic);
     }
   }
 
