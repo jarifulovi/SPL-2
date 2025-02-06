@@ -8,6 +8,9 @@ import { Server } from 'socket.io';
 import http from 'http';
 import cookieParser from 'cookie-parser';
 
+
+const allowedOrigin = 'http://localhost:5173';
+
 // ----------------------------
 // Environment Variables Setup
 // ----------------------------
@@ -27,7 +30,7 @@ const port = process.env.PORT || 3000;
 
 // Enable CORS for all routes
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: allowedOrigin,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type'],
   credentials: true,
@@ -59,7 +62,7 @@ mongoose.connect(process.env.MONGODB_URI)
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: 'http://localhost:5173', 
+    origin: allowedOrigin, 
     methods: ['GET', 'POST'],
     credentials: true,
   },

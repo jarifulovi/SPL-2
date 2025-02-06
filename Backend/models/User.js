@@ -2,7 +2,7 @@ import { Schema, model } from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
 
 const UserSchema = new Schema({
-  user_id: { type: String, unique: true, default: uuidv4 },
+  user_id: { type: String, default: uuidv4 },
   email: { type: String, unique: true, required: true },
   password: { type: String, required: true }, 
   name: { type: String, required: true },

@@ -2,7 +2,7 @@ import { Schema, model } from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
 
 const StudyGroupSchema = new Schema({
-  group_id: { type: String, unique: true, default: uuidv4 },
+  group_id: { type: String, default: uuidv4 },
   group_name: { type: String, required: true },
   group_description: { type: String },
   group_size: { type: Number, default: 1 },
