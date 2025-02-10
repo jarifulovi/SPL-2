@@ -6,7 +6,7 @@ const FileSchema = new Schema({
   file_name: { type: String, required: true },
   file_type: { type: String, required: true }, 
   file_size: { type: Number, required: true }, 
-  file_path: { type: String, required: true }, // signed url
+  file_key: { type: String, required: true }, // key to retrieve
   file_hash: { type: String, required: true }, // for avoid duplication
   uploaded_at: { type: Date, default: Date.now },
   uploaded_by: { type: String, ref: 'User', required: true },

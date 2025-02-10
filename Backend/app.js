@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url';
 import { Server } from 'socket.io';
 import http from 'http';
 import cookieParser from 'cookie-parser';
+import storageConfig from './storageConfig.js';
 
 
 const allowedOrigin = 'http://localhost:5173';
