@@ -1,4 +1,4 @@
-
+import File from '../models/File.js';
 
 // This class only works on file metadata in db ( not s3 storage )
 class FileService {
@@ -7,8 +7,10 @@ class FileService {
         this.user_id = user_id;
     }
 
-    retrieveAllUserRepoFile() {
+    async retrieveAllUserRepoFile() {
         // provide file metadata except signed url
+        const files = await File.find({ user_id }, { file_path: 0 });
+        return files;
     }
 
     retrieveRepoFile() {
