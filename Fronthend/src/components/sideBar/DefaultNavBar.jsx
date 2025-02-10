@@ -16,7 +16,7 @@ const DefaultNavBar = () => {
             <Flex gap={4}> 
 
                 <Text textStyle="3xl" fontWeight="bold">
-                    Study Sinc
+                    StudySync
                 </Text>
 
                 <PopOver trigger={<IconButton><IoIosArrowDropdown/></IconButton>}>
