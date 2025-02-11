@@ -3,13 +3,29 @@ import { PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import storageConfig from '../storageConfig';
 import crypto from 'crypto';
+import fs from 'fs';
 
 dotenv.config();
 
 
 
-const generateHash = (buffer) => {
-    return crypto.createHash('sha256').update(buffer).digest('hex');
+const generateFileHashFromPath = (filePath) => {
+    return new Promise((resolve, reject) => {
+        const hash = crypto.createHash('sha256');
+        const stream = fs.createReadStream(filePath);
+
+        stream.on('data', (chunk) => {
+            hash.update(chunk);
+        });
+
+        stream.on('end', () => {
+            resolve(hash.digest('hex')); // Return the final hash
+        });
+
+        stream.on('error', (err) => {
+            reject(err);
+        });
+    });
 };
 
 
@@ -28,25 +44,28 @@ const getFileUrl = async (fileKey) => {
 };
 
 
-const uploadFile = async(file, key) => {
+const uploadFile = async (file, key) => {
     try {
+        const fileStream = fs.createReadStream(file.path);
+
         const params = {
             Bucket: process.env.S3_BUCKET_NAME,
             Key: key,
-            Body: file.buffer,
+            Body: fileStream,
             ContentType: file.mimetype,
+            ACL: 'public-read',
         };
 
-        // Use the AWS SDK directly to upload
         await storageConfig.s3Client.send(new PutObjectCommand(params));
         console.log('Upload successful');
     } catch (error) {
+        console.error('File upload failed:', error.message);
         throw new Error('File upload failed.');
     }
-}
+};
 
 export default { 
-    generateHash, 
+    generateFileHashFromPath, 
     getFileUrl, 
     uploadFile 
 };

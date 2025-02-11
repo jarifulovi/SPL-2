@@ -111,5 +111,6 @@ class FileService {
         return await File.findOne({ file_hash: hash });
     }
 
-
 }
+
+export default FileService;
