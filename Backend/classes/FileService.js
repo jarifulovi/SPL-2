@@ -8,12 +8,12 @@ class FileService {
     }
 
     async retrieveAllUserRepoFile() {
-        // provide file metadata except signed url
-        const files = await File.find({ user_id }, { file_path: 0 });
+        // provide file metadata except file key
+        const files = await File.find({ user_id }, { file_key: 0 });
         return files;
     }
 
-    retrieveRepoFile() {
+    retrieveRepoFile(file_id) {
         // sends the signed url 
     }
 
@@ -35,18 +35,81 @@ class FileService {
     }
 
     
-    // needs : user_id, hash , signed url
-    uploadRepoFile() {
-        // use hash algorithm
-        // check if the hash already present in db ( file model )
-        // if not present 
-        //      then store the file metadata with signed url,hash
-        //      return true
-        // else 
-        //      retrieve the hash and url and store with metadata for new user
-        //      store : hash and url with current user_id
-        //      returns false
+    // file should has all prop mentioned ( extracted via multer )
+    // Store and check if file upload in storage needed ( boolean )
+    async uploadAndCheckFile(file, group_id) {
+        try {
+            
+            const existingFile = await this.isFileAlreadyUploaded(file.file_hash);
+            
+            if (existingFile) {
+                file.key = existingFile.key;
+                await this.uploadRepoFile(file, group_id);
+                return false;
+            }
+
+            
+            await this.uploadRepoFile(file, group_id);
+            return true;
+        } catch (error) {
+            throw new Error(`Error during file upload: ${error.message}`);
+        }
+    }
+
+    // user_id is uploading, a new fresh file 
+    async uploadRepoFile(file, group_id) {
+        if (!file || !file.file_name || !file.file_type || !file.file_size || !file.file_key || !file.file_hash) {
+            throw new Error("Invalid file data.");
+        }
+
+        try {
+            const newFile = new File({
+                file_name: file.file_name,
+                file_type: file.file_type,
+                file_size: file.file_size,
+                file_key: file.file_key,
+                file_hash: file.file_hash,
+                uploaded_by: this.user_id, 
+                group_id: group_id,
+                user_id: this.user_id 
+            });
+
+            await newFile.save();
+            return newFile;
+        } catch (error) {
+            throw new Error("Error uploading file in database.");
+        }
+    }
+
+    // Always duplicate, uploader : who uploaded first ( not user_id )
+    async saveFile(file, uploader, group_id) {
+        if (!file || !file.file_name || !file.file_type || !file.file_size || !file.file_key || !file.file_hash) {
+            throw new Error("Invalid file data.");
+        }
+
+        try {
+            const newFile = new File({
+                file_name: file.file_name,
+                file_type: file.file_type,
+                file_size: file.file_size,
+                file_key: file.file_key,
+                file_hash: file.file_hash,
+                uploaded_by: uploader,
+                group_id: group_id,
+                user_id: this.user_id
+            });
+
+            await newFile.save();
+            return newFile;
+        } catch (error) {
+            throw new Error("Error saving file to database.");
+        }
     }
 
     
+    async isFileAlreadyUploaded(hash) {
+        return await File.findOne({ file_hash: hash });
+    }
+
+
 }
