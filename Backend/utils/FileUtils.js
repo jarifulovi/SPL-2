@@ -30,11 +30,11 @@ const generateFileHashFromPath = (filePath) => {
 
 
 
-const getFileUrl = async (fileKey) => {
+const getFileUrl = async (key) => {
     try {
         const command = new GetObjectCommand({
             Bucket: process.env.S3_BUCKET_NAME,
-            Key: fileKey,
+            Key: key,
         });
 
         return await getSignedUrl(storageConfig.s3Client, command, { expiresIn: 3600 });
@@ -44,28 +44,21 @@ const getFileUrl = async (fileKey) => {
 };
 
 
-const uploadFile = async (file, key) => {
-    try {
-        const fileStream = fs.createReadStream(file.path);
+const generateSignedUploadUrl = async (contentType, key) => {
+    const params = {
+        Bucket: process.env.S3_BUCKET_NAME,
+        Key: key,
+        ContentType: contentType,
+        Expires: 60,
+    };
 
-        const params = {
-            Bucket: process.env.S3_BUCKET_NAME,
-            Key: key,
-            Body: fileStream,
-            ContentType: file.mimetype,
-            ACL: 'public-read',
-        };
-
-        await storageConfig.s3Client.send(new PutObjectCommand(params));
-        console.log('Upload successful');
-    } catch (error) {
-        console.error('File upload failed:', error.message);
-        throw new Error('File upload failed.');
-    }
-};
+    const command = new PutObjectCommand(params);
+    const signedUrl = await getSignedUrl(storageConfig.s3Client, command);
+    return signedUrl;
+}
 
 export default { 
     generateFileHashFromPath, 
     getFileUrl, 
-    uploadFile 
+    generateSignedUploadUrl 
 };
