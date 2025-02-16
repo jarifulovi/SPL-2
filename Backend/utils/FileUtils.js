@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import { PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import storageConfig from '../storageConfig';
+import storageConfig from '../storageConfig.js';
 import crypto from 'crypto';
 import fs from 'fs';
 
@@ -49,11 +49,10 @@ const generateSignedUploadUrl = async (contentType, key) => {
         Bucket: process.env.S3_BUCKET_NAME,
         Key: key,
         ContentType: contentType,
-        Expires: 60,
     };
 
     const command = new PutObjectCommand(params);
-    const signedUrl = await getSignedUrl(storageConfig.s3Client, command);
+    const signedUrl = await getSignedUrl(storageConfig.s3Client, command, { expiresIn: 120 });
     return signedUrl;
 }
 

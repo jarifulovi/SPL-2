@@ -86,6 +86,7 @@ import groupMembers from './routers/GroupMemberRouter.js';
 import notification from './routers/NotificationRouter.js';
 import groupChat from './routers/GroupChatRouter.js';
 import groupSearch from './routers/GroupSearchRouter.js';
+import fileSystem from './routers/FileRouter.js';
 import composite from './routers/CompositeRouter.js';
 
 
@@ -96,6 +97,7 @@ app.use('/', groupMembers);
 app.use('/', notification);
 app.use('/', groupChat);
 app.use('/', groupSearch);
+app.use('/', fileSystem);
 app.use('/', composite);
 
 

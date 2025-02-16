@@ -13,9 +13,18 @@ class FileService {
         return files;
     }
 
-    retrieveRepoFile(file_id) {
-        // sends the signed url 
-    }
+    async retrieveFileKey(file_id) {
+        try {
+          const file = await File.findOne({ file_id });
+          if (file) { 
+            return file.file_key;
+          } else {
+            throw new Error("File not found.");
+          }
+        } catch (error) {
+          throw new Error(error.message || "Error retrieving file key.");
+        }
+      }
 
     retrieveUserProfilePic() {
         // retrieve profile pic url from userProfile
@@ -35,15 +44,15 @@ class FileService {
     }
 
     
-    // file should has all prop mentioned ( extracted via multer )
-    // Store and check if file upload in storage needed ( boolean )
+    
+    // Uploads file to storage if not exists, returns true if newly uploaded.
     async uploadAndCheckFile(file, group_id) {
         try {
             
             const existingFile = await this.isFileAlreadyUploaded(file.file_hash);
             
             if (existingFile) {
-                file.key = existingFile.key;
+                file.file_key = existingFile.file_key;
                 await this.uploadRepoFile(file, group_id);
                 return false;
             }

@@ -1,7 +1,7 @@
 import express from 'express';
 import multer from 'multer';
-import FileService from '../classes/FileService';
-import FileUtils from '../utils/FileUtils';
+import FileService from '../classes/FileService.js';
+import FileUtils from '../utils/FileUtils.js';
 import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -33,7 +33,7 @@ router.post('/uploadFile', upload.single('file'), async (req, res) => {
             file_hash: file_hash, 
         };
 
-        // Delete temp file after hashing
+       
         fs.unlinkSync(file.path);
         const fileHandler = new FileService(user_id);
         const isUploadedNeeded = await fileHandler.uploadAndCheckFile(fileMetadata, group_id);
@@ -57,6 +57,27 @@ router.post('/uploadFile', upload.single('file'), async (req, res) => {
         return res.status(400).json({
             success: false,
             message: `Error uploading file: ${error.message}`
+        });
+    }
+});
+
+router.post('/getFileUrl', async (req, res) => {
+    try {
+        const { file_id } = req.body;
+        
+
+        const fileService = new FileService();
+        const file_key = await fileService.retrieveFileKey(file_id); // Also check if file exists
+        const fileUrl = await FileUtils.getFileUrl(file_key);
+        return res.status(200).json({
+            success: true,
+            message: 'File URL generated successfully.',
+            data: { fileUrl }
+        });
+    } catch (error) {
+        return res.status(400).json({
+            success: false,
+            message: `Error generating file URL: ${error.message}`
         });
     }
 });
