@@ -1,14 +1,18 @@
 import { useContext, useEffect, useState, useRef } from 'react';
-import { Box, HStack, Flex, VStack, Text, Button, Input } from '@chakra-ui/react';
-
+import { Box, HStack, Flex, VStack, Text, IconButton, Input } from '@chakra-ui/react';
+import { Button } from '../components/ui/button';
 import GroupItem from '../components/Others/GroupItem';
 import ChatItem from '../components/Others/ChatItem';
 import CustomDialog from '../components/Buttons/CustomDialog';
+import { FiUpload } from 'react-icons/fi';
 
-import GroupMemberApi from '../services/GroupMemberApi';
-import GroupChatApi from '../services/GroupChatApi';
+// Context and hooks
 import { SocketContext } from '../utils/SocketContext';
-import { use } from 'react';
+import useGroupData from '../hooks/useGroupData';
+import useChatData from '../hooks/useChatData';
+import useGroupMembers from '../hooks/useGroupMembers';
+
+
 
 const tolerance = 2;  // For checking scroll bottom
 
@@ -37,71 +41,19 @@ const checkActiveDiscussion = (messages, setActiveDiscussion, setActiveDiscTopic
 
 
 
-
-const retAndUpdateGroups = async (user_id, setGroupsData) => {
-  try {
-    const result = await GroupMemberApi.getAllGroupsOfMember(user_id);
-    setGroupsData(result.data || []);
-    return result.data;
-  } catch (error) {
-    console.log(error.message);
-  }
-};
-
-const retAndUpdateChats = async (group_id, setMessages) => {
-  try {
-    const result = await GroupChatApi.retrieveAllChats(group_id);
-    setMessages(result.data || []);
-    return result.data;
-  } catch (error) {
-    console.log(error.message);
-  }
-};
-
-const retAndUpdateGroupMembers = async (group_id, setGroupMembersMap, currentUserId, setIsAdmin) => {
-  try {
-    const result = await GroupMemberApi.getAllGroupMembers(group_id);
-    const membersMap = result.data.reduce((acc, member) => {
-      acc[member.user_id] = member.name;
-      return acc;
-    }, {});
-    setGroupMembersMap(membersMap || {});
-    
-
-    // Check if the current user is an admin
-    const currentUser = result.data.find(member => member.user_id === currentUserId);
-    if (currentUser && currentUser.role === 'admin') {
-      setIsAdmin(true);
-    } else {
-      setIsAdmin(false);
-    }
-
-    return membersMap;
-  } catch (error) {
-    console.log(error.message);
-  }
-};
-
-
-
 const GroupChatPage = () => {
 
+  const user_id = localStorage.getItem('user_id');
+  const name = localStorage.getItem('name');
   
-  // State to hold the list of groups the user is a member of
-  const [groupsData, setGroupsData] = useState([]);
+  // States of hooks
+  const {groupsData, selectedGroup, setSelectedGroup} = useGroupData(user_id);
+  const { groupMembersMap, isAdmin, retAndUpdateGroupMembers } = useGroupMembers(selectedGroup?.group_id, user_id);
+  const { messages, setMessages, retAndUpdateChats, sendChatMessage } = useChatData(selectedGroup?.group_id);
 
-  // State to track the currently selected group
-  const [selectedGroup, setSelectedGroup] = useState(null);
-
-  // State to store a map of selected group's members' user IDs to their names
-  const [groupMembersMap, setGroupMembersMap] = useState({});
-
-  // State to hold the list of messages for the selected group
-  const [messages, setMessages] = useState([]);
   const [sendMessage, setSendMessage] = useState('');
+  const { emitEvent } = useContext(SocketContext);
 
-  // Check if user is admin in the selected group
-  const [isAdmin, setIsAdmin] = useState(false);
 
   // Reference to the chat container element, used for scrolling control
   const chatContainerRef = useRef(null);
@@ -111,43 +63,21 @@ const GroupChatPage = () => {
 
 
 
-  const user_id = localStorage.getItem('user_id');
-  const name = localStorage.getItem('name');
-  
-  const { onEvent, offEvent, emitEvent } = useContext(SocketContext);
-
-
   // Fetch data when the component mounts
   useEffect(() => {
     const fetchGroups = async () => {
-      const data = await retAndUpdateGroups(user_id, setGroupsData);
       
-      if (data && data.length > 0) {
-
+      if (groupsData && groupsData.length > 0) {
         // Select default group
-        setSelectedGroup(data[0]); 
-        const initialMessages = await retAndUpdateChats(data[0].group_id, setMessages); 
-        await retAndUpdateGroupMembers(data[0].group_id, setGroupMembersMap, user_id, setIsAdmin);
+        console.log(groupsData);
+        const initialMessages = await retAndUpdateChats(groupsData[0].group_id); 
+        await retAndUpdateGroupMembers(groupsData[0].group_id);
         checkActiveDiscussion(initialMessages, setActiveDiscussion, setActiveDiscTopic);
       }
     };
     fetchGroups();
-  }, [user_id, setGroupsData, setMessages, setGroupMembersMap]);
+  }, [user_id, groupsData, setMessages]);
 
-  // Listening for new chat messages
-  useEffect(() => {
-    const handleNewChatMessage = (newMessage) => {
-      setMessages((prevMessages) => [newMessage, ...prevMessages]);
-    };
-
-    
-    onEvent('chatMessage', handleNewChatMessage);
-
-   
-    return () => {
-      offEvent('chatMessage', handleNewChatMessage);
-    };
-  }, [onEvent]);
 
 
 
@@ -156,16 +86,16 @@ const GroupChatPage = () => {
     setSelectedGroup(group);
     console.log('Group : ', group.group_name, " is selected");
 
-    const updatedMessages = await retAndUpdateChats(group.group_id, setMessages);
-    await retAndUpdateGroupMembers(group.group_id, setGroupMembersMap, user_id, setIsAdmin);
+    const updatedMessages = await retAndUpdateChats(group.group_id);
+    await retAndUpdateGroupMembers(group.group_id);
     checkActiveDiscussion(updatedMessages, setActiveDiscussion, setActiveDiscTopic);
   };
 
 
   // Function to handle sending the message
-  const sendChatMessage = async () => {
-    if (sendMessage.trim() && groupsData.length > 0) {
-      emitEvent('chatMessage', selectedGroup.group_id, user_id, sendMessage.trim());
+  const handleSendMessage = async () => {
+    if (groupsData.length > 0) {
+      sendChatMessage(selectedGroup.group_id, user_id, sendMessage);
       setSendMessage('');
     }
   };
@@ -200,7 +130,6 @@ const GroupChatPage = () => {
       setIsAtBottom(atBottom);
     }
   };
-  
   
   
 
@@ -278,21 +207,27 @@ const GroupChatPage = () => {
             placeholder="Type a message..." 
             value={sendMessage}
             onChange={(e) => setSendMessage(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleSendMessage();
+              }
+            }}
           />
-          <Button onClick={sendChatMessage} colorPalette='purple'>
-            Send
-          </Button>
+          <IconButton colorPalette="purple">
+            <FiUpload />
+          </IconButton>
+       
           { isAdmin ? (
             isActiveDiscussion ? (
               <Button
-                colorScheme="red"
+                colorPalette="blue"
                 onClick={handleCloseDiscussion}
               >
                 Close Disc
               </Button>
             ) : (
               <CustomDialog
-                triggerButton={<Button>Disc</Button>}
+                triggerButton={<Button colorPalette="blue">Disc</Button>}
                 dialogTitle='Post a discussion with topic'
                 dialogBody={
                   <Input 
