@@ -4,17 +4,16 @@ import { Button } from '../components/ui/button';
 import GroupItem from '../components/Others/GroupItem';
 import ChatItem from '../components/Others/ChatItem';
 import CustomDialog from '../components/Buttons/CustomDialog';
-import { FiUpload } from 'react-icons/fi';
+import UploadFile from '../components/Others/UploadFile';
+import { HiUpload } from "react-icons/hi"
 
 // Context and hooks
 import { SocketContext } from '../utils/SocketContext';
 import useGroupData from '../hooks/useGroupData';
 import useChatData from '../hooks/useChatData';
 import useGroupMembers from '../hooks/useGroupMembers';
+import useScroll from '../hooks/useScroll';
 
-
-
-const tolerance = 2;  // For checking scroll bottom
 
 
 // Check active discussion status
@@ -40,6 +39,10 @@ const checkActiveDiscussion = (messages, setActiveDiscussion, setActiveDiscTopic
 };
 
 
+const handleFileUpload = () => {
+  console.log('File upload');
+};
+
 
 const GroupChatPage = () => {
 
@@ -53,13 +56,11 @@ const GroupChatPage = () => {
 
   const [sendMessage, setSendMessage] = useState('');
   const { emitEvent } = useContext(SocketContext);
+  const [file, setFile] = useState(null);
+  const [fileDescription, setFileDescription] = useState('');
 
+  const { containerRef, handleScroll } = useScroll([messages]);
 
-  // Reference to the chat container element, used for scrolling control
-  const chatContainerRef = useRef(null);
-
-  // Reference to track whether the chat container is scrolled to the bottom
-  const [isAtBottom, setIsAtBottom] = useState(true);
 
 
 
@@ -100,6 +101,24 @@ const GroupChatPage = () => {
     }
   };
 
+  // Function to handle file upload
+  const setFileUpload = (file) => {
+    setFile(file);
+  };
+
+  const onClearFile = () => {
+    setFile(null);
+    setFileDescription('');
+  };
+
+  const handleFileUpload = async () => {
+    if(file) {
+      console.log(file, fileDescription);
+    }
+  };
+
+
+
   // ***** Discussion fields ****** //
   const [ discussion_topic, setDiscussion_topic ] = useState('');
   const [ isActiveDiscussion, setActiveDiscussion ] = useState(false);
@@ -121,30 +140,6 @@ const GroupChatPage = () => {
     setActiveDiscussion(false);
   }
   // ***** Discussion fields ****** //
-
-
-  const handleScroll = () => {
-    if (chatContainerRef.current) {
-      const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
-      const atBottom = Math.abs(scrollHeight - scrollTop - clientHeight) <= tolerance;
-      setIsAtBottom(atBottom);
-    }
-  };
-  
-  
-
-  const scrollToBottom = () => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-    }
-  };
-
-  useEffect(() => {
-    if (isAtBottom) {
-      scrollToBottom();
-    }
-  }, [messages, isAtBottom]); 
-
 
   return (
     <Flex height="100%">
@@ -182,7 +177,7 @@ const GroupChatPage = () => {
       >
         {/* Chat Messages */}
         <Box
-        ref={chatContainerRef}
+        ref={containerRef}
         flex="1"
         overflowY="auto"
         mb={4}
@@ -201,21 +196,43 @@ const GroupChatPage = () => {
 
       </Box>
 
-        <HStack>
-        <Input 
-            variant="subtle" 
-            placeholder="Type a message..." 
-            value={sendMessage}
-            onChange={(e) => setSendMessage(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                handleSendMessage();
+        <HStack width="100%">
+          <Input 
+              flex="1"
+              variant="subtle" 
+              placeholder="Type a message..." 
+              value={sendMessage}
+              onChange={(e) => setSendMessage(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleSendMessage();
+                }
+              }}
+            />
+           
+            <CustomDialog
+              triggerButton={<Button colorPalette="purple"><HiUpload /></Button>}
+              dialogTitle='Upload a file'
+              dialogBody={
+                <VStack>
+                <UploadFile 
+                  accepts={['image/*', 'video/*', 'audio/*', 'application/pdf']}
+                  onSetFile={setFileUpload}
+                  onClearFile={onClearFile}
+                />
+                <Input 
+                    value={fileDescription} 
+                    onChange={(e) => setFileDescription(e.target.value)}
+                    placeholder='File description...'
+                />
+                </VStack>
               }
-            }}
-          />
-          <IconButton colorPalette="purple">
-            <FiUpload />
-          </IconButton>
+              confirmButtonText='Upload'
+              confirmButtonColor='purple'
+              onConfirm={handleFileUpload}
+              onCancel={onClearFile}
+            />
+
        
           { isAdmin ? (
             isActiveDiscussion ? (

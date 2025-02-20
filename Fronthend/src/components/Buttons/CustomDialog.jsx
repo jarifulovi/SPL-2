@@ -21,9 +21,14 @@ const CustomDialog =  ({
   confirmButtonColor = "red",
   cancelButtonText = "Cancel",
   onConfirm = () => {},
+  onCancel = () => {},
 }) => {
   return (
-    <DialogRoot role="alertdialog" placement="center" closeOnInteractOutside={true}>
+    <DialogRoot 
+      role="alertdialog"
+      placement="center" 
+      closeOnInteractOutside={false}
+    >
       <DialogTrigger asChild>
         {triggerButton || (
           <Button variant="outline" size="sm">
@@ -36,17 +41,16 @@ const CustomDialog =  ({
           <DialogTitle>{dialogTitle}</DialogTitle>
         </DialogHeader>
         <DialogBody>
-          <p>{dialogBody}</p>
+          {dialogBody}
         </DialogBody>
         <DialogFooter>
           <DialogActionTrigger asChild>
-            <Button variant="outline">{cancelButtonText}</Button>
+            <Button variant="outline" onClick={onCancel}>{cancelButtonText}</Button>
           </DialogActionTrigger>
           <Button colorPalette={confirmButtonColor} onClick={onConfirm}>
             {confirmButtonText}
           </Button>
         </DialogFooter>
-        <DialogCloseTrigger />
       </DialogContent>
     </DialogRoot>
   );
