@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { Box, HStack, Flex, VStack, Text, IconButton, Input } from '@chakra-ui/react';
 import { Button } from '../components/ui/button';
 import GroupItem from '../components/Others/GroupItem';
@@ -8,40 +8,13 @@ import UploadFile from '../components/Others/UploadFile';
 import { HiUpload } from "react-icons/hi"
 
 // Context and hooks
-import { SocketContext } from '../utils/SocketContext';
 import useGroupData from '../hooks/useGroupData';
 import useChatData from '../hooks/useChatData';
 import useGroupMembers from '../hooks/useGroupMembers';
+import useDiscussionData from '../hooks/useDiscussionData';
+import useFileUpload from '../hooks/useFileUpload';
 import useScroll from '../hooks/useScroll';
 
-
-
-// Check active discussion status
-const checkActiveDiscussion = (messages, setActiveDiscussion, setActiveDiscTopic) => {
-
-  for (let message of messages) {
-    if (message && message.type === 'discussion_topic') {
-      if (message.discussionStatus === 'open') {
-        setActiveDiscussion(true);
-        setActiveDiscTopic(message.topic);
-        return;
-      }
-      if (message.discussionStatus === 'closed') {
-        setActiveDiscussion(false);
-        return;
-      }
-    }
-  }
-
-  // If no active discussion is found, set the state to false
-  setActiveDiscussion(false);
-  setActiveDiscTopic(null);
-};
-
-
-const handleFileUpload = () => {
-  console.log('File upload');
-};
 
 
 const GroupChatPage = () => {
@@ -52,15 +25,33 @@ const GroupChatPage = () => {
   // States of hooks
   const {groupsData, selectedGroup, setSelectedGroup} = useGroupData(user_id);
   const { groupMembersMap, isAdmin, retAndUpdateGroupMembers } = useGroupMembers(selectedGroup?.group_id, user_id);
-  const { messages, setMessages, retAndUpdateChats, sendChatMessage } = useChatData(selectedGroup?.group_id);
+  const { 
+    messages, 
+    setMessages, 
+    retAndUpdateChats, 
+    sendChatMessage 
+  } = useChatData(selectedGroup?.group_id);
 
   const [sendMessage, setSendMessage] = useState('');
-  const { emitEvent } = useContext(SocketContext);
-  const [file, setFile] = useState(null);
-  const [fileDescription, setFileDescription] = useState('');
+  const {
+    fileDescription,
+    setFileDescription,
+    setFileUpload,
+    onClearFile,
+    handleFileUpload,
+    accepts,
+  } = useFileUpload();
 
   const { containerRef, handleScroll } = useScroll([messages]);
-
+  
+  const {
+    discussionTopic,
+    isActiveDiscussion,
+    setDiscussionTopic,
+    handlePostDiscussion,
+    handleCloseDiscussion,
+    checkActiveDiscussion,
+  } = useDiscussionData(user_id, name, selectedGroup);
 
 
 
@@ -73,7 +64,7 @@ const GroupChatPage = () => {
         console.log(groupsData);
         const initialMessages = await retAndUpdateChats(groupsData[0].group_id); 
         await retAndUpdateGroupMembers(groupsData[0].group_id);
-        checkActiveDiscussion(initialMessages, setActiveDiscussion, setActiveDiscTopic);
+        checkActiveDiscussion(initialMessages);
       }
     };
     fetchGroups();
@@ -89,7 +80,7 @@ const GroupChatPage = () => {
 
     const updatedMessages = await retAndUpdateChats(group.group_id);
     await retAndUpdateGroupMembers(group.group_id);
-    checkActiveDiscussion(updatedMessages, setActiveDiscussion, setActiveDiscTopic);
+    checkActiveDiscussion(updatedMessages);
   };
 
 
@@ -101,45 +92,9 @@ const GroupChatPage = () => {
     }
   };
 
-  // Function to handle file upload
-  const setFileUpload = (file) => {
-    setFile(file);
-  };
-
-  const onClearFile = () => {
-    setFile(null);
-    setFileDescription('');
-  };
-
-  const handleFileUpload = async () => {
-    if(file) {
-      console.log(file, fileDescription);
-    }
-  };
+  
 
 
-
-  // ***** Discussion fields ****** //
-  const [ discussion_topic, setDiscussion_topic ] = useState('');
-  const [ isActiveDiscussion, setActiveDiscussion ] = useState(false);
-  const [ activeDiscTopic, setActiveDiscTopic ] = useState('');
-  const handlePostDiscussion = async () => {
-    if (discussion_topic.trim()) {
-      console.log(discussion_topic);
-      emitEvent('newDiscussion', selectedGroup.group_id, user_id, name, selectedGroup.group_name, discussion_topic.trim());
-      setActiveDiscussion(true);
-      setDiscussion_topic('');
-      setActiveDiscTopic(discussion_topic);
-    }
-  }
-
-  const handleCloseDiscussion = async () => {
-    console.log(activeDiscTopic);
-    emitEvent('closeDiscussion', selectedGroup.group_id, user_id, activeDiscTopic);
-    setActiveDiscTopic('');
-    setActiveDiscussion(false);
-  }
-  // ***** Discussion fields ****** //
 
   return (
     <Flex height="100%">
@@ -216,7 +171,7 @@ const GroupChatPage = () => {
               dialogBody={
                 <VStack>
                 <UploadFile 
-                  accepts={['image/*', 'video/*', 'audio/*', 'application/pdf']}
+                  accepts={accepts}
                   onSetFile={setFileUpload}
                   onClearFile={onClearFile}
                 />
@@ -229,7 +184,7 @@ const GroupChatPage = () => {
               }
               confirmButtonText='Upload'
               confirmButtonColor='purple'
-              onConfirm={handleFileUpload}
+              onConfirm={() => handleFileUpload(selectedGroup?.group_id)}
               onCancel={onClearFile}
             />
 
@@ -248,8 +203,8 @@ const GroupChatPage = () => {
                 dialogTitle='Post a discussion with topic'
                 dialogBody={
                   <Input 
-                    value={discussion_topic} 
-                    onChange={(e) => setDiscussion_topic(e.target.value)}
+                    value={discussionTopic} 
+                    onChange={(e) => setDiscussionTopic(e.target.value)}
                     placeholder='Enter discussion topic...'
                   />
                   }

@@ -44,13 +44,15 @@ router.post('/uploadFile', upload.single('file'), async (req, res) => {
             return res.status(201).json({
                 success: true,
                 message: 'File uploaded successfully and stored.',
-                data: { signedUrl, file_key }
+                data: { signedUrl, file_key },
+                isUploaded: true
             });
         } else {
             return res.status(201).json({
                 success: true,
-                message: 'File already exists, reused the file key.',
-                data: { file_key }
+                message: 'File uploaded successfully and stored.',
+                data: { file_key },
+                isUploaded: false
             });
         }
     } catch (error) {
