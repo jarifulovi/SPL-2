@@ -9,7 +9,7 @@ class FileService {
 
     async retrieveAllUserRepoFile() {
         // provide file metadata except file key
-        const files = await File.find({ user_id }, { file_key: 0 });
+        const files = await File.find({ user_id:this.user_id }, { file_key: 0 });
         return files;
     }
 

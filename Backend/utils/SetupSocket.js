@@ -46,9 +46,7 @@ const SetupSocket = (io) => {
         // When a file is uploaded in a group, notify the user
         // File has file metadata
         socket.on('fileUploaded', async (group_id, sender, file, sender_name, group_name) => {
-            // Store file metadata in the database
-            // If the file is successfully stored, emit the file
-            // Issue : Doesn't handle file upload in storage
+            
             io.to(group_id).emit('fileUploaded', file);
             
             const memberIds = await GroupMemberUtils.retrieveGroupMemberIds(group_id);
@@ -97,11 +95,10 @@ const SetupSocket = (io) => {
         // UserId : Admin who receives the request
         // SenderId : User who sends the request
         socket.on('groupJoinRequest', async (user_id, group_id, sender, sender_name, group_name) => {
-            // Retrieve group name if needed
+            
             const content = `${sender_name} requested to join the ${group_name}`;
             const socket_id = userSocketMap.get(user_id);
             await NotificationUtils.storeAndEmitNotification(io, user_id, socket_id, 'join_request', sender, group_id, content);
-            
         });
 
         // UserId : User who receives the invitation

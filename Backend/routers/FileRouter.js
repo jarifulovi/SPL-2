@@ -24,7 +24,7 @@ router.post('/uploadFile', upload.single('file'), async (req, res) => {
         
         // File metadata from the uploaded file (multer adds the properties)
         const file_hash = await FileUtils.generateFileHashFromPath(file.path);
-        const file_key = `${uuidv4()}-${file.originalname}`;
+        const file_key = `user-files/${uuidv4()}-${file.originalname}`;
         const fileMetadata = {
             file_name: file.originalname,
             file_type: file.mimetype,      
