@@ -1,6 +1,9 @@
 import Fetch from "../utils/Fetch";
 
 
+const retrieveAllFile = async (user_id) => {
+    return await Fetch.fetchData(Fetch.baseUrl + '/retrieveAllFiles', 'POST', { user_id });
+};
 
 const uploadFile = async (file, user_id, group_id) => {
     const formData = new FormData();
@@ -22,6 +25,7 @@ const getFileUrl = async (file_id) => {
 
 
 export default {
+    retrieveAllFile,
     uploadFile,
     getFileUrl,
     uploadToAws,

@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import FileApi from '../services/FileApi';
 import Fetch from '../utils/Fetch';
 import { toaster } from '../components/ui/toaster';
+import { SocketContext } from '../utils/SocketContext';
 
-const acceptsObj = {
+
+export const acceptsObj = {
   image: ["image/jpeg", "image/png", "image/gif", "image/webp", "image/svg+xml", "image/x-icon"],
   audio: ["audio/mpeg", "audio/ogg", "audio/wav", "audio/webm"],
   video: ["video/mp4", "video/webm"],
@@ -39,8 +41,10 @@ const accepts = Object.values(acceptsObj).flat();
 
 const useFileUpload = () => {
   const user_id = localStorage.getItem('user_id');
+  const name = localStorage.getItem('name');
   const [file, setFile] = useState(null);
   const [fileDescription, setFileDescription] = useState('');
+  const { onEvent, offEvent, emitEvent } = useContext(SocketContext);
 
   const setFileUpload = (file) => {
     setFile(file);
@@ -51,13 +55,25 @@ const useFileUpload = () => {
     setFileDescription('');
   };
 
-  const handleFileUpload = async (group_id) => {
-    if (file) {
+  const emitFileUploaded = (group) => {
+    const fileMetadata = {
+      file_name: file.files[0].name,
+      file_description: fileDescription,
+      file_type: file.files[0].type,
+      file_size: file.files[0].size,
+      uploaded_by: user_id,
+      group_id: group.group_id,
+    }
+    emitEvent('fileUploaded', group.group_id, user_id, fileMetadata, name, group.group_name);
+  }
+
+  const handleFileUpload = async (group) => {
+    if (file && group) {
       setFile(null);
       setFileDescription('');
 
       try {
-        const result = await FileApi.uploadFile(file.files[0], user_id, group_id);
+        const result = await FileApi.uploadFile(file.files[0], user_id, group.group_id);
         
         if (result.success) {
           if(result.isUploaded) {
@@ -90,6 +106,7 @@ const useFileUpload = () => {
         });
       }
     }
+    emitFileUploaded(group);
   };
 
 

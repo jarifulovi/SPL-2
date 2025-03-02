@@ -184,7 +184,7 @@ const GroupChatPage = () => {
               }
               confirmButtonText='Upload'
               confirmButtonColor='purple'
-              onConfirm={() => handleFileUpload(selectedGroup?.group_id)}
+              onConfirm={() => handleFileUpload(selectedGroup)}
               onCancel={onClearFile}
             />
 
