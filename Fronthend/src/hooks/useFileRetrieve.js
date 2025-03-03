@@ -46,17 +46,27 @@ const useFileRetrieve = (selectedFolder) => {
     const filteredFiles = files.filter(file => fileTypeToMimeTypes[selectedFolder].includes(file.file_type));
 
 
-    const handleFileClick = (file) => {
-        console.log('File clicked:', file);
-        // fetch the url from the server
-        // open the file in a new tab
+    const handleFileClick = async (file) => {
+        const result = await FileApi.getFileUrl(file.file_id);
+        window.open(result.data.fileUrl, '_blank');
     };
+
+    const handleDownload = async (file) => {
+        const result = await FileApi.getFileUrl(file.file_id);
+        const link = document.createElement('a');
+        link.href = result.data.fileUrl;
+        link.download = file.file_name;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
 
     return {
         files,
         setFiles,
         filteredFiles,
-        handleFileClick
+        handleFileClick,
+        handleDownload
     };
 }
 

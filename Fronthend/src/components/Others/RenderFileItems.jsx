@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Text, Flex, Box, VStack, HStack, Button, Icon } from '@chakra-ui/react';
-import { Tooltip } from '../../components/ui/tooltip';
-import { acceptsObj } from '../../hooks/useFileUpload';
 import { useColorModeValue } from '../../components/ui/color-mode';
 
-import FileApi from '../../services/FileApi';
 import useFileRetrieve from '../../hooks/useFileRetrieve';
 
 
@@ -23,7 +20,7 @@ const formatDate = (dateString) => {
 };
 
 
-const FileItem = ({ file, onClick }) => {
+const FileItem = ({ file, onClick, onDownLoad }) => {
     const bgColor = useColorModeValue('gray.100', 'gray.700');
     const hoverBgColor = useColorModeValue('gray.200', 'gray.600');
     const textColor = useColorModeValue('black', 'white');
@@ -47,7 +44,7 @@ const FileItem = ({ file, onClick }) => {
             <Flex align="center" justify="space-between" width="100%">
                 <Text 
                     isTruncated 
-                    maxWidth="calc(100% - 150px)"   // Adjust this based on the space needed for file size and uploaded date
+                    maxWidth="calc(100% - 200px)"   // Adjust this based on the space needed for file size, uploaded date, and button
                     whiteSpace="nowrap" 
                     overflow="hidden" 
                     textOverflow="ellipsis"
@@ -59,14 +56,21 @@ const FileItem = ({ file, onClick }) => {
                     <Text ml={3}>{formatDate(file.uploaded_at)}</Text>
                 </Flex>
             </Flex>
-
+            {/* <Button 
+                ml={3} 
+                size="sm" 
+                onClick={(e) => { e.stopPropagation(); onDownLoad(file); }}
+            >
+                Download
+            </Button> */}
         </Box>
     );
 };
 
 const RenderFileItems = ({ onBack = ()=>{}, selectedFolder }) => {
     
-    const { filteredFiles, handleFileClick } = useFileRetrieve(selectedFolder);
+    const { filteredFiles, handleFileClick, handleDownload } = useFileRetrieve(selectedFolder);
+
 
     return (
         <Flex direction="column" align="center" width="80%" p={5}>
@@ -76,7 +80,12 @@ const RenderFileItems = ({ onBack = ()=>{}, selectedFolder }) => {
             {/* Placeholder bars for file items */}
             {filteredFiles.length > 0 ? (
                 filteredFiles.map((file, index) => (
-                    <FileItem key={index} file={file} onClick={handleFileClick} />
+                    <FileItem 
+                        key={index} 
+                        file={file} 
+                        onClick={handleFileClick} 
+                        onDownLoad={handleDownload}
+                    />
                 ))
             ) : (
                 <Text>No files available</Text>

@@ -57,7 +57,10 @@ const FileRepository = () => {
     return (
         <Flex justify="center" wrap="wrap" p={50}>
         {selectedFolder ?
-            <RenderFileItems onBack={handleBackToFolders} selectedFolder={selectedFolder}/>
+            <RenderFileItems 
+                onBack={handleBackToFolders} 
+                selectedFolder={selectedFolder}
+            />
             : 
             folders.map(({ content, icon, type }) => (
                 <FolderItem key={type} content={content} onClick={() => handleFolderClick(type)}>
