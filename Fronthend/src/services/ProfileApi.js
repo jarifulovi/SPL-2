@@ -10,7 +10,12 @@ const getOthersProfileData = async (user_id,currentUserId) => {
 
 
 const updateProfile = async (profileData) => {
-    return await Fetch.fetchData(Fetch.baseUrl + '/updateProfile', 'PUT', profileData);
+    const formData = new FormData();
+    for (const key in profileData) {
+        formData.append(key, profileData[key]);
+    }
+
+    return await Fetch.fetchFormData(Fetch.baseUrl + '/updateProfile', 'PUT', formData);
 };
 
 export default {

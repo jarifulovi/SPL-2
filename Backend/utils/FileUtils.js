@@ -56,8 +56,29 @@ const generateSignedUploadUrl = async (contentType, key) => {
     return signedUrl;
 }
 
+
+const generateProfilePicUploadUrl = async (file, key) => {
+    const params = {
+        Bucket: process.env.S3_BUCKET_NAME,
+        Key: key,
+        Body: file.buffer,
+        ContentType: file.mimetype,
+    };
+
+    const command = new PutObjectCommand(params);
+    await storageConfig.s3Client.send(command);
+
+    // Return the public URL (it won’t expire)
+    const publicUrl = `https://${process.env.S3_BUCKET_NAME}.s3.amazonaws.com/${key}`;
+    
+    return { publicUrl };
+};
+
+
+
 export default { 
     generateFileHashFromPath, 
     getFileUrl, 
-    generateSignedUploadUrl 
+    generateSignedUploadUrl,
+    generateProfilePicUploadUrl,
 };

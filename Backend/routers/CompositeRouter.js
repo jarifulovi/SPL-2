@@ -7,7 +7,7 @@ import FileService from '../classes/FileService.js';
 const router = express.Router();
 
 
-// Needs: creator name, group members, isCurrentUser a member
+// Needs: creator name, group members, isCurrentUser a member, profile picture
 router.post('/loadGroupDetails', async (req, res) => {
     try {
         const { user_id, group } = req.body;

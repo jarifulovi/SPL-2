@@ -30,7 +30,7 @@ const UpdateProfilePage = () => {
         date_of_birth: '',               
         gender: '',                       
         phone_number: '',                 
-        profile_picture: '',             
+        profile_picture: null,             
         address: '',                      
         bio: '',                          
         department: '',                   
@@ -79,7 +79,24 @@ const UpdateProfilePage = () => {
     };
 
 
-    const handleSubmit = async () => {
+    const handleOnSetFile = (file) => {
+        console.log(file.files[0]);
+        setFormData({
+            ...formData,
+            profile_picture: file.files[0],
+        });
+    }
+
+    const handleOnClearFile = () => {
+        
+        setFormData({
+            ...formData,
+            profile_picture: null,
+        });
+    }
+
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         const formErrors = FormValidation.validateUpdateProfile(formData);
@@ -133,6 +150,8 @@ const UpdateProfilePage = () => {
                     <UploadFile 
                         text="Upload Profile Pic"
                         accepts={["image/*"]}
+                        onSetFile={handleOnSetFile}
+                        onClearFile={handleOnClearFile}
                     />
                 </HStack>
                 
