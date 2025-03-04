@@ -38,7 +38,7 @@ const UpdateGroup = () => {
         onSetFile,
         onClearFile,
         handleSubmit,
-    } = useGroupForm(initialFormData, GroupApi.updateGroupInfo);
+    } = useGroupForm(formData, GroupApi.updateGroupInfo);
 
 
     return (

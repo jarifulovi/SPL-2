@@ -32,7 +32,7 @@ const CreateGroup = () => {
         onSetFile,
         onClearFile,
         handleSubmit,
-    } = useGroupForm(initialFormData, GroupApi.createGroup);
+    } = useGroupForm(formData, GroupApi.createGroup);
 
 
     return (

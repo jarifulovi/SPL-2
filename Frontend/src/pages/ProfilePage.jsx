@@ -22,7 +22,8 @@ const ProfilePage = () => {
       const profileData = result.data;
 
       setProfileData(profileData);
-      setImageUrl(profileData.profile.profilePicUrl);
+      setImageUrl(profileData.profile.profile_picture);
+      console.log(profileData.profile.profile_picture);
       
     } catch (error) {
       console.log(error.message);
@@ -47,7 +48,7 @@ const ProfilePage = () => {
     >
       <Box flex="1" minW="300px">
         {profileData ? (
-          <ProfilePanel profile={profileData.profile} />
+          <ProfilePanel profile={profileData.profile}/>
         ) : (
           <CustomSpinner text="Loading..." />
         )}

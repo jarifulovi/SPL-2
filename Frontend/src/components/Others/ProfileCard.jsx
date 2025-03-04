@@ -31,7 +31,7 @@ const ProfileCard = ({ profilePicUrl, user_id, name, email, bio, skills, otherUs
                 textAlign={'center'}
             >
                 
-                <CustomAvatar src={profilePicUrl}  size="3xl"/>
+                <CustomAvatar src={profilePicUrl}  size="2x1" shape='rounded'/>
                 <Heading fontSize={'2xl'} fontFamily={'body'}>
                     {name}
                 </Heading>

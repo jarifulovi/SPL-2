@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import { PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
+import { PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import storageConfig from '../storageConfig.js';
 import crypto from 'crypto';
@@ -45,35 +45,62 @@ const getFileUrl = async (key) => {
 
 
 const generateSignedUploadUrl = async (contentType, key) => {
-    const params = {
-        Bucket: process.env.S3_BUCKET_NAME,
-        Key: key,
-        ContentType: contentType,
-    };
-
-    const command = new PutObjectCommand(params);
-    const signedUrl = await getSignedUrl(storageConfig.s3Client, command, { expiresIn: 120 });
-    return signedUrl;
+    try {
+        const params = {
+            Bucket: process.env.S3_BUCKET_NAME,
+            Key: key,
+            ContentType: contentType,
+        };
+    
+        const command = new PutObjectCommand(params);
+        const signedUrl = await getSignedUrl(storageConfig.s3Client, command, { expiresIn: 120 });
+        return signedUrl;
+    } catch (error) {
+        throw new Error("Failed to generate signed URL.");
+    }
+    
 }
 
 
 const generateProfilePicUploadUrl = async (file, key) => {
-    const params = {
-        Bucket: process.env.S3_BUCKET_NAME,
-        Key: key,
-        Body: file.buffer,
-        ContentType: file.mimetype,
-    };
-
-    const command = new PutObjectCommand(params);
-    await storageConfig.s3Client.send(command);
-
-    // Return the public URL (it won’t expire)
-    const publicUrl = `https://${process.env.S3_BUCKET_NAME}.s3.amazonaws.com/${key}`;
+    try {
+        const params = {
+            Bucket: process.env.S3_BUCKET_NAME,
+            Key: key,
+            Body: file.buffer,
+            ContentType: file.mimetype,
+        };
     
-    return { publicUrl };
+        const command = new PutObjectCommand(params);
+        await storageConfig.s3Client.send(command);
+    
+        // Return the public URL (it won’t expire)
+        const encodedKey = encodeURI(key);
+        const publicUrl = `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${encodedKey}`;
+        
+        return { publicUrl };
+    } catch (error) {
+        throw new Error("Failed to upload profile picture to S3.");
+    }
+    
 };
 
+
+const deleteFileFromS3 = async (key) => {
+
+    try {
+        const params = {
+            Bucket: process.env.S3_BUCKET_NAME,
+            Key: key,
+        };
+        const command = new DeleteObjectCommand(params);
+        await storageConfig.s3Client.send(command);
+        console.log(`Deleted: ${key}`);
+    } catch (error) {
+        console.error('Error deleting file:', error.message);
+        throw error;
+    }
+};
 
 
 export default { 
@@ -81,4 +108,5 @@ export default {
     getFileUrl, 
     generateSignedUploadUrl,
     generateProfilePicUploadUrl,
+    deleteFileFromS3,
 };
