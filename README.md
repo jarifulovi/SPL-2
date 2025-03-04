@@ -1,7 +1,6 @@
 # StudySync
-# A Collaborative Group Study Platform
 
-A simple real-time chat application built using the MERN stack (MongoDB, Express.js, React.js, Node.js) with Socket.IO for real-time communication.
+A full-stack web application designed to help users collaborate and study together. It features real-time communication, secure user authentication, and cloud-based file storage, making it easy to sync study materials and sessions.
 
 ## Features
 - **Real-Time Collaboration**: Chat or sync study sessions using WebSockets.
