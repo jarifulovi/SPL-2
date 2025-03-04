@@ -28,7 +28,7 @@ A full-stack web application designed to help users collaborate and study togeth
 
 ## Project Structure
 ```
-mern-chat/
+studySync/
 ├── Backend/                  # Node.js and Express server
 │   ├── node_modules/         # Backend dependencies
 │   ├── app.js                # Main Express server file
