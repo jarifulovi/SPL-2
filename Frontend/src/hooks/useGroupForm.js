@@ -23,13 +23,13 @@ const groupTopics = [
 ];
 
 
-const useGroupForm = (initialFormData, submitCallback) => {
-    const [formData, setFormData] = useState(initialFormData);
-    const [file, setFile] = useState(null);
+const useGroupForm = (formData, setFormData, submitCallback) => {
+   
     const [errors, setErrors] = useState({});
 
     const handleChange = (e) => {
         const { name, value } = e.target;
+        
         setFormData((prevData) => ({
             ...prevData,
             [name]: value,
@@ -37,33 +37,42 @@ const useGroupForm = (initialFormData, submitCallback) => {
     };
 
     const handleRadioChange = (value) => {
-        setFormData({
-            ...formData,
+        console.log(value);
+        setFormData((prev) => ({
+            ...prev,
             group_status: value,
-        });
+        }));
     };
 
     const handleSelectType = (value) => {
         const singleValue = value[0];
-        setFormData({
-            ...formData,
+        setFormData((prev) => ({
+            ...prev,
             type: singleValue,
-        });
+        }));
     };
 
     const handleSelectTopics = (value) => {
-        setFormData({
-            ...formData,
+        setFormData((prev) => ({
+            ...prev,
             topics: value,
-        });
+        }));
     };
 
     const onSetFile = (file) => {
-        setFile(file.files[0]);
+        console.log(file.files[0]);
+        setFormData((prev) => ({
+            ...prev,
+            group_image: file.files[0],
+        }));
     };
 
     const onClearFile = () => {
-        setFile(null);
+        console.log('clear file');
+        setFormData((prev) => ({
+            ...prev,
+            group_image: null,
+        }));
     };
 
     const handleSubmit = async (e) => {
@@ -92,7 +101,6 @@ const useGroupForm = (initialFormData, submitCallback) => {
         items,
         groupTypes,
         groupTopics,
-        file,
         errors,
         handleChange,
         handleRadioChange,

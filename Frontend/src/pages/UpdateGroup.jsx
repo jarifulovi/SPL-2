@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import React from 'react';
+import React, { useState } from 'react';
 
 import GroupForm from '../components/Others/GroupForm';
 import GroupApi from '../services/GroupApi';
@@ -15,21 +15,20 @@ const UpdateGroup = () => {
     const { group_id } = location.state || {};
 
     const user_id = localStorage.getItem('user_id');
-    const formData = {
+    const [formData, setFormData] = useState({
         group_id: group_id,
         group_name: '',
         group_description: '',
         group_status: 'public',
         type: '',
         topics: [],
-        group_image: '',
-        user_id: user_id
-    };
+        group_image: null,
+        user_id: user_id,
+    });
     const {
         items,
         groupTypes,
         groupTopics,
-        file,
         errors,
         handleChange,
         handleRadioChange,
@@ -38,7 +37,7 @@ const UpdateGroup = () => {
         onSetFile,
         onClearFile,
         handleSubmit,
-    } = useGroupForm(formData, GroupApi.updateGroupInfo);
+    } = useGroupForm(formData, setFormData, GroupApi.updateGroupInfo);
 
 
     return (

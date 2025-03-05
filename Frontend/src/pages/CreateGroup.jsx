@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import GroupForm from '../components/Others/GroupForm';
 import GroupApi from '../services/GroupApi';
@@ -10,20 +10,19 @@ import useGroupForm from '../hooks/useGroupForm';
 const CreateGroup = () => {
 
     const user_id = localStorage.getItem('user_id');
-    const formData = {
+    const [formData, setFormData] = useState({
         group_name: '',
         group_description: '',
         group_status: 'public',
         type: '',
         topics: [],
-        group_image: '',
-        user_id: user_id
-    };
+        group_image: null,
+        user_id: user_id,
+    });
     const {
         items,
         groupTypes,
         groupTopics,
-        file,
         errors,
         handleChange,
         handleRadioChange,
@@ -32,13 +31,13 @@ const CreateGroup = () => {
         onSetFile,
         onClearFile,
         handleSubmit,
-    } = useGroupForm(formData, GroupApi.createGroup);
+    } = useGroupForm(formData, setFormData, GroupApi.createGroup);
 
 
     return (
         <GroupForm
             formData={formData}
-            handleSubmit={(e)=> {e.preventDefault(); console.log(file);}}
+            handleSubmit={handleSubmit}
             errors={errors}
             title="Create a new group"
             submitText="Create Group"

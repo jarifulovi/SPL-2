@@ -80,6 +80,7 @@ const generateProfilePicUploadUrl = async (file, key) => {
         
         return { publicUrl };
     } catch (error) {
+        console.log('error', error);
         throw new Error("Failed to upload profile picture to S3.");
     }
     

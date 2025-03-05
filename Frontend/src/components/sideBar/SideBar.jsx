@@ -22,6 +22,7 @@ import { FaUserCircle } from 'react-icons/fa';
 import MenuButton from '../Buttons/MenuButton';
 
 import NotificationApi from '../../services/NotificationApi';
+import ProfileApi from '../../services/ProfileApi';
 import { SocketContext } from '../../utils/SocketContext';
 
 
@@ -33,12 +34,15 @@ const SideBar = () => {
 
   const { onEvent, offEvent, emitEvent } = useContext(SocketContext);
   const [ notifications, setNotifications ] = useState([]);
+  const [ profilePicUrl, setProfilePicUrl ] = useState('');
   
 
 
   const fetchNotifications = async () => {
     try {
       const response = await NotificationApi.fetchNotifications(user_id);
+      const result = await ProfileApi.getOwnProfileData(user_id);
+      setProfilePicUrl(result.data.profile.profile_picture);
       setNotifications(response.data);
       console.log('Notifications:', notifications);
     } catch (error) {
@@ -75,8 +79,6 @@ const SideBar = () => {
     navigate(path);
   }
 
-  const profilePicUrl = "https://gratisography.com/wp-content/uploads/2024/11/gratisography-augmented-reality-1170x780.jpg";
-  
 
   return (
 

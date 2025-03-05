@@ -29,8 +29,8 @@ router.put('/updateProfile', upload.single("profile_picture"), async (req, res) 
         }
     }
 
-    await RouterUtils.handleBasicRequest(req, res, () => 
-        new UserProfileService().updateProfile(profileData)
+    await RouterUtils.handleBasicRequest(req, res, async () => 
+        await new UserProfileService().updateProfile(profileData)
     );
 });
 
