@@ -20,7 +20,7 @@ const ChatSchema = new Schema({
   },
   content: { type: String }, 
   sender: { type: String, ref: 'User', required: true },
-  file: { type: String }, 
+  file_id: { type: String, ref: 'File' }, 
   group_id: { type: String, ref: 'Group', required: true },
   send_at: { type: Date, default: Date.now }
 });

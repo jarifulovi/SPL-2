@@ -4,6 +4,7 @@ import FileService from '../classes/FileService.js';
 import FileUtils from '../utils/FileUtils.js';
 import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
+import { resourceLimits } from 'worker_threads';
 
 
 const router = express.Router();
@@ -36,22 +37,22 @@ router.post('/uploadFile', upload.single('file'), async (req, res) => {
        
         fs.unlinkSync(file.path);
         const fileHandler = new FileService(user_id);
-        const isUploadedNeeded = await fileHandler.uploadAndCheckFile(fileMetadata, group_id);
+        const result = await fileHandler.uploadAndCheckFile(fileMetadata, group_id);
 
-        if (isUploadedNeeded) {
+        if (result.isUploaded) {
             // store in storage
             const signedUrl = await FileUtils.generateSignedUploadUrl(file.mimetype, file_key); 
             return res.status(201).json({
                 success: true,
                 message: 'File uploaded successfully and stored.',
-                data: { signedUrl, file_key },
+                data: { signedUrl, file_key, file_id: result.file.file_id },
                 isUploaded: true
             });
         } else {
             return res.status(201).json({
                 success: true,
                 message: 'File uploaded successfully and stored.',
-                data: { file_key },
+                data: { file_key, file_id: result.file.file_id },
                 isUploaded: false
             });
         }

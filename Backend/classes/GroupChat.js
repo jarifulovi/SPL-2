@@ -33,6 +33,12 @@ class GroupChat {
                 chatData.topic = topic;
                 chatData.discussionStatus = discussionStatus;
             }
+            if(type === 'files'){
+                if(!additionalFields.file_id){
+                    throw new Error('Missing required fields for files');
+                }
+                chatData.file_id = additionalFields.file_id;
+            }
     
             const newChat = new Chat(chatData);
             const savedChat = await newChat.save();

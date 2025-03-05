@@ -39,10 +39,30 @@ async function postDiscussion(io, group_id, sender, content, topic, discussionSt
     }
 }
 
+async function postFile(io, group_id, sender, content, file_id) {
+    try {
+        
+        const groupChat = new GroupChat(group_id);
+        const savedMessage = await groupChat.postMessage(sender, content, 'files', { file_id });
+
+        io.to(group_id).emit('chatMessage', savedMessage);
+
+    } catch (error) {
+        console.error('Error storing or emitting message:', error.message);
+
+        // Optionally, send an error event back to the sender
+        socket.emit('error', {
+            success: false,
+            message: error.message || 'Failed to send message',
+        });
+    }
+}
+
 
 
 export default {
     postMessage,
     postDiscussion,
+    postFile,
 }
 

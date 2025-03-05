@@ -47,7 +47,8 @@ const SetupSocket = (io) => {
         // File has file metadata
         socket.on('fileUploaded', async (group_id, sender, file, sender_name, group_name) => {
             
-            io.to(group_id).emit('fileUploaded', file);
+            const content = file.file_description || `file upload: ${file.file_name}`;
+            await ChatUtils.postFile(io, group_id, sender, content, file.file_id);
             
             const memberIds = await GroupMemberUtils.retrieveGroupMemberIds(group_id);
             const notificationContent = `${sender_name} shared a file ${file.file_name} in ${group_name}`;

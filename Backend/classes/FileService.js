@@ -54,12 +54,12 @@ class FileService {
             if (existingFile) {
                 file.file_key = existingFile.file_key;
                 await this.uploadRepoFile(file, group_id);
-                return false;
+                return { isUploaded: false, file: existingFile };
             }
 
             
-            await this.uploadRepoFile(file, group_id);
-            return true;
+            const newFile = await this.uploadRepoFile(file, group_id);
+            return { isUploaded: true, file: newFile };
         } catch (error) {
             throw new Error(`Error during file upload: ${error.message}`);
         }

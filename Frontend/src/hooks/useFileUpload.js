@@ -55,8 +55,9 @@ const useFileUpload = () => {
     setFileDescription('');
   };
 
-  const emitFileUploaded = (group) => {
+  const emitFileUploaded = (group, file_id) => {
     const fileMetadata = {
+      file_id: file_id,
       file_name: file.files[0].name,
       file_description: fileDescription,
       file_type: file.files[0].type,
@@ -71,9 +72,10 @@ const useFileUpload = () => {
     if (file && group) {
       setFile(null);
       setFileDescription('');
+      let result = null;
 
       try {
-        const result = await FileApi.uploadFile(file.files[0], user_id, group.group_id);
+        result = await FileApi.uploadFile(file.files[0], user_id, group.group_id);
         
         if (result.success) {
           if(result.isUploaded) {
@@ -105,8 +107,8 @@ const useFileUpload = () => {
           type: 'error',
         });
       }
+      emitFileUploaded(group, result.data.file_id);
     }
-    emitFileUploaded(group);
   };
 
 
