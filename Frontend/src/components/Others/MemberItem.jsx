@@ -39,7 +39,7 @@ const MemberItem = ({ member = {} }) => {
       _hover={{ bg: gradientColor}}
     >
       <HStack p={2}>
-        <CustomAvatar size="sm" src={member.profile_pic}/>
+        <CustomAvatar size="sm" src={member.profile_picture}/>
         <Text fontWeight="semibold">{member.name}</Text>
         {member?.role === 'admin' && <Badge>Admin</Badge>}
 

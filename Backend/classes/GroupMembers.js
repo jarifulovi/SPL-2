@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import User from "../models/User.js";
 import Group from "../models/Group.js";
 import UserGroup from "../models/UserGroup.js";
+import Profile from "../models/Profile.js";
 
 class GroupMembers {
     constructor(group_id) {
@@ -189,14 +190,17 @@ class GroupMembers {
 
             // Fetch user details (name, email) for all user IDs
             const users = await User.find({ user_id: { $in: userIds } }, 'user_id name email -_id');
-            
+            const profile_pictures = await Profile.find({ user_id: { $in: userIds } }, 'user_id profile_picture -_id');
+
             const data = members.map(member => {
                 const user = users.find(u => u.user_id === member.user_id);
+                const profile = profile_pictures.find(p => p.user_id === member.user_id);
                 return {
                     user_id: member.user_id,
                     role: member.role,
                     name: user ? user.name : 'N/A',
-                    email: user ? user.email : 'N/A'
+                    email: user ? user.email : 'N/A',
+                    profile_picture: profile ? profile.profile_picture : 'N/A'
                 };
             });
             
