@@ -1,6 +1,5 @@
 import User from "../models/User.js";
 import Profile from "../models/Profile.js";
-import ProfileClass from "./ProfileClass.js";
 
 class UserProfileService {
 
