@@ -26,22 +26,7 @@ class FileService {
         }
       }
 
-    retrieveUserProfilePic() {
-        // retrieve profile pic url from userProfile
-        // sends the singned url
-    }
 
-    uploadProfilePic() {
-        
-    }
-
-    retrieveGroupProfilePic() {
-        // retrieve profile pic from group
-    }
-
-    uploadGroupProfilePic() {
-
-    }
 
     
     
