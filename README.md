@@ -16,7 +16,6 @@ A full-stack web application designed to help users collaborate and study togeth
 - **MongoDB (Mongoose)**: Database for storing user data and resources.
 - **AWS S3**: Cloud storage for files.
 - **Socket.io**: Real-time communication.
-- **JWT & bcryptjs**: Authentication and security.
 - **Dependencies**: See [Backend/package.json](Backend/package.json).
 
 ### Frontend
