@@ -45,11 +45,11 @@ const NavBar = ({ profilePicUrl, notifications = [] }) => {
             <FiAlignJustify />
           </IconButton>
         </DrawerTrigger>
-
+<Button height="100%" width="100%" onClick={() => navigateTo("/")}>
         <Text textStyle="3xl" fontWeight="bold">
           Study Sync
         </Text>
-
+</Button>
         <PopOver trigger={<IconButton><IoIosArrowDropdown/></IconButton>}>
           <Button width="90%" onClick={() => navigateTo("/createGroup")}>Create Group</Button>
           <Button width="90%" onClick={() => navigateTo("/")}>Search Group</Button>
