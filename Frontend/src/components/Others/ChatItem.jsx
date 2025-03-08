@@ -1,16 +1,20 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Text, HStack, VStack, Spacer, Button, Icon } from '@chakra-ui/react';
-import { CiFileOn } from "react-icons/ci";
 import { useColorModeValue } from '../ui/color-mode';
+import { toaster } from '../ui/toaster';
 
-// fetch the file using message.file_id
-// display file name, size, mimetype, date
-// attack two buttons, save and view
-// save will save the file in user repo
-// view will ope the file in new tab
+import FileApi from '../../services/FileApi';
 
 
-const FileChatItem = ({ message, backgroundColor, contentColor, handleSave, handleView }) => {
+
+const FileChatItem = ({ 
+  message, 
+  backgroundColor, 
+  contentColor, 
+  handleSave, 
+  handleView,
+  file,
+}) => {
   return (
     <Box
       p={3}
@@ -25,10 +29,10 @@ const FileChatItem = ({ message, backgroundColor, contentColor, handleSave, hand
         
         <VStack align="start" spacing={0} flex={1}>
           <Text fontWeight="bold" color={contentColor} fontSize="sm" noOfLines={1}>
-            {'message.file_name'}
+            {file.file_name}
           </Text>
           <Text color={contentColor} fontSize="xs">
-            {'message.size'} - {'message.mimetype'}
+            {file.file_size}{'byte'} - {file.file_type}
           </Text>
         </VStack>
       </HStack>
@@ -55,6 +59,7 @@ const ChatItem = ({ message, groupMembersMap }) => {
 
   const user_id = localStorage.getItem('user_id');
   const isUserMessage = message.sender === user_id;
+  const [file, setFile] = useState({});
 
   const formatContent = (content) => {
     const userIdRegex = /\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\b/g;
@@ -67,14 +72,68 @@ const ChatItem = ({ message, groupMembersMap }) => {
     return `${messageDate.getHours()}:${messageDate.getMinutes()} ${messageDate.toLocaleDateString()}`;
   };
 
-  const handleSave = () => {
-    // Implement save logic here
-    console.log('Save file');
+
+  useEffect(() => {
+    
+    const fetchFile = async () => {
+      if(!message.file_id) return;
+      const result = await FileApi.retrieveFile(message.file_id);
+      if(result.success) {
+        setFile(result.data.file);
+        //console.log(result.data.file);
+      }
+      else {
+        toaster.create({
+          type: 'error',
+          description: result.message || 'Error fetching file data'
+        });
+      }
+    }
+
+    fetchFile();
+    
+  }, [message.file_id]);
+
+  const handleSave = async () => {
+    
+    if(!message.file_id) {
+      console.log('No file id');
+      return;
+    }
+    try {
+      const result = await FileApi.retrieveFile(message.file_id);
+      const result2 = await FileApi.saveFile(user_id, result.data.file);
+      
+      if(result2.success) {
+        toaster.create({
+          type: 'success',
+          description: 'File saved successfully.',
+        });
+      } else {
+        toaster.create({
+          type: 'error',
+          description: result2.message,
+        });
+      }
+    } catch (error) {
+      toaster.create({
+        type: 'error',
+        description: error.message,
+      });
+    }
+    
   };
 
-  const handleView = () => {
-    // Implement view logic here
-    // window.open(message.file_url, '_blank');
+  const handleView = async () => {
+    if(!message.file_id) {
+      console.log('No file id');
+      return;
+    }
+    const result = await FileApi.getFileUrl(message.file_id);
+    const url = result.data.fileUrl;
+    console.log(result.data.fileUrl);
+    window.open(url, '_blank');
+    
   };
 
   const senderColor = useColorModeValue('black', 'gray.200');  
@@ -110,6 +169,7 @@ const ChatItem = ({ message, groupMembersMap }) => {
             contentColor={contentColor} 
             handleSave={handleSave} 
             handleView={handleView} 
+            file={file}
           />
         ) : (
           <Text fontWeight="bold" color={contentColor} fontSize="sm" mt={1}>

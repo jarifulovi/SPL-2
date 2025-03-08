@@ -7,6 +7,7 @@ import { toaster } from '../ui/toaster';
 
 import PopOver from '../Buttons/PopOver';
 import DropDown from '../Buttons/DropDown';
+import CustomAvatar from './CustomAvatar';
 
 import GroupMemberApi from '../../services/GroupMemberApi';
 
@@ -23,7 +24,6 @@ const GroupItem = ({ group, selectedGroup, onSelectGroup, isAdmin = false }) => 
   const user_id = localStorage.getItem('user_id');
 
   const navigate = useNavigate();
-
 
   const handleGroupDetails = () => {
     navigate("/groupDetails", {
@@ -82,6 +82,10 @@ const GroupItem = ({ group, selectedGroup, onSelectGroup, isAdmin = false }) => 
       _hover={{ bg: gradientColor}}
     >
       <HStack p={2}>
+        <CustomAvatar
+          src={group.group_image}
+          size='sm'
+        />
         <Text   fontWeight="semibold" color={contentColor}>{group.group_name}</Text>
         <Spacer></Spacer>
 

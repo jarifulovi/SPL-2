@@ -13,11 +13,11 @@ class FileService {
         return files;
     }
 
-    async retrieveFileKey(file_id) {
+    async retrieveFile(file_id) {
         try {
           const file = await File.findOne({ file_id });
           if (file) { 
-            return file.file_key;
+            return file;
           } else {
             throw new Error("File not found.");
           }
@@ -76,30 +76,43 @@ class FileService {
     }
 
     // Always duplicate, uploader : who uploaded first ( not user_id )
-    async saveFile(file, uploader, group_id) {
-        if (!file || !file.file_name || !file.file_type || !file.file_size || !file.file_key || !file.file_hash) {
-            throw new Error("Invalid file data.");
-        }
+    async saveFile(file) {
 
         try {
+
+            if (!file || !file.file_name || !file.file_type || !file.file_size || !file.file_key || !file.file_hash || !file.group_id || !file.uploaded_by) {
+                throw new Error("Invalid file data.");
+            }
+    
+            
+            const existingFile = await this.isFileAlreadySaved(file.file_hash);
+            if(existingFile) {
+                throw new Error('File already exists in you repository.');
+            }
+
+
             const newFile = new File({
                 file_name: file.file_name,
                 file_type: file.file_type,
                 file_size: file.file_size,
                 file_key: file.file_key,
                 file_hash: file.file_hash,
-                uploaded_by: uploader,
-                group_id: group_id,
+                uploaded_by: file.uploaded_by,
+                group_id: file.group_id,
                 user_id: this.user_id
             });
 
             await newFile.save();
             return newFile;
         } catch (error) {
-            throw new Error("Error saving file to database.");
+            throw new Error(error.message || "Error saving file to database.");
         }
     }
 
+    async isFileAlreadySaved(hash) {
+        return await File.findOne({ file_hash: hash, user_id: this.user_id });
+    }
+    
     
     async isFileAlreadyUploaded(hash) {
         return await File.findOne({ file_hash: hash });

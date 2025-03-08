@@ -5,6 +5,11 @@ const retrieveAllFile = async (user_id) => {
     return await Fetch.fetchData(Fetch.baseUrl + '/retrieveAllFiles', 'POST', { user_id });
 };
 
+const retrieveFile = async (file_id) => {
+    return await Fetch.fetchData(Fetch.baseUrl + '/retrieveFile', 'POST', { file_id });
+}
+
+
 const uploadFile = async (file, user_id, group_id) => {
     const formData = new FormData();
     formData.append('file', file);
@@ -22,11 +27,17 @@ const getFileUrl = async (file_id) => {
     return await Fetch.fetchData(Fetch.baseUrl + '/getFileUrl', 'POST', { file_id });
 };
 
+const saveFile = async (user_id, file) => {
+    return await Fetch.fetchData(Fetch.baseUrl + '/saveFile', 'POST', { user_id, file });
+};
+
 
 
 export default {
     retrieveAllFile,
+    retrieveFile,
     uploadFile,
     getFileUrl,
     uploadToAws,
+    saveFile,
 };

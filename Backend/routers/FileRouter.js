@@ -4,8 +4,6 @@ import FileService from '../classes/FileService.js';
 import FileUtils from '../utils/FileUtils.js';
 import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
-import { resourceLimits } from 'worker_threads';
-
 
 const router = express.Router();
 const storage = multer.diskStorage({
@@ -14,7 +12,6 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage });
-
 
 router.post('/uploadFile', upload.single('file'), async (req, res) => {
     try {
@@ -64,14 +61,34 @@ router.post('/uploadFile', upload.single('file'), async (req, res) => {
     }
 });
 
+router.post('/saveFile', async (req, res) => {
+    try {
+        const { user_id, file } = req.body;
+
+        const fileService = new FileService(user_id);
+        await fileService.saveFile(file);
+        
+        return res.status(200).json({
+            success: true,
+            message: 'File saved successfully.',
+        });
+    } catch (error) {
+        console.error('Error saving file:', error.message);
+        return res.status(400).json({
+            success: false,
+            message: `${error.message}`
+        });
+    }
+});
+
 router.post('/getFileUrl', async (req, res) => {
     try {
         const { file_id } = req.body;
         
 
         const fileService = new FileService();
-        const file_key = await fileService.retrieveFileKey(file_id); // Also check if file exists
-        const fileUrl = await FileUtils.getFileUrl(file_key);
+        const retrievedFile = await fileService.retrieveFile(file_id); // Also check if file exists
+        const fileUrl = await FileUtils.getFileUrl(retrievedFile.file_key);
         return res.status(200).json({
             success: true,
             message: 'File URL generated successfully.',
@@ -81,6 +98,25 @@ router.post('/getFileUrl', async (req, res) => {
         return res.status(400).json({
             success: false,
             message: `Error generating file URL: ${error.message}`
+        });
+    }
+});
+
+
+router.post('/retrieveFile', async (req, res) => {
+    try {
+        const { file_id } = req.body;
+        const fileService = new FileService();
+        const file = await fileService.retrieveFile(file_id);
+        return res.status(200).json({
+            success: true,
+            message: 'File retrieved successfully.',
+            data: { file }
+        });
+    } catch (error) {
+        return res.status(400).json({
+            success: false,
+            message: `Error retrieving file: ${error.message}`
         });
     }
 });
