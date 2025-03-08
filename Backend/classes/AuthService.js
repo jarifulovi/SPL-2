@@ -1,7 +1,6 @@
 import User from "../models/User.js";
 import PasswordService from "./PasswordService.js";
 import SessionService from "./SessionService.js";
-import UserClass from "./User.js";
 import UserProfileService from "./UserProfileService.js";
 import UserService from "./UserService.js";
 import EmailUtils from '../utils/EmailUtils.js';
