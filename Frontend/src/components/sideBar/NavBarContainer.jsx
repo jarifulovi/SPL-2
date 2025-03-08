@@ -1,10 +1,14 @@
 import { Box, Flex } from '@chakra-ui/react';
+import { useColorModeValue } from '../ui/color-mode';
 
 
 
 const NavBarContainer = ({ children }) => {
+    const bgColor = useColorModeValue('gray.100', 'gray.900');
+
     return (
         <Box 
+            bg={bgColor}
             as="nav" 
             p={4} 
             boxShadow="md" 

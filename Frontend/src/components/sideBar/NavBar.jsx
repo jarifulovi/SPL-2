@@ -12,6 +12,7 @@ import { IoMdNotificationsOutline } from "react-icons/io";
 import CustomAvatar from '../Others/CustomAvatar';
 import NotificationItem from '../Others/NotificationItem';
 import NavBarContainer from './NavBarContainer';
+import StudySyncText from '../Fragments/StudySyncText';
 
 import AuthApi from '../../services/AuthApi';
 import { SocketContext } from '../../utils/SocketContext';
@@ -45,11 +46,12 @@ const NavBar = ({ profilePicUrl, notifications = [] }) => {
             <FiAlignJustify />
           </IconButton>
         </DrawerTrigger>
-<Button height="100%" width="100%" onClick={() => navigateTo("/")}>
-        <Text textStyle="3xl" fontWeight="bold">
-          Study Sync
-        </Text>
-</Button>
+        <Button 
+          onClick={() => navigateTo("/")} bg="transparent"
+        >
+          <StudySyncText />
+        </Button>
+
         <PopOver trigger={<IconButton><IoIosArrowDropdown/></IconButton>}>
           <Button width="90%" onClick={() => navigateTo("/createGroup")}>Create Group</Button>
           <Button width="90%" onClick={() => navigateTo("/")}>Search Group</Button>

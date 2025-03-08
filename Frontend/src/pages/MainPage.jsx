@@ -93,7 +93,7 @@ const MainPage = () => {
             <Link
               variant="plain"
               fontWeight="bold"
-              href="#"
+              href="/createGroup"
               colorPalette="teal"
             >
               Create Group

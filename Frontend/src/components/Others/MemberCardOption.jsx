@@ -19,13 +19,13 @@ const MemberCardOption = ({ member, onMakeAdmin, onRemoveMember }) => {
         </Box>
         <HStack spacing={2}>
           <CustomDialog 
-            triggerButton={<Button>Make Admin</Button>}
+            triggerButton={<Button colorPalette='blue'>Make Admin</Button>}
             dialogTitle="Confirm Admin Role"
             dialogBody="Are you sure you want to make this user an admin?"
             onConfirm={onMakeAdmin}
           />
           <CustomDialog
-            triggerButton={<IconButton><IoPersonRemoveSharp /></IconButton>}
+            triggerButton={<IconButton colorPalette='purple'><IoPersonRemoveSharp /></IconButton>}
             dialogTitle="Confirm remove member"
             dialogBody={`Are you sure you want to remove ${member.name} from the group?`}
             onConfirm={onRemoveMember}

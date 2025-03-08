@@ -110,7 +110,7 @@ const RegistrationPageNew = () => {
                 />
 
                 
-                <Button type="submit" colorScheme="blue" width="full">
+                <Button type="submit" colorPalette="blue" width="full">
                     Sign Up
                 </Button>
 

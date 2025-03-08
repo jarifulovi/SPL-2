@@ -86,7 +86,7 @@ const ChangePasswordPage = () => {
                     onChange={handleChange}
                 />
 
-                <Button type="submit" colorScheme="blue" width="full">
+                <Button type="submit" colorPalette="blue" width="full">
                     Update
                 </Button>
             </VStack>

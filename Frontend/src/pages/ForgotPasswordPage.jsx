@@ -14,6 +14,7 @@ import { toaster } from '../components/ui/toaster';
 import ColorModeToggle from '../components/Buttons/ColorModeToggle';
 import CustomFormInput from '../components/Auth/CustomFormInput';
 import AuthFlexContainer from '../components/Auth/AuthFlexContainer';
+import StudySyncText from '../components/Fragments/StudySyncText';
 
 import FormValidation from '../utils/FormValidation';
 import AuthApi from '../services/AuthApi';
@@ -64,7 +65,7 @@ const ForgotPasswordPage = () => {
 
     return (
         <AuthFlexContainer>
-            <Heading mb="4" textAlign='center'>Study Sync</Heading>
+            <StudySyncText />
             <Heading mb="4" textAlign='center'>Forgot Password</Heading>
             
             <VStack as="form" spacing="4" onSubmit={handleSubmit}>
@@ -78,7 +79,7 @@ const ForgotPasswordPage = () => {
                     type="email"
                 />
                 
-                <Button type="submit" colorScheme="blue" width="full">
+                <Button type="submit" colorPalette="blue" width="full">
                     Send Reset Link
                 </Button>
 

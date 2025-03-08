@@ -11,6 +11,7 @@ import CustomSelect from '../Buttons/CustomSelect';
 import AuthFlexContainer from '../Auth/AuthFlexContainer';
 import RadioButton from '../Buttons/RadioButton';
 import UploadFile from '../Others/UploadFile';
+import StudySyncText from '../Fragments/StudySyncText';
 
 
 const GroupForm = ({ 
@@ -34,7 +35,7 @@ const GroupForm = ({
 
     return (
         <AuthFlexContainer>
-            <Heading mb="4" textAlign='center'>Study Sync</Heading>
+            <StudySyncText />
             <Heading mb="4" textAlign='center'>{title}</Heading>
 
             <VStack as="form" spacing="4" onSubmit={handleSubmit}>
@@ -82,7 +83,7 @@ const GroupForm = ({
                     onClearFile={onClearFile}
                 />
 
-                <Button type="submit" colorScheme="blue" width="full">
+                <Button type="submit" colorPalette="blue" width="full">
                     {submitText}
                 </Button>
             </VStack>

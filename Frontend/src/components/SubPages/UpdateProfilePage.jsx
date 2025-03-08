@@ -157,7 +157,7 @@ const UpdateProfilePage = () => {
                 
 
 
-                <Button type="submit" colorScheme="blue" width="full">
+                <Button type="submit" colorPalette="blue" width="full">
                     Update Profile
                 </Button>
             </VStack>

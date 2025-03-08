@@ -265,7 +265,11 @@ const GroupOptions = () => {
             </Text>
             {/* Update/Delete content */}
             <VStack align="start" spacing={3}>
-              <Button width="100%" onClick={() => navigate("/updateGroup",{ state: {group_id} })}>Update Group</Button>
+              <Button 
+                width="100%" 
+                onClick={() => navigate("/updateGroup",{ state: {group_id} })} 
+                colorPalette='teal'
+              >Update Group</Button>
               <Input
                 width="100%"
                 placeholder="Enter user ID"
@@ -275,10 +279,11 @@ const GroupOptions = () => {
               <Button 
                 width="100%" 
                 onClick={() => performWithValidation(() => handleInvite())}
+                colorPalette='teal'
               >Invite Member
               </Button>
               <CustomDialog 
-                triggerButton={<Button width="100%">Delete Group</Button>}
+                triggerButton={<Button width="100%" colorPalette='teal'>Delete Group</Button>}
                 dialogTitle="Group Deletion"
                 dialogBody="Are you sure you want to delete this group"
                 onConfirm={() => performWithValidation(() => handleDeleteGroup(group_id, navigate))}
@@ -288,16 +293,7 @@ const GroupOptions = () => {
           </Box>
 
           {/* Lower Right - Basic Settings */}
-          <Box p={4} borderRadius="md" mt={4} bg={containerColor}>
-            <Text fontSize="xl" fontWeight="bold" mb={4}>
-              Basic Settings
-            </Text>
-            {/* Basic settings content */}
-            <VStack align="start" spacing={3}>
-              <Button width="100%">Configure Notifications</Button>
-              <Button width="100%">Security Settings</Button>
-            </VStack>
-          </Box>
+          
         </Flex>
       </Box>
     </Flex>

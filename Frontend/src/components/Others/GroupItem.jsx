@@ -42,9 +42,6 @@ const GroupItem = ({ group, selectedGroup, onSelectGroup, isAdmin = false }) => 
     });
   };
 
-  const handleGroupSettings = () => {
-    // if any func remains for group
-  }
 
   const handleLeaveGroup = async () => {
     console.log('leave');
@@ -65,14 +62,12 @@ const GroupItem = ({ group, selectedGroup, onSelectGroup, isAdmin = false }) => 
 
   const menuItems = [
     { value: "details", label: "Details", onClick: handleGroupDetails },
-    { value: "settings", label: "Settings", onClick: ()=>{console.log('settings');} },
     { value: "leave", label: "Leave Group", onClick: handleLeaveGroup, isDanger: true },
   ];
   
   const menuItemForAdmin = [
     { value: "details", label: "Details", onClick: handleGroupDetails },
     { value: "options", label: "Options", onClick: handleGroupOptions },
-    { value: "settings", label: "Settings", onClick: ()=>{console.log('settings');} },
   ]
   
 

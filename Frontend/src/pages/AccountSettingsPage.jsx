@@ -25,10 +25,10 @@ const AccountSettingsPage = () => {
       {/* Left Sidebar */}
       <Box w="20%" p={4} m={4} h="100%">
         <VStack align="start" spacing={4}>
-          <Button onClick={() => setActiveComponent('profile')} w="100%">
+          <Button onClick={() => setActiveComponent('profile')} colorPalette='purple' w="100%">
             Update Profile
           </Button>
-          <Button onClick={() => setActiveComponent('password')} w="100%">
+          <Button onClick={() => setActiveComponent('password')} colorPalette='pink' w="100%">
             Change Password
           </Button>
           {/* Add more buttons here */}
