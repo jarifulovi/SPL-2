@@ -7,10 +7,10 @@ import useFileRetrieve from '../../hooks/useFileRetrieve';
 
 
 const formatFileSize = (size) => {
-    if (size < 1000) {
-        return `${size} KB`;
+    if (size < 1024) {
+        return `${size} bytes`;
     } else {
-        return `${(size / 1000).toFixed(2)} MB`;
+        return `${(size / 1024).toFixed(2)} KB`;
     }
 };
 

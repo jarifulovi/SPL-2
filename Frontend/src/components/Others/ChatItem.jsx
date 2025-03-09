@@ -32,7 +32,9 @@ const FileChatItem = ({
             {file.file_name}
           </Text>
           <Text color={contentColor} fontSize="xs">
-            {file.file_size}{'byte'} - {file.file_type}
+            {file.file_size < 1024 ? `${file.file_size} Bytes` 
+            : `${(file.file_size / 1024).toFixed(2)} KB`} - {file.file_type}
+
           </Text>
         </VStack>
       </HStack>
