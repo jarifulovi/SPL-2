@@ -1,5 +1,5 @@
 import express from 'express';
-import AuthService from '../classes/AuthService.js';
+import * as AuthService from '../classes/AuthService.js';
 
 const router = express.Router();
 
@@ -17,8 +17,7 @@ router.post('/isAuthenticated', async (req, res) => {
             });
         }
 
-        const authService = new AuthService();
-        await authService.isAuthenticated(email, sessionToken);
+        await AuthService.isAuthenticated(email, sessionToken);
         
 
         res.status(201).json({
@@ -37,8 +36,7 @@ router.post('/isAuthenticated', async (req, res) => {
 router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
-        const authService = new AuthService();
-        const result = await authService.login(email, password);
+        const result = await AuthService.login(email, password);
         const { sessionToken, user_id, name } = result;
 
 
@@ -66,13 +64,11 @@ router.post('/login', async (req, res) => {
 router.post('/register', async (req, res) => {
     try {
         const { name, email, password } = req.body;
-        const authService = new AuthService();
-        const result = await authService.register(name, email, password);
+        await AuthService.register(name, email, password);
 
         res.status(201).json({
             success: true,
-            message: 'User registered successfully',
-            data: result
+            message: 'User registered successfully'
         });
 
     } catch (error) {
@@ -87,8 +83,7 @@ router.post('/register', async (req, res) => {
 router.post('/logout', async (req, res) => {
     try {
         const { email } = req.body;
-        const authService = new AuthService();
-        await authService.logOut(email); 
+        await AuthService.logOut(email); 
 
         res.clearCookie('sessionToken', {
             httpOnly: true,
@@ -113,8 +108,7 @@ router.post('/logout', async (req, res) => {
 router.post("/updatePassword", async (req, res) => {
     try {
         const { email, old_password, new_password } = req.body;
-        const authService = new AuthService();
-        await authService.updatePassword(email, old_password, new_password);
+        await AuthService.updatePassword(email, old_password, new_password);
 
         res.status(201).json({
             success: true,
@@ -132,8 +126,7 @@ router.post("/updatePassword", async (req, res) => {
 router.post('/forgotPassword', async (req, res) => {
     try {
         const { email } = req.body;
-        const authService = new AuthService();
-        await authService.forgotPassword(email);
+        await AuthService.forgotPassword(email);
 
         res.status(201).json({
             success: true,
@@ -160,8 +153,7 @@ router.post('/resetPassword', async (req, res) => {
             });
         }
 
-        const authService = new AuthService();
-        await authService.resetPassword(email, newPassword, token);
+        await AuthService.resetPassword(email, newPassword, token);
 
         res.status(201).json({
             success: true,
