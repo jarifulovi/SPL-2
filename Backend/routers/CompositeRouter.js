@@ -1,4 +1,5 @@
 import express from 'express';
+import * as GroupService from '../classes/GroupService.js';
 import * as GroupMembers from '../classes/GroupMembers.js';
 import * as UserService from '../classes/UserService.js';
 import * as FileService from '../classes/FileService.js';
@@ -22,9 +23,10 @@ router.post('/loadGroupDetails', async (req, res) => {
         const groupMembers = await GroupMembers.retrieveAllGroupMembers(group.group_id);
         const creator = await UserService.getUserById(group.created_by);
         if (!creator) {
-            return res.status(404).json({
-                success: false,
+            return res.status(200).json({
+                success: true,
                 message: 'Group creator not found',
+                data: [],
             });
         }
 
@@ -55,18 +57,45 @@ router.post('/retrieveAllFiles', async (req, res) => {
         const { user_id } = req.body;
 
         const allFiles = await FileService.retrieveAllUserRepoFile(user_id);
-        // needs uploaded_by name, group name
-        // uploader profile picture
-        const data = {
-            allFiles,
-        };
-
-        if (!allFiles) {
-            return res.status(404).json({
+        if (!allFiles || allFiles.length === 0) {
+            return res.status(200).json({
                 success: true,
                 message: 'No file found',
+                data: [],
             });
         }
+
+        const userIds = allFiles.map(file => file.uploaded_by);
+        const groupIds = allFiles.map(file => file.group_id);
+
+        const uploaders = await UserService.getUsersByIds(userIds);
+        const groups = await GroupService.getGroupsByIds(groupIds);
+
+        const uploadersMap = new Map();
+        const groupsMap = new Map();
+
+        uploaders.forEach(uploader => {
+            uploadersMap.set(uploader.user_id, uploader);
+        });
+
+        groups.forEach(group => {
+            groupsMap.set(group.group_id, group);
+        });
+
+        // preserve duplicates
+        const filesWithUploadersAndGroups = allFiles.map(file => {
+            return {
+                ...file.toObject ? file.toObject() : file,
+                uploader: uploadersMap.get(file.uploaded_by) || null,
+                group: groupsMap.get(file.group_id) || null,
+            };
+        });
+
+        const data = {
+            allFiles: filesWithUploadersAndGroups,
+        };
+        
+        
         res.status(200).json({
             success: true,
             message: 'All files loaded successfully',

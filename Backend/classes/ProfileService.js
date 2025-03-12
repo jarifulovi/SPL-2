@@ -1,12 +1,17 @@
-import User from "../models/User.js";
 import Profile from "../models/Profile.js";
+import * as UserService from "../classes/UserService.js";
 
-export async function doesUserExist(user_id) {
-    return User.exists({ user_id });
+
+export async function getProfileById(user_id) {
+    return await Profile.findOne({ user_id });
 }
 
-export async function doesProfileExist(user_id) {
-    return Profile.exists({ user_id });
+export async function getProfilesByIds(user_ids) {
+    return await Profile.find({ user_id: { $in: user_ids } });
+}
+
+export async function isProfileExists(user_id) {
+    return await Profile.exists({ user_id });
 }
 
 export function validateUpdateFields(updateFields) {
@@ -19,15 +24,15 @@ export function validateUpdateFields(updateFields) {
 export async function createProfile(email) {
     try {
         // Retrieve the User document by email
-        const user = await User.findOne({ email });
+        const user = await UserService.getUserByEmail(email);
         if (!user) {
             throw new Error("User does not exist. Cannot create profile.");
         }
 
         const user_id = user.user_id;
 
-        // Check if the profile already exists
-        if (await doesProfileExist(user_id)) {
+        
+        if (await isProfileExists(user_id)) {
             throw new Error("Profile already exists for this user.");
         }
 
@@ -48,8 +53,8 @@ export async function createProfile(email) {
 
 export async function updateProfile(profileData) {
     try {
-        // Check if the profile exists
-        if (!(await doesProfileExist(profileData.user_id))) {
+        
+        if (!(await isProfileExists(profileData.user_id))) {
             throw new Error("Profile does not exist. Cannot update.");
         }
 
@@ -76,14 +81,14 @@ export async function updateProfile(profileData) {
 export async function getProfileInfo(userId, currentUserId) {
     try {
         // Fetch the basic user details
-        const user = await User.findOne({ user_id: userId }, { user_id: 1, name: 1, email: 1 });
+        const user = await UserService.getUserById(userId);
         
         if (!user) {
             throw new Error("User not found");
         }
         const { user_id, name, email } = user;
 
-        const profile = await Profile.findOne({ user_id });   
+        const profile = await Profile.findOne({ user_id });
         const isSameUser = user_id === currentUserId;
 
         // If not the same user, check if the profile is visible

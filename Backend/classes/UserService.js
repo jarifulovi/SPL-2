@@ -1,5 +1,19 @@
 import User from '../models/User.js';
 
+
+
+export async function getUserById(user_id) {
+    return await User.findOne({ user_id }, { password: 0, session_token: 0, reset_token: 0, reset_token_expiry: 0 });
+}
+
+export async function getUsersByIds(user_ids) {
+    return await User.find({ user_id: { $in: user_ids } }, { password: 0, session_token: 0, reset_token: 0, reset_token_expiry: 0 });
+}
+
+export async function getUserByEmail(email) {
+    return await User.findOne({ email }, { password: 0, session_token: 0, reset_token: 0, reset_token_expiry: 0 });
+}
+
 export async function addUser(name, email, hashPassword) {
     try {
         const existingUser = await User.findOne({ email });
@@ -38,22 +52,6 @@ export async function removeUser(email) {
     }
 }
 
-// Retrieve user info (id, email, name only)
-export async function retrieveUser(email) {
-    try {
-        const user = await User.findOne({ email })
-            .select('user_id email name notifications status last_login created_at');
-        if (!user) {
-            throw new Error('User not found');
-        }
-        return user;
-    } catch (error) {
-        console.error('Error retrieving user:', error);
-        throw new Error(error.message || 'Error retrieving user');
-    }
-}
 
-export async function getUserById(user_id) {
-    return await User.findOne({ user_id });
-}
+
 

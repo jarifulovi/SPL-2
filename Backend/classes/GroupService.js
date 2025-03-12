@@ -4,6 +4,25 @@ import StudyGroup from "../models/Group.js";
 import UserGroup from "../models/UserGroup.js";
 import Chat from "../models/Chat.js";
 
+
+export async function getGroupbyId(group_id) {
+    try {
+        const group = await StudyGroup.findOne({ group_id: group_id });
+        return group;
+    } catch (error) {
+        throw new Error(error.message || 'Error during fetching group');
+    }
+}
+
+export async function getGroupsByIds(group_ids) {
+    try {
+        const groups = await StudyGroup.find({ group_id: { $in: group_ids } });
+        return groups;
+    } catch (error) {
+        throw new Error(error.message || 'Error during fetching groups');
+    }
+}
+
 export async function createGroup(group_name, group_description, group_status, type, topics, group_image, created_by) {
     const creator = await User.findOne({ user_id: created_by });
     if(!creator) {
@@ -47,20 +66,7 @@ export async function createGroup(group_name, group_description, group_status, t
     }
 }
 
-export async function retrieveGroupInfo(group_id) {
-    try {
-        const group = await 
-            StudyGroup.findOne({ group_id: group_id });
 
-        if (!group) {
-            throw new Error('Group not found');
-        }
-        return group;
-    } catch (error) {
-        
-        throw new Error(error.message || 'Error during fetching group');
-    }
-}
 
 export async function updateGroup(group_name, group_description, group_status, type, topics, group_image, group_id) {
     try {
@@ -117,7 +123,7 @@ export async function removeGroup(group_id) {
 // Default export for backward compatibility
 export default {
     createGroup,
-    retrieveGroupInfo,
+    retrieveGroupInfo: getGroupbyId,
     updateGroup,
     removeGroup
 }; 
