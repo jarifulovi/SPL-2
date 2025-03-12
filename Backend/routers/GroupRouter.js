@@ -1,6 +1,6 @@
 import express from 'express';
 import multer from 'multer';
-import GroupClass from '../classes/GroupClass.js';
+import * as GroupService from '../classes/GroupService.js';
 import RouterUtils from '../utils/RouterUtils.js';
 import FileUtils from '../utils/FileUtils.js';
 import { v4 as uuidv4 } from 'uuid';
@@ -8,15 +8,6 @@ import { v4 as uuidv4 } from 'uuid';
 const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
-
-
-const getGroupClass = (user_id, group_name, group_description, group_status, type, topics, group_image) => {
-    if (!group_name) throw new Error('Group name is required');
-    if (!group_description) throw new Error('Group description is required');
-    if (!group_status) throw new Error('Group status is required');
-    
-    return new GroupClass(group_name, group_description, group_status, type, topics, group_image, user_id);
-};
 
 
 router.post('/createGroup', upload.single("group_image"), async (req, res) => {
@@ -41,9 +32,13 @@ router.post('/createGroup', upload.single("group_image"), async (req, res) => {
     }
 
     
-    await RouterUtils.handleBasicRequest(req, res, async () => 
-        await getGroupClass(user_id, group_name, group_description, group_status, type, topics, group_image).createGroup()
-    );
+    await RouterUtils.handleBasicRequest(req, res, async () => {
+        if (!group_name) throw new Error('Group name is required');
+        if (!group_description) throw new Error('Group description is required');
+        if (!group_status) throw new Error('Group status is required');
+        
+        return await GroupService.createGroup(group_name, group_description, group_status, type, topics, group_image, user_id);
+    });
     
 });
 
@@ -52,7 +47,7 @@ router.post('/retrieveGroupInfo', async (req, res) => {
     // Retrieve group information
     const { group_id } = req.body;
     RouterUtils.handleBasicRequest(req, res, () => 
-        new GroupClass().retrieveGroupInfo(group_id)
+        GroupService.retrieveGroupInfo(group_id)
     );
 });
 
@@ -80,9 +75,13 @@ router.post('/updateGroup', upload.single("group_image"), async (req, res) => {
     }
     
     
-    await RouterUtils.handleBasicRequest(req, res, async () => 
-        await getGroupClass(user_id, group_name, group_description, group_status, type, topics, group_image).updateGroup(group_id)
-    );
+    await RouterUtils.handleBasicRequest(req, res, async () => {
+        if (!group_name) throw new Error('Group name is required');
+        if (!group_description) throw new Error('Group description is required');
+        if (!group_status) throw new Error('Group status is required');
+        
+        return await GroupService.updateGroup(group_name, group_description, group_status, type, topics, group_image, group_id);
+    });
 });
 
 
@@ -90,7 +89,7 @@ router.post('/removeGroup', async (req, res) => {
     
     const { group_id } = req.body;
     RouterUtils.handleBasicRequest(req, res, () => 
-        new GroupClass().removeGroup(group_id)
+        GroupService.removeGroup(group_id)
     );
 });
 

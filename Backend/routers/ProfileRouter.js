@@ -1,6 +1,6 @@
 import express from 'express';
 import multer from 'multer';
-import UserProfileService from '../classes/UserProfileService.js';
+import * as ProfileService from '../classes/ProfileService.js';
 import RouterUtils from '../utils/RouterUtils.js';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -30,14 +30,14 @@ router.put('/updateProfile', upload.single("profile_picture"), async (req, res) 
     }
 
     await RouterUtils.handleBasicRequest(req, res, async () => 
-        await new UserProfileService().updateProfile(profileData)
+        await ProfileService.updateProfile(profileData)
     );
 });
 
 router.post('/getProfileInfo', async (req, res) => {
     const { userId, currentUserId } = req.body;
     RouterUtils.handleBasicRequest(req, res, () => 
-        new UserProfileService().getProfileInfo(userId, currentUserId)
+        ProfileService.getProfileInfo(userId, currentUserId)
     );
 });
 

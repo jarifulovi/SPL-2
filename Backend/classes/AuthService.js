@@ -1,20 +1,16 @@
 import User from "../models/User.js";
-import PasswordService from "./PasswordService.js";
-import SessionService from "./SessionService.js";
-import UserProfileService from "./UserProfileService.js";
-import UserService from "./UserService.js";
+import * as PasswordService from "./PasswordService.js";
+import * as SessionService from "./SessionService.js";
+import * as ProfileService from "./ProfileService.js";
+import * as UserService from "./UserService.js";
 import EmailUtils from '../utils/EmailUtils.js';
 
 export async function login(email, password) {
     try {
-        const passwordService = new PasswordService(password);
-        const isValidPassword = await passwordService.checkPassword(email);
+        const isValidPassword = await PasswordService.checkPassword(email, password);
         
         if (isValidPassword) {
-            
-            const sessionService = new SessionService();
-            const data = await sessionService.addSessionToken(email);
-
+            const data = await SessionService.addSessionToken(email);
             return data;
         } else {
             throw new Error('Incorrect Password');
@@ -28,12 +24,9 @@ export async function login(email, password) {
 export async function register(name, email, password) {
     
     try {
-        const passwordService = new PasswordService(password);
-        const hashedPassword = await passwordService.hashPassword();
-        const userService = new UserService();
-        await userService.addUser(name, email, hashedPassword);
-        const profileService = new UserProfileService();
-        await profileService.createProfile(email);
+        const hashedPassword = await PasswordService.hashPassword(password);
+        await UserService.addUser(name, email, hashedPassword);
+        await ProfileService.createProfile(email);
         await EmailUtils.sendWelcomeEmail(email);
     } catch (error) {
         console.error('Error during registration:', error.message);
@@ -44,9 +37,7 @@ export async function register(name, email, password) {
 
 export async function isAuthenticated(email, session_token) {
     try {
-        const sessionService = new SessionService();
-        await sessionService.validateSessionToken(email, session_token);
-
+        await SessionService.validateSessionToken(email, session_token);
     } catch (error) {
         throw new Error('Error during authentication');
     }
@@ -54,8 +45,7 @@ export async function isAuthenticated(email, session_token) {
 
 export async function logOut(email) {
     try {
-        const sessionService = new SessionService();
-        await sessionService.invalidateSessionToken(email);
+        await SessionService.invalidateSessionToken(email);
     } catch (error) {
         console.error('Error during logout:', error);
         throw new Error('Error during logout');
@@ -64,8 +54,7 @@ export async function logOut(email) {
 
 export async function updatePassword(email, oldPassword, newPassword) {
     try {
-        const passwordService = new PasswordService(oldPassword);
-        await passwordService.changePassword(email, newPassword);
+        await PasswordService.changePassword(email, oldPassword, newPassword);
     } catch (error) {
         throw new Error(error.message || 'Failed to update password');
     }
@@ -78,8 +67,7 @@ export async function forgotPassword(email) {
             throw new Error('User does not exist');
         }
         
-        const passwordService = new PasswordService();
-        const token = await passwordService.createResetToken(email);
+        const token = await PasswordService.createResetToken(email);
         
         await EmailUtils.sendResetPasswordLink(email, token);
     } catch (error) {
@@ -95,9 +83,8 @@ export async function resetPassword(email, newPassword, token) {
             throw new Error('User does not exist');
         }
 
-        const passwordService = new PasswordService();
-        await passwordService.verifyResetToken(token, user);
-        await passwordService.changePasswordAndClearToken(user, newPassword);
+        await PasswordService.verifyResetToken(token, user);
+        await PasswordService.changePasswordAndClearToken(user, newPassword);
         
     } catch (error) {
         console.log(error.message);

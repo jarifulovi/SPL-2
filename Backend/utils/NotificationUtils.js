@@ -1,15 +1,11 @@
-import NotificationClass from "../classes/Notification.js";
-
+import * as NotificationService from "../classes/NotificationService.js";
 
 async function storeNotification(io, members, notificationType, sender, group_id, content) {
     try {
-        
-        const notification = new NotificationClass(notificationType, sender, group_id);
         await Promise.all(
-            members.map(memberId => notification.storeNotification(memberId, content))
+            members.map(memberId => NotificationService.storeNotification(memberId, content, notificationType, sender, group_id))
         );
 
-        
         io.to(group_id).emit('notification', {
             content: content,
             type: notificationType,
@@ -24,9 +20,7 @@ async function storeNotification(io, members, notificationType, sender, group_id
 
 async function storeAndEmitNotifToUser(io, user_id, socket_id, notificationType, sender, group_id, content) {
     try {
-       
-        const notification = new NotificationClass(notificationType, sender, group_id);
-        const storedNotification = await notification.storeNotification(user_id, content);
+        const storedNotificationId = await NotificationService.storeNotification(user_id, content, notificationType, sender, group_id);
         
         if (socket_id) {
             io.to(socket_id).emit('notification', {
@@ -34,7 +28,7 @@ async function storeAndEmitNotifToUser(io, user_id, socket_id, notificationType,
                 type: notificationType,
                 group_id: group_id,
                 sender: sender,
-                receive_date: storedNotification.receive_date || new Date(),
+                receive_date: new Date(),
             });
         } else {
             console.warn(`No active socket found for userId: ${user_id}`);
@@ -48,7 +42,6 @@ async function storeAndEmitNotifToUser(io, user_id, socket_id, notificationType,
 }
 
 export default {
-    
     storeAndEmitDiscussionNotif: (io, members, sender, group_id, content) => {
         return storeNotification(io, members, 'discussion_topic', sender, group_id, content);
     },

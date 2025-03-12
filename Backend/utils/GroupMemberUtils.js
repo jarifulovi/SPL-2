@@ -1,11 +1,8 @@
-import GroupMembers from "../classes/GroupMembers.js";
-
-
+import * as GroupMembers from "../classes/GroupMembers.js";
 
 async function retrieveGroupMemberIds(group_id) {
     try {
-        const groupMember = new GroupMembers(group_id);
-        const members = await groupMember.retrieveAllGroupMembers();
+        const members = await GroupMembers.retrieveAllGroupMembers(group_id);
         const memberIds = members.map(member => member.user_id);
 
         return memberIds;
@@ -16,9 +13,7 @@ async function retrieveGroupMemberIds(group_id) {
 
 async function connectUserToGroups(user_id, socket) {
     try {
-        
-        const groupMember = new GroupMembers();
-        const groups = await groupMember.getAllGroupsOfMember(user_id);
+        const groups = await GroupMembers.getAllGroupsOfMember(user_id);
         
         if (!groups || groups.length === 0) {
             //console.log(`User ${user_id} is not part of any groups.`);
@@ -27,7 +22,6 @@ async function connectUserToGroups(user_id, socket) {
 
         let groupIds = groups.map(group => group.group_id);
 
-       
         groupIds.forEach(groupId => {
             socket.join(groupId);
             //console.log(`User ${user_id} connected to group: ${groupId}`);
@@ -38,12 +32,10 @@ async function connectUserToGroups(user_id, socket) {
     }
 }
 
-
 async function disconnectUserFromGroups(user_id, socket) {
     try {
         // Retrieve the groups for the user from the database
-        const groupMember = new GroupMembers();
-        const groups = await groupMember.getAllGroupsOfMember(user_id);
+        const groups = await GroupMembers.getAllGroupsOfMember(user_id);
         
         if (!groups || groups.length === 0) {
             //console.log(`User ${user_id} is not part of any groups.`);
@@ -52,7 +44,6 @@ async function disconnectUserFromGroups(user_id, socket) {
 
         let groupIds = groups.map(group => group.group_id);
 
-        
         groupIds.forEach(groupId => {
             socket.leave(groupId);
             //console.log(`User ${user_id} disconnected from group: ${groupId}`);
@@ -62,7 +53,6 @@ async function disconnectUserFromGroups(user_id, socket) {
         console.error(`Error disconnecting user ${user_id} from groups:`, error.message);
     }
 }
-
 
 export default {
     retrieveGroupMemberIds,

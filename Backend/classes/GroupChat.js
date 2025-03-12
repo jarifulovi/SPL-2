@@ -110,41 +110,15 @@ export async function retrieveChats(group_id, limit = 0) {
     }
 }
 
-// For backward compatibility with code that uses the class
-export default class GroupChat {
-    constructor(group_id) {
-        this.group_id = group_id;
-    }
+// Default export for backward compatibility
+export default {
+    postMessage,
+    removeChat,
+    postDiscussion,
+    retrieveAllChat,
+    retrieveLatestChat,
+    retrieveAllDiscussion,
+    checkDiscussionExists,
+    retrieveChats
+};
 
-    async postMessage(sender, content, type = 'text_message', additionalFields = {}) {
-        return await postMessage(this.group_id, sender, content, type, additionalFields);
-    }
-
-    async removeChat(chat_id) {
-        return await removeChat(this.group_id, chat_id);
-    }
-
-    async postDiscussion(sender, content, topic, discussionStatus) {
-        return await postDiscussion(this.group_id, sender, content, topic, discussionStatus);
-    }
-
-    async retrieveAllChat() {
-        return await retrieveAllChat(this.group_id);
-    }
-
-    async retrieveLatestChat() {
-        return await retrieveLatestChat(this.group_id);
-    }
-
-    async retrieveAllDiscussion() {
-        return await retrieveAllDiscussion(this.group_id);
-    }
-
-    async checkDiscussionExists(content) {
-        return await checkDiscussionExists(this.group_id, content);
-    }
-
-    async retrieveChats(limit = 0) {
-        return await retrieveChats(this.group_id, limit);
-    }
-}

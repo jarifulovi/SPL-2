@@ -1,6 +1,6 @@
 import express from 'express';
 import multer from 'multer';
-import FileService from '../classes/FileService.js';
+import * as FileService from '../classes/FileService.js';
 import FileUtils from '../utils/FileUtils.js';
 import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
@@ -33,8 +33,7 @@ router.post('/uploadFile', upload.single('file'), async (req, res) => {
 
        
         fs.unlinkSync(file.path);
-        const fileHandler = new FileService(user_id);
-        const result = await fileHandler.uploadAndCheckFile(fileMetadata, group_id);
+        const result = await FileService.uploadAndCheckFile(fileMetadata, group_id, user_id);
 
         if (result.isUploaded) {
             // store in storage
@@ -65,8 +64,7 @@ router.post('/saveFile', async (req, res) => {
     try {
         const { user_id, file } = req.body;
 
-        const fileService = new FileService(user_id);
-        await fileService.saveFile(file);
+        await FileService.saveFile(file, user_id);
         
         return res.status(200).json({
             success: true,
@@ -85,9 +83,7 @@ router.post('/getFileUrl', async (req, res) => {
     try {
         const { file_id } = req.body;
         
-
-        const fileService = new FileService();
-        const retrievedFile = await fileService.retrieveFile(file_id); // Also check if file exists
+        const retrievedFile = await FileService.retrieveFile(file_id); // Also check if file exists
         const fileUrl = await FileUtils.getFileUrl(retrievedFile.file_key);
         return res.status(200).json({
             success: true,
@@ -106,8 +102,7 @@ router.post('/getFileUrl', async (req, res) => {
 router.post('/retrieveFile', async (req, res) => {
     try {
         const { file_id } = req.body;
-        const fileService = new FileService();
-        const file = await fileService.retrieveFile(file_id);
+        const file = await FileService.retrieveFile(file_id);
         return res.status(200).json({
             success: true,
             message: 'File retrieved successfully.',

@@ -1,5 +1,4 @@
-import NotificationClass from "../classes/Notification.js";
-import GroupMembers from "../classes/GroupMembers.js";
+import * as GroupMembers from "../classes/GroupMembers.js";
 
 import ChatUtils from "./ChatUtils.js";
 import NotificationUtils from "./NotificationUtils.js";
@@ -76,9 +75,7 @@ const SetupSocket = (io) => {
         socket.on('groupJoin', async (user_id, group_id, role, user_name, group_name) => {
 
             try {
-                const groupMember = new GroupMembers(group_id);
-                await groupMember.joinMember(user_id,role);
-
+                await GroupMembers.joinMember(user_id, group_id, role);
 
                 const content = `${user_id} has joined the group`;
                 await ChatUtils.postMessage(io, group_id, user_id, content, 'join_group');
