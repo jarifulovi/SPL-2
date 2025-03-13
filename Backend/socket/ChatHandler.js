@@ -1,6 +1,8 @@
 import * as GroupChatFunctions from '../classes/GroupChat.js';
 
-async function postMessage(io, group_id, sender, content, type = 'text_message') {
+
+
+export async function postMessage(io, group_id, sender, content, type = 'text_message') {
     try {
         const savedMessage = await GroupChatFunctions.postMessage(group_id, sender, content, type);
         io.to(group_id).emit('chatMessage', savedMessage);
@@ -15,7 +17,7 @@ async function postMessage(io, group_id, sender, content, type = 'text_message')
     }
 }
 
-async function postDiscussion(io, group_id, sender, content, topic, discussionStatus) {
+export async function postDiscussion(io, group_id, sender, content, topic, discussionStatus) {
     try {
         const savedDiscussion = await GroupChatFunctions.postDiscussion(group_id, sender, content, topic, discussionStatus);
         io.to(group_id).emit('chatMessage', savedDiscussion);
@@ -29,7 +31,7 @@ async function postDiscussion(io, group_id, sender, content, topic, discussionSt
     }
 }
 
-async function postFile(io, group_id, sender, content, file_id) {
+export async function postFile(io, group_id, sender, content, file_id) {
     try {
         const savedMessage = await GroupChatFunctions.postMessage(group_id, sender, content, 'files', { file_id });
         io.to(group_id).emit('chatMessage', savedMessage);
@@ -44,9 +46,4 @@ async function postFile(io, group_id, sender, content, file_id) {
     }
 }
 
-export default {
-    postMessage,
-    postDiscussion,
-    postFile,
-}
 

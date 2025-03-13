@@ -1,6 +1,9 @@
 import * as GroupMembers from "../classes/GroupMembers.js";
 
-async function retrieveGroupMemberIds(group_id) {
+
+
+
+export async function retrieveGroupMemberIds(group_id) {
     try {
         const members = await GroupMembers.retrieveAllGroupMembers(group_id);
         const memberIds = members.map(member => member.user_id);
@@ -11,7 +14,7 @@ async function retrieveGroupMemberIds(group_id) {
     }
 }
 
-async function connectUserToGroups(user_id, socket) {
+export async function connectUserToGroups(user_id, socket) {
     try {
         const groups = await GroupMembers.getAllGroupsOfMember(user_id);
         
@@ -32,7 +35,7 @@ async function connectUserToGroups(user_id, socket) {
     }
 }
 
-async function disconnectUserFromGroups(user_id, socket) {
+export async function disconnectUserFromGroups(user_id, socket) {
     try {
         // Retrieve the groups for the user from the database
         const groups = await GroupMembers.getAllGroupsOfMember(user_id);
@@ -53,9 +56,3 @@ async function disconnectUserFromGroups(user_id, socket) {
         console.error(`Error disconnecting user ${user_id} from groups:`, error.message);
     }
 }
-
-export default {
-    retrieveGroupMemberIds,
-    connectUserToGroups,
-    disconnectUserFromGroups,
-};

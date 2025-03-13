@@ -1,5 +1,6 @@
 import * as NotificationService from "../classes/NotificationService.js";
 
+
 async function storeNotification(io, members, notificationType, sender, group_id, content) {
     try {
         await Promise.all(
@@ -18,7 +19,7 @@ async function storeNotification(io, members, notificationType, sender, group_id
     }
 }
 
-async function storeAndEmitNotifToUser(io, user_id, socket_id, notificationType, sender, group_id, content) {
+export async function storeAndEmitNotifToUser(io, user_id, socket_id, notificationType, sender, group_id, content) {
     try {
         const storedNotificationId = await NotificationService.storeNotification(user_id, content, notificationType, sender, group_id);
         
@@ -41,17 +42,16 @@ async function storeAndEmitNotifToUser(io, user_id, socket_id, notificationType,
     }
 }
 
-export default {
-    storeAndEmitDiscussionNotif: (io, members, sender, group_id, content) => {
-        return storeNotification(io, members, 'discussion_topic', sender, group_id, content);
-    },
+export function storeAndEmitDiscussionNotif(io, members, sender, group_id, content) {
+    return storeNotification(io, members, 'discussion_topic', sender, group_id, content);
+}
 
-    storeAndEmitVideoConferenceNotif: (io, members, sender, group_id, content) => {
-        return storeNotification(io, members, 'video_conferencing', sender, group_id, content);
-    },
+export function storeAndEmitVideoConferenceNotif(io, members, sender, group_id, content) {
+    return storeNotification(io, members, 'video_conferencing', sender, group_id, content);
+}
 
-    storeAndEmitFileUploadNotif: (io, members, sender, group_id, content) => {
-        return storeNotification(io, members, 'file_shared', sender, group_id, content);
-    },
-    storeAndEmitNotification: storeAndEmitNotifToUser,
-};
+export function storeAndEmitFileUploadNotif(io, members, sender, group_id, content) {
+    return storeNotification(io, members, 'file_shared', sender, group_id, content);
+}
+
+export const storeAndEmitNotification = storeAndEmitNotifToUser;

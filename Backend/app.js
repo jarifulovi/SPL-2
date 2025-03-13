@@ -72,7 +72,7 @@ const io = new Server(httpServer, {
 // ----------------------------
 // Socket.IO Connection Handling
 // ----------------------------
-import SetupSocket from './utils/SetupSocket.js';
+import SetupSocket from './socket/SetupSocket.js';
 
 SetupSocket(io);
 
