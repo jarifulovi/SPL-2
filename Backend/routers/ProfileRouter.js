@@ -1,5 +1,6 @@
 import express from 'express';
 import multer from 'multer';
+import * as Sanitizer from '../utils/Sanitizer.js';
 import * as ProfileService from '../classes/ProfileService.js';
 import RouterUtils from '../utils/RouterUtils.js';
 import { v4 as uuidv4 } from 'uuid';
@@ -7,9 +8,17 @@ import { v4 as uuidv4 } from 'uuid';
 import FileUtils from '../utils/FileUtils.js';
 
 const router = express.Router();
+
+// add image file validation
 const upload = multer({ storage: multer.memoryStorage() });
 
-router.put('/updateProfile', upload.single("profile_picture"), async (req, res) => {
+// not complete
+// need to pass individual fields instead of object
+router.put(
+    '/updateProfile', 
+    upload.single("profile_picture"), 
+    Sanitizer.handleValidationErrors,
+    async (req, res) => {
     const profileData = req.body;
     const file = req.file;
    
@@ -34,10 +43,16 @@ router.put('/updateProfile', upload.single("profile_picture"), async (req, res) 
     );
 });
 
-router.post('/getProfileInfo', async (req, res) => {
-    const { userId, currentUserId } = req.body;
+
+router.post(
+    '/getProfileInfo', 
+    [Sanitizer.validateId('user_id'), Sanitizer.validateId('currentUserId')], 
+    Sanitizer.handleValidationErrors,
+    async (req, res) => {
+    
+    const { user_id, currentUserId } = req.body;
     RouterUtils.handleBasicRequest(req, res, () => 
-        ProfileService.getProfileInfo(userId, currentUserId)
+        ProfileService.getProfileInfo(user_id, currentUserId)
     );
 });
 

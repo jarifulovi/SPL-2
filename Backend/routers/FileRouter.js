@@ -1,5 +1,6 @@
 import express from 'express';
 import multer from 'multer';
+import * as Sanitizer from '../utils/Sanitizer.js';
 import * as FileService from '../classes/FileService.js';
 import FileUtils from '../utils/FileUtils.js';
 import fs from 'fs';
@@ -11,9 +12,16 @@ const storage = multer.diskStorage({
     filename: (req, file, cb) => cb(null, `${Date.now()}-${file.originalname}`),
 });
 
+// will add validation for file size and type
 const upload = multer({ storage });
 
-router.post('/uploadFile', upload.single('file'), async (req, res) => {
+router.post(
+    '/uploadFile', 
+    upload.single('file'),
+    [Sanitizer.validateId('user_id'), Sanitizer.validateId('group_id')], 
+    Sanitizer.handleValidationErrors,
+    async (req, res) => {
+    
     try {
         const { file } = req;
         const { user_id, group_id } = req.body; 
@@ -60,11 +68,16 @@ router.post('/uploadFile', upload.single('file'), async (req, res) => {
     }
 });
 
-router.post('/saveFile', async (req, res) => {
+router.post(
+    '/saveFile', 
+    [Sanitizer.validateId('user_id')], 
+    Sanitizer.handleValidationErrors,
+    async (req, res) => {
+    
     try {
-        const { user_id, file } = req.body;
+        const { user_id, fileMetadata } = req.body;
 
-        await FileService.saveFile(file, user_id);
+        await FileService.saveFile(fileMetadata, user_id);
         
         return res.status(200).json({
             success: true,
@@ -79,7 +92,12 @@ router.post('/saveFile', async (req, res) => {
     }
 });
 
-router.post('/getFileUrl', async (req, res) => {
+router.post(
+    '/getFileUrl', 
+    [Sanitizer.validateId('file_id')], 
+    Sanitizer.handleValidationErrors,
+    async (req, res) => {
+    
     try {
         const { file_id } = req.body;
         
@@ -99,7 +117,12 @@ router.post('/getFileUrl', async (req, res) => {
 });
 
 
-router.post('/retrieveFile', async (req, res) => {
+router.post(
+    '/retrieveFile', 
+    [Sanitizer.validateId('file_id')], 
+    Sanitizer.handleValidationErrors,
+    async (req, res) => {
+    
     try {
         const { file_id } = req.body;
         const file = await FileService.retrieveFile(file_id);

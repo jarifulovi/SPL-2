@@ -26,7 +26,7 @@ const forgotPassword = async (email) => {
 };
 
 const resetPassword = async (formData) => {
-    return await Fetch.fetchData(Fetch.baseUrl + '/resetPassword', 'POST', { email: formData.email, newPassword: formData.new_password, token: formData.token });
+    return await Fetch.fetchData(Fetch.baseUrl + '/resetPassword', 'POST', { email: formData.email, new_password: formData.new_password, token: formData.token });
 };
 
 

@@ -33,7 +33,7 @@ export async function addUser(name, email, hashPassword) {
 
         return savedUser;
     } catch (error) {
-        console.error('Error adding user:', error);
+        console.error('Error adding user:', error.message);
         throw new Error(error.message || 'Unable to add user');
     }
 }

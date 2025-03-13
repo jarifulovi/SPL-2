@@ -28,7 +28,7 @@ const getFileUrl = async (file_id) => {
 };
 
 const saveFile = async (user_id, file) => {
-    return await Fetch.fetchData(Fetch.baseUrl + '/saveFile', 'POST', { user_id, file });
+    return await Fetch.fetchData(Fetch.baseUrl + '/saveFile', 'POST', { user_id, fileMetadata: file });
 };
 
 

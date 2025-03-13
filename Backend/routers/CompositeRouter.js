@@ -1,4 +1,5 @@
 import express from 'express';
+import * as Sanitizer from '../utils/Sanitizer.js';
 import * as GroupService from '../classes/GroupService.js';
 import * as GroupMembers from '../classes/GroupMembers.js';
 import * as UserService from '../classes/UserService.js';
@@ -12,16 +13,19 @@ const router = express.Router();
 
 
 
-router.post('/loadGroupDetails', async (req, res) => {
+router.post(
+    '/loadGroupDetails', 
+    [Sanitizer.validateId('user_id'), Sanitizer.validateId('group_id'), Sanitizer.validateId('created_by')], 
+    Sanitizer.handleValidationErrors,
+    async (req, res) => {
+    
     try {
-        const { user_id, group } = req.body;
-        if (!user_id || !group) {
-            throw new Error('User_id or group_id not provided');
-        }
+        const { user_id, group_id, created_by } = req.body;
         
-        const isMember = await GroupMembers.isMemberOfGroup(user_id, group.group_id);
-        const groupMembers = await GroupMembers.retrieveAllGroupMembers(group.group_id);
-        const creator = await UserService.getUserById(group.created_by);
+        
+        const isMember = await GroupMembers.isMemberOfGroup(user_id, group_id);
+        const groupMembers = await GroupMembers.retrieveAllGroupMembers(group_id);
+        const creator = await UserService.getUserById(created_by);
         if (!creator) {
             return res.status(200).json({
                 success: true,
@@ -46,13 +50,18 @@ router.post('/loadGroupDetails', async (req, res) => {
         console.error('Error during loading groupDetails data:', error.message);
         res.status(500).json({
             success: false,
-            message: error.message
+            message: 'An error occurred during loading groupDetails'
         });
     }
 });
 
 
-router.post('/retrieveAllFiles', async (req, res) => {
+router.post(
+    '/retrieveAllFiles', 
+    [Sanitizer.validateId('user_id')], 
+    Sanitizer.handleValidationErrors,
+    async (req, res) => {
+    
     try {
         const { user_id } = req.body;
 
@@ -61,7 +70,7 @@ router.post('/retrieveAllFiles', async (req, res) => {
             return res.status(200).json({
                 success: true,
                 message: 'No file found',
-                data: [],
+                data: { allFiles: [] },
             });
         }
 
@@ -105,7 +114,7 @@ router.post('/retrieveAllFiles', async (req, res) => {
         console.error('Error during loading groupFiles data:', error.message);
         res.status(500).json({
             success: false,
-            message: error.message
+            message: 'An error occurred during loading groupFiles'
         });
     };
 });

@@ -30,7 +30,7 @@ export async function register(name, email, password) {
         await EmailUtils.sendWelcomeEmail(email);
     } catch (error) {
         console.error('Error during registration:', error.message);
-        throw new Error('Error during registration');
+        throw new Error(error.message || 'Error during registration');
     }
     
 }
@@ -39,7 +39,7 @@ export async function isAuthenticated(email, session_token) {
     try {
         await SessionService.validateSessionToken(email, session_token);
     } catch (error) {
-        throw new Error('Error during authentication');
+        throw new Error(error.message || 'Error during authentication');
     }
 }
 

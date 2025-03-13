@@ -1,16 +1,32 @@
 import express from 'express';
 import multer from 'multer';
+import * as Sanitizer from '../utils/Sanitizer.js';
 import * as GroupService from '../classes/GroupService.js';
 import RouterUtils from '../utils/RouterUtils.js';
 import FileUtils from '../utils/FileUtils.js';
 import { v4 as uuidv4 } from 'uuid';
 
 const router = express.Router();
+
+// add image file validation
 const upload = multer({ storage: multer.memoryStorage() });
 
 
-
-router.post('/createGroup', upload.single("group_image"), async (req, res) => {
+// here group_image is the actual image when the user uploads it
+// letter it is just the url in database
+router.post(
+    '/createGroup',
+    upload.single("group_image"),
+    [
+        Sanitizer.validateId('user_id'), 
+        Sanitizer.validateContent('group_name', 3, 50, false), 
+        Sanitizer.validateContent('group_description', 3, 500, false), 
+        Sanitizer.validateGroupStatus,
+        Sanitizer.validateContent('type', 0, 50, true),
+        Sanitizer.validateContent('topics', 0, 500, true)
+    ],
+    Sanitizer.handleValidationErrors,
+    async (req, res) => {
     
     let { user_id, group_name, group_description, group_status, type, topics, group_image } = req.body;
     const file = req.file;
@@ -33,31 +49,43 @@ router.post('/createGroup', upload.single("group_image"), async (req, res) => {
 
     
     await RouterUtils.handleBasicRequest(req, res, async () => {
-        if (!group_name) throw new Error('Group name is required');
-        if (!group_description) throw new Error('Group description is required');
-        if (!group_status) throw new Error('Group status is required');
-        
         return await GroupService.createGroup(group_name, group_description, group_status, type, topics, group_image, user_id);
     });
     
 });
 
 
-router.post('/retrieveGroupInfo', async (req, res) => {
-    // Retrieve group information
+router.post(
+    '/retrieveGroupInfo', 
+    [Sanitizer.validateId('group_id')], 
+    Sanitizer.handleValidationErrors,
+    async (req, res) => {
+    
     const { group_id } = req.body;
-    RouterUtils.handleBasicRequest(req, res, () => 
+    await RouterUtils.handleBasicRequest(req, res, () => 
         GroupService.retrieveGroupInfo(group_id)
     );
 });
 
 
-router.post('/updateGroup', upload.single("group_image"), async (req, res) => {
-
+router.post(
+    '/updateGroup', 
+    upload.single("group_image"),
+    [
+        Sanitizer.validateId('group_id'), 
+        Sanitizer.validateContent('group_name', 3, 50, false), 
+        Sanitizer.validateContent('group_description', 3, 500, false), 
+        Sanitizer.validateGroupStatus,
+        Sanitizer.validateContent('type', 0, 50, true), 
+        Sanitizer.validateContent('topics', 0, 500, true)
+    ], 
+    Sanitizer.handleValidationErrors,
+    async (req, res) => {
     
-    let { group_id, group_name, group_description, group_status, type, topics, group_image, user_id } = req.body;
+    
+    let { group_id, group_name, group_description, group_status, type, topics, group_image } = req.body;
     const file = req.file;
-    console.log(group_id);
+    
     if(file) {
         try {
             const fileKey = `profile-pictures/${uuidv4()}-${file.originalname}`;
@@ -76,19 +104,20 @@ router.post('/updateGroup', upload.single("group_image"), async (req, res) => {
     
     
     await RouterUtils.handleBasicRequest(req, res, async () => {
-        if (!group_name) throw new Error('Group name is required');
-        if (!group_description) throw new Error('Group description is required');
-        if (!group_status) throw new Error('Group status is required');
-        
         return await GroupService.updateGroup(group_name, group_description, group_status, type, topics, group_image, group_id);
     });
 });
 
 
-router.post('/removeGroup', async (req, res) => {
+router.post(
+    '/removeGroup', 
+    [Sanitizer.validateId('group_id')], 
+    Sanitizer.handleValidationErrors,
+    async (req, res) => {
+    
     
     const { group_id } = req.body;
-    RouterUtils.handleBasicRequest(req, res, () => 
+    await RouterUtils.handleBasicRequest(req, res, () => 
         GroupService.removeGroup(group_id)
     );
 });

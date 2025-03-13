@@ -29,8 +29,7 @@ export async function retrieveHashedPassword(email) {
         }
         return user.password;
     } catch (error) {
-        console.error('Error retrieving password:', error);
-        throw new Error('Unable to retrieve password');
+        throw new Error(error.message || 'Unable to retrieve password');
     }
 }
 
