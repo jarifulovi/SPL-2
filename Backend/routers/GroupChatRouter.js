@@ -1,6 +1,6 @@
 import express from 'express';
 import * as Sanitizer from '../utils/Sanitizer.js';
-import * as GroupChatFunctions from '../classes/GroupChat.js';
+import * as GroupChatFunctions from '../services/GroupChat.js';
 import RouterUtils from '../utils/RouterUtils.js';
 
 const router = express.Router();

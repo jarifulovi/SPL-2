@@ -1,7 +1,7 @@
 import express from 'express';
 import multer from 'multer';
 import * as Sanitizer from '../utils/Sanitizer.js';
-import * as GroupService from '../classes/GroupService.js';
+import * as GroupService from '../services/GroupService.js';
 import RouterUtils from '../utils/RouterUtils.js';
 import FileUtils from '../utils/FileUtils.js';
 import { v4 as uuidv4 } from 'uuid';

@@ -1,7 +1,7 @@
 import express from 'express';
 import * as Sanitizer from '../utils/Sanitizer.js';
 import Notification from '../models/Notification.js';
-import * as NotificationService from '../classes/NotificationService.js';
+import * as NotificationService from '../services/NotificationService.js';
 import RouterUtils from '../utils/RouterUtils.js';
 
 const router = express.Router();

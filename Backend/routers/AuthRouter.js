@@ -1,6 +1,6 @@
 import express from 'express';
 import * as Sanitizer from '../utils/Sanitizer.js';
-import * as AuthService from '../classes/AuthService.js';
+import * as AuthService from '../services/AuthService.js';
 
 
 const router = express.Router();

@@ -1,5 +1,5 @@
 import Profile from "../models/Profile.js";
-import * as UserService from "../classes/UserService.js";
+import * as UserService from "../services/UserService.js";
 
 
 export async function getProfileById(user_id) {

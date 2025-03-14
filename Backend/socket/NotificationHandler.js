@@ -1,4 +1,4 @@
-import * as NotificationService from "../classes/NotificationService.js";
+import * as NotificationService from "../services/NotificationService.js";
 
 
 async function storeNotification(io, members, notificationType, sender, group_id, content) {

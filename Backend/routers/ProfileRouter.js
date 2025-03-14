@@ -1,7 +1,7 @@
 import express from 'express';
 import multer from 'multer';
 import * as Sanitizer from '../utils/Sanitizer.js';
-import * as ProfileService from '../classes/ProfileService.js';
+import * as ProfileService from '../services/ProfileService.js';
 import RouterUtils from '../utils/RouterUtils.js';
 import { v4 as uuidv4 } from 'uuid';
 

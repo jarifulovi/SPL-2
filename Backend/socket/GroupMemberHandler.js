@@ -1,4 +1,4 @@
-import * as GroupMembers from "../classes/GroupMembers.js";
+import * as GroupMembers from "../services/GroupMembers.js";
 
 
 

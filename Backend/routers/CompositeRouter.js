@@ -1,9 +1,9 @@
 import express from 'express';
 import * as Sanitizer from '../utils/Sanitizer.js';
-import * as GroupService from '../classes/GroupService.js';
-import * as GroupMembers from '../classes/GroupMembers.js';
-import * as UserService from '../classes/UserService.js';
-import * as FileService from '../classes/FileService.js';
+import * as GroupService from '../services/GroupService.js';
+import * as GroupMembers from '../services/GroupMembers.js';
+import * as UserService from '../services/UserService.js';
+import * as FileService from '../services/FileService.js';
 
 const router = express.Router();
 // This module is designed for the initial mount in React.

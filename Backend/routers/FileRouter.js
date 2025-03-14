@@ -1,7 +1,7 @@
 import express from 'express';
 import multer from 'multer';
 import * as Sanitizer from '../utils/Sanitizer.js';
-import * as FileService from '../classes/FileService.js';
+import * as FileService from '../services/FileService.js';
 import FileUtils from '../utils/FileUtils.js';
 import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';

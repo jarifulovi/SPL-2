@@ -1,6 +1,6 @@
 import express from 'express';
 import * as Sanitizer from '../utils/Sanitizer.js';
-import * as GroupMembers from '../classes/GroupMembers.js';
+import * as GroupMembers from '../services/GroupMembers.js';
 import RouterUtils from '../utils/RouterUtils.js';
 
 const router = express.Router();
