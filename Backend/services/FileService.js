@@ -12,7 +12,7 @@ export async function retrieveFile(file_id) {
     try {
         const file = await File.findOne({ file_id });
         if (file) { 
-            return file;
+            return { file };
         } else {
             throw new Error("File not found.");
         }

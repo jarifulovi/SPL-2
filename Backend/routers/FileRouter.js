@@ -3,6 +3,7 @@ import multer from 'multer';
 import * as Sanitizer from '../utils/Sanitizer.js';
 import * as FileService from '../services/FileService.js';
 import FileUtils from '../utils/FileUtils.js';
+import * as RouterUtils from '../utils/RouterUtils.js';
 import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -73,25 +74,14 @@ router.post(
     [Sanitizer.validateId('user_id')], 
     Sanitizer.handleValidationErrors,
     async (req, res) => {
-    
-    try {
         const { user_id, fileMetadata } = req.body;
-
-        await FileService.saveFile(fileMetadata, user_id);
-        
-        return res.status(200).json({
-            success: true,
-            message: 'File saved successfully.',
-        });
-    } catch (error) {
-        console.error('Error saving file:', error.message);
-        return res.status(400).json({
-            success: false,
-            message: `${error.message}`
-        });
+        await RouterUtils.handleBasicRequest(req, res, async () => {
+            return FileService.saveFile(fileMetadata, user_id);
+        }, 'Save file', 'File saved successfully');
     }
-});
+);
 
+        
 router.post(
     '/getFileUrl', 
     [Sanitizer.validateId('file_id')], 
@@ -101,8 +91,8 @@ router.post(
     try {
         const { file_id } = req.body;
         
-        const retrievedFile = await FileService.retrieveFile(file_id); // Also check if file exists
-        const fileUrl = await FileUtils.getFileUrl(retrievedFile.file_key);
+        const result = await FileService.retrieveFile(file_id); // Also check if file exists
+        const fileUrl = await FileUtils.getFileUrl(result.file.file_key);
         return res.status(200).json({
             success: true,
             message: 'File URL generated successfully.',
@@ -122,21 +112,11 @@ router.post(
     [Sanitizer.validateId('file_id')], 
     Sanitizer.handleValidationErrors,
     async (req, res) => {
-    
-    try {
         const { file_id } = req.body;
-        const file = await FileService.retrieveFile(file_id);
-        return res.status(200).json({
-            success: true,
-            message: 'File retrieved successfully.',
-            data: { file }
-        });
-    } catch (error) {
-        return res.status(400).json({
-            success: false,
-            message: `Error retrieving file: ${error.message}`
-        });
+        await RouterUtils.handleBasicRequest(req, res, async () => {
+            return FileService.retrieveFile(file_id);
+        }, 'Retrieve file', 'File retrieved successfully');
     }
-});
+);
 
 export default router;

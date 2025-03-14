@@ -6,9 +6,9 @@ import RouterUtils from '../utils/RouterUtils.js';
 const router = express.Router();
 
 router.post('/retrieveAllGroups', async (req, res) => {
-    RouterUtils.handleBasicRequest(req, res, () => 
-        GroupSearch.retrieveAllGroups()
-    );
+    await RouterUtils.handleBasicRequest(req, res, async () => {
+        return GroupSearch.retrieveAllGroups();
+    }, 'Retrieve all groups', 'Groups retrieved successfully');
 });
 
 router.post(
@@ -17,11 +17,11 @@ router.post(
         Sanitizer.validateContent('type', 0, 50, true), Sanitizer.validateGroupTopics], 
     Sanitizer.handleValidationErrors,
     async (req, res) => {
-    
-    const { type, topics, group_size, group_name } = req.body;
-    RouterUtils.handleBasicRequest(req, res, () =>
-        GroupSearch.searchGroup(group_name, type, topics, group_size)
-    );
-});
+        const { type, topics, group_size, group_name } = req.body;
+        await RouterUtils.handleBasicRequest(req, res, async () => {
+            return GroupSearch.searchGroup(group_name, type, topics, group_size);
+        }, 'Search groups', 'Groups search completed successfully');
+    }
+);
 
 export default router;

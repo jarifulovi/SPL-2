@@ -1,6 +1,7 @@
 import express from 'express';
 import * as Sanitizer from '../utils/Sanitizer.js';
 import * as AuthService from '../services/AuthService.js';
+import * as RouterUtils from '../utils/RouterUtils.js';
 
 
 const router = express.Router();
@@ -10,27 +11,13 @@ router.post(
     [Sanitizer.validateEmail, Sanitizer.validateTokenInCookie('sessionToken')],
     Sanitizer.handleValidationErrors,
     async (req, res) => {
-
-    try {
         const { email } = req.body;
         const sessionToken = req.cookies.sessionToken;
-        
-
-        await AuthService.isAuthenticated(email, sessionToken);
-
-        res.status(201).json({
-            success: true,
-            message: 'User is logged in',
-        });
-
-    } catch (error) {
-        console.error('Error during authentication:', error.message);
-        res.status(400).json({
-            success: false,
-            message: error.message || 'An error occurred during login'
-        });
+        await RouterUtils.handleBasicRequest(req, res, async () => {
+            return AuthService.isAuthenticated(email, sessionToken);
+        }, 'User authentication check', 'User is authenticated');
     }
-});
+);
 
 router.post(
     '/login', 
@@ -70,24 +57,12 @@ router.post(
     [Sanitizer.validateContent('name', 3, 50), Sanitizer.validateEmail, Sanitizer.validatePassword('password')], 
     Sanitizer.handleValidationErrors,
     async (req, res) => {
-    
-    try {
         const { name, email, password } = req.body;
-        await AuthService.register(name, email, password);
-
-        res.status(201).json({
-            success: true,
-            message: 'User registered successfully'
-        });
-
-    } catch (error) {
-        console.error('Error during registration:', error.message);
-        res.status(400).json({
-            success: false,
-            message: error.message || 'An error occurred during registration'
-        });
+        await RouterUtils.handleBasicRequest(req, res, async () => {
+            return AuthService.register(name, email, password);
+        }, 'Register user', 'User registered successfully');
     }
-});
+);
 
 
 router.post(
@@ -95,55 +70,30 @@ router.post(
     [Sanitizer.validateEmail],
     Sanitizer.handleValidationErrors,
     async (req, res) => {
-    
-    try {
-        const { email } = req.body;
-        await AuthService.logOut(email); 
 
         res.clearCookie('sessionToken', {
             httpOnly: true,
             //secure: true,   // For HTTPS in production
             sameSite: 'Strict',
         });
-
-        res.status(201).json({
-            success: true,
-            message: 'User logged out successfully',
-        });
-
-    } catch (error) {
-        console.error('Error during logout:', error);
-        res.status(400).json({
-            success: false,
-            message: error.message || 'An error occurred during logout'
-        });
+        const { email } = req.body;
+        await RouterUtils.handleBasicRequest(req, res, async () => {
+            return AuthService.logOut(email);
+        }, 'Logout', 'User logged out successfully');
     }
-    
-});
+);
 
 router.post(
     '/updatePassword', 
     [Sanitizer.validateEmail, Sanitizer.validatePassword('old_password'), Sanitizer.validatePassword('new_password')], 
     Sanitizer.handleValidationErrors,
     async (req, res) => {
-    
-
-    try {
         const { email, old_password, new_password } = req.body;
-        await AuthService.updatePassword(email, old_password, new_password);
-
-        res.status(201).json({
-            success: true,
-            message: 'User successfully updated password',
-        });
-    } catch (error) {
-        console.error('Error during password update:', error.message);
-        res.status(400).json({
-            success: false,
-            message: error.message || 'An error occurred during updating password'
-        });
+        await RouterUtils.handleBasicRequest(req, res, async () => {
+            return AuthService.updatePassword(email, old_password, new_password);
+        }, 'Update password', 'Password updated successfully');
     }
-});
+);
 
 
 router.post(
@@ -151,46 +101,24 @@ router.post(
     [Sanitizer.validateEmail], 
     Sanitizer.handleValidationErrors,
     async (req, res) => {
-
-    try {
         const { email } = req.body;
-        await AuthService.forgotPassword(email);
-
-        res.status(201).json({
-            success: true,
-            message: 'Reset Password Email sent successfully',
-        });
-    } catch (error) {
-        console.error('Error during forgot password:', error.message);
-        res.status(400).json({
-            success: false,
-            message: error.message || 'An error occurred during forgot password'
-        });
+        await RouterUtils.handleBasicRequest(req, res, async () => {
+            return AuthService.forgotPassword(email);
+        }, 'Forgot password', 'Reset Password Email sent successfully');
     }
-});
+);
+        
 
 router.post(
     '/resetPassword', 
     [Sanitizer.validateEmail, Sanitizer.validatePassword('new_password'), Sanitizer.validateTokenInBody('token')],
     Sanitizer.handleValidationErrors,
     async (req, res) => {
-    
-
-    try {
         const { email, new_password, token } = req.body;
-        await AuthService.resetPassword(email, new_password, token);
-
-        res.status(201).json({
-            success: true,
-            message: 'Reset Password finished successfully',
-        });
-    } catch (error) {
-        console.error('Error during reset password:', error.message);
-        res.status(400).json({
-            success: false,
-            message: error.message || 'An error occurred during reset password'
-        });
+        await RouterUtils.handleBasicRequest(req, res, async () => {
+            return AuthService.resetPassword(email, new_password, token);
+        }, 'Reset password', 'Password reset successfully');
     }
-});
+);
 
 export default router;

@@ -19,29 +19,30 @@ router.put(
     upload.single("profile_picture"), 
     Sanitizer.handleValidationErrors,
     async (req, res) => {
-    const profileData = req.body;
-    const file = req.file;
+        const profileData = req.body;
+        const file = req.file;
    
-    if (file) {
-        try {
-            const fileKey = `profile-pictures/${uuidv4()}-${file.originalname}`;
-            const uploadResult = await FileUtils.generateProfilePicUploadUrl(file, fileKey);
-            profileData.profile_picture = uploadResult.publicUrl;
-            
-        } catch (error) {
-            console.log('error', error);
-            return res.status(400).json({
-                success: false,
-                message: 'Failed to upload profile picture.',
-                error: error.message,
-            });
+        if (file) {
+            try {
+                const fileKey = `profile-pictures/${uuidv4()}-${file.originalname}`;
+                const uploadResult = await FileUtils.generateProfilePicUploadUrl(file, fileKey);
+                profileData.profile_picture = uploadResult.publicUrl;
+                
+            } catch (error) {
+                console.log('error', error);
+                return res.status(400).json({
+                    success: false,
+                    message: 'Failed to upload profile picture.',
+                    error: error.message,
+                });
+            }
         }
-    }
 
-    await RouterUtils.handleBasicRequest(req, res, async () => 
-        await ProfileService.updateProfile(profileData)
-    );
-});
+        await RouterUtils.handleBasicRequest(req, res, async () => {
+            return ProfileService.updateProfile(profileData);
+        }, 'Update profile', 'Profile updated successfully');
+    }
+);
 
 
 router.post(
@@ -49,11 +50,60 @@ router.post(
     [Sanitizer.validateId('user_id'), Sanitizer.validateId('currentUserId')], 
     Sanitizer.handleValidationErrors,
     async (req, res) => {
-    
-    const { user_id, currentUserId } = req.body;
-    RouterUtils.handleBasicRequest(req, res, () => 
-        ProfileService.getProfileInfo(user_id, currentUserId)
-    );
-});
+        const { user_id, currentUserId } = req.body;
+        await RouterUtils.handleBasicRequest(req, res, async () => {
+            return ProfileService.getProfileInfo(user_id, currentUserId);
+        }, 'Get profile info', 'Profile info retrieved successfully');
+    }
+);
+
+router.post(
+    '/getProfile', 
+    [Sanitizer.validateId('user_id')], 
+    Sanitizer.handleValidationErrors,
+    async (req, res) => {
+        const { user_id } = req.body;
+        await RouterUtils.handleBasicRequest(req, res, async () => {
+            return ProfileService.getProfile(user_id);
+        }, 'Get profile', 'Profile retrieved successfully');
+    }
+);
+
+router.post(
+    '/updateProfile', 
+    [Sanitizer.validateId('user_id'), Sanitizer.validateContent('name', 0, 50, true),
+        Sanitizer.validateContent('bio', 0, 500, false), Sanitizer.validateEmail], 
+    Sanitizer.handleValidationErrors,
+    async (req, res) => {
+        const { user_id, name, bio, email } = req.body;
+        await RouterUtils.handleBasicRequest(req, res, async () => {
+            return ProfileService.updateProfile(user_id, name, bio, email);
+        }, 'Update profile', 'Profile updated successfully');
+    }
+);
+
+router.post(
+    '/updateProfilePicture', 
+    [Sanitizer.validateId('user_id')], 
+    Sanitizer.handleValidationErrors,
+    async (req, res) => {
+        const { user_id } = req.body;
+        await RouterUtils.handleBasicRequest(req, res, async () => {
+            return ProfileService.updateProfilePicture(user_id, req.file);
+        }, 'Update profile picture', 'Profile picture updated successfully');
+    }
+);
+
+router.post(
+    '/deleteProfile', 
+    [Sanitizer.validateId('user_id')], 
+    Sanitizer.handleValidationErrors,
+    async (req, res) => {
+        const { user_id } = req.body;
+        await RouterUtils.handleBasicRequest(req, res, async () => {
+            return ProfileService.deleteProfile(user_id);
+        }, 'Delete profile', 'Profile deleted successfully');
+    }
+);
 
 export default router;

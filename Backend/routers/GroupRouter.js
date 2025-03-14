@@ -49,8 +49,8 @@ router.post(
 
     
     await RouterUtils.handleBasicRequest(req, res, async () => {
-        return await GroupService.createGroup(group_name, group_description, group_status, type, topics, group_image, user_id);
-    });
+        return GroupService.createGroup(group_name, group_description, group_status, type, topics, group_image, user_id);
+    }, 'Create group', 'Group created successfully');
     
 });
 
@@ -62,9 +62,9 @@ router.post(
     async (req, res) => {
     
     const { group_id } = req.body;
-    await RouterUtils.handleBasicRequest(req, res, () => 
-        GroupService.retrieveGroupInfo(group_id)
-    );
+    await RouterUtils.handleBasicRequest(req, res, async () => {
+        return GroupService.retrieveGroupInfo(group_id);
+    }, 'Retrieve group info', 'Group info retrieved successfully');
 });
 
 
@@ -104,8 +104,8 @@ router.post(
     
     
     await RouterUtils.handleBasicRequest(req, res, async () => {
-        return await GroupService.updateGroup(group_name, group_description, group_status, type, topics, group_image, group_id);
-    });
+        return GroupService.updateGroup(group_name, group_description, group_status, type, topics, group_image, group_id);
+    }, 'Update group', 'Group updated successfully');
 });
 
 
@@ -117,9 +117,9 @@ router.post(
     
     
     const { group_id } = req.body;
-    await RouterUtils.handleBasicRequest(req, res, () => 
-        GroupService.removeGroup(group_id)
-    );
+    await RouterUtils.handleBasicRequest(req, res, async () => {
+        return GroupService.removeGroup(group_id);
+    }, 'Remove group', 'Group removed successfully');
 });
 
 export default router;

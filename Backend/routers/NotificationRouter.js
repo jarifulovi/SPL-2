@@ -17,12 +17,12 @@ router.post(
     async (req, res) => {
 
     const { user_id } = req.body;
-    RouterUtils.handleBasicRequest(req, res, () => 
-        Notification.find({ user_id })
+    RouterUtils.handleBasicRequest(req, res, () => {
+        return Notification.find({ user_id })
         .sort({ receive_date: -1 }) 
         .limit(20) 
-        .exec()
-    );
+        .exec();
+    }, 'Fetch notifications', 'Notifications fetched successfully');
 });
 
 
@@ -33,9 +33,9 @@ router.post(
     async (req, res) => {
     
     const { user_id, content, receive_date } = req.body;
-    RouterUtils.handleBasicRequest(req, res, () => 
-        NotificationService.deleteNotification(user_id, content, receive_date)
-    );
+    RouterUtils.handleBasicRequest(req, res, () => {
+        return NotificationService.deleteNotification(user_id, content, receive_date);
+    }, 'Delete notification', 'Notification deleted successfully');
 });
 
 
