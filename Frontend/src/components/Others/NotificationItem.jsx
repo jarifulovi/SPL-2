@@ -1,10 +1,11 @@
 import React, { useContext } from 'react';
 import { Box, Text, Button, Flex } from '@chakra-ui/react';
-import { toaster, Toaster } from '../ui/toaster';
+import { toaster } from '../ui/toaster';
 import { useColorModeValue } from '../ui/color-mode';
 import { useNavigate } from 'react-router-dom';
 
 import NotificationApi from '../../services/NotificationApi';
+import GroupApi from '../../services/GroupApi';
 import { SocketContext } from '../../utils/SocketContext';
 
 
@@ -20,10 +21,11 @@ const NotificationItem = ({ notification }) => {
   const handleAction = async (actionType) => {
     try {
       if (actionType === 'accept') {
+        const groupData = await GroupApi.retrieveGroupInfo(notification.group_id);
         if (notification.type === 'join_request') {
-          emitEvent('groupJoin', notification.sender, notification.group_id, 'member', '', '');
+          emitEvent('groupJoin', notification.sender, notification.group_id, 'member', name, groupData.name);
         } else if (notification.type === 'invitation' && notification.group_id) {
-          emitEvent('groupJoin', user_id, notification.group_id, 'member', name, '');
+          emitEvent('groupJoin', user_id, notification.group_id, 'member', name, groupData.name);
         }
       }
       await NotificationApi.deleteNotification(user_id, notification.content, notification.receive_date);

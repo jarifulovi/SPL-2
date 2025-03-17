@@ -13,7 +13,7 @@ const router = express.Router();
 router.post(
     '/fetchNotification', 
     [Sanitizer.validateId('user_id')], 
-    Sanitizer.handleValidationErrors,
+    Sanitizer.handleValidationErrors('fetchNotification'),
     async (req, res) => {
 
     const { user_id } = req.body;
@@ -29,7 +29,7 @@ router.post(
 router.post(
     '/deleteNotification', 
     [Sanitizer.validateId('user_id'), Sanitizer.validateContent('content'), Sanitizer.validateDate('receive_date')], 
-    Sanitizer.handleValidationErrors,
+    Sanitizer.handleValidationErrors('deleteNotification'),
     async (req, res) => {
     
     const { user_id, content, receive_date } = req.body;

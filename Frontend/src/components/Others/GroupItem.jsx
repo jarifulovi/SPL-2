@@ -26,7 +26,7 @@ const GroupItem = ({ group, selectedGroup, onSelectGroup, isAdmin = false }) => 
   const navigate = useNavigate();
 
   const handleGroupDetails = () => {
-    navigate("/groupDetails", {
+    navigate(`/groupDetails/${group.group_id}`, {
       state: {
         group,
       },
@@ -35,7 +35,7 @@ const GroupItem = ({ group, selectedGroup, onSelectGroup, isAdmin = false }) => 
 
   const handleGroupOptions = () => {
     // admin page for groups
-    navigate("/groupOptions", {
+    navigate(`/groupOptions/${group.group_id}`, {
       state: {
         group,
       }

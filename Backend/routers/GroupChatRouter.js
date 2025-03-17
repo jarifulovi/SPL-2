@@ -10,7 +10,7 @@ const router = express.Router();
 router.post(
     '/retrieveAllChats', 
     [Sanitizer.validateId('group_id')], 
-    Sanitizer.handleValidationErrors,
+    Sanitizer.handleValidationErrors('retrieveAllChats'),
     async (req, res) => {
         const { group_id } = req.body;
         await RouterUtils.handleBasicRequest(req, res, async () => {
@@ -23,7 +23,7 @@ router.post(
 router.post(
     '/retrieveLatestChats', 
     [Sanitizer.validateId('group_id')], 
-    Sanitizer.handleValidationErrors,
+    Sanitizer.handleValidationErrors('retrieveLatestChats'),
     async (req, res) => {
         const { group_id } = req.body;
         await RouterUtils.handleBasicRequest(req, res, async () => {
@@ -36,7 +36,7 @@ router.post(
 router.post(
     '/retrieveAllDiscussions', 
     [Sanitizer.validateId('group_id')], 
-    Sanitizer.handleValidationErrors,
+    Sanitizer.handleValidationErrors('retrieveAllDiscussions'),
     async (req, res) => {
         const { group_id } = req.body;
         await RouterUtils.handleBasicRequest(req, res, async () => {
@@ -49,7 +49,7 @@ router.post(
 router.post(
     '/checkDiscussion', 
     [Sanitizer.validateId('group_id'), Sanitizer.validateContent('content')], 
-    Sanitizer.handleValidationErrors,
+    Sanitizer.handleValidationErrors('checkDiscussion'),
     async (req, res) => {
         const { group_id, content } = req.body;
         await RouterUtils.handleBasicRequest(req, res, async () => {

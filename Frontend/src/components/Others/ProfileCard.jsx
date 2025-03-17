@@ -73,7 +73,7 @@ const ProfileCard = ({ profilePicUrl, user_id, name, email, bio, skills, otherUs
                     <Button
                         w='full'
                         mt={4}
-                        onClick={() => navigate('/accountSettings')}
+                        onClick={() => navigate(`/accountSettings/${user_id}`)}
                     >
                     Update
                     </Button>

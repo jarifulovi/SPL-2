@@ -25,7 +25,7 @@ router.post(
         Sanitizer.validateContent('type', 0, 50, true),
         Sanitizer.validateContent('topics', 0, 500, true)
     ],
-    Sanitizer.handleValidationErrors,
+    Sanitizer.handleValidationErrors('createGroup'),
     async (req, res) => {
     
     let { user_id, group_name, group_description, group_status, type, topics, group_image } = req.body;
@@ -58,12 +58,12 @@ router.post(
 router.post(
     '/retrieveGroupInfo', 
     [Sanitizer.validateId('group_id')], 
-    Sanitizer.handleValidationErrors,
+    Sanitizer.handleValidationErrors('retrieveGroupInfo'),
     async (req, res) => {
     
     const { group_id } = req.body;
     await RouterUtils.handleBasicRequest(req, res, async () => {
-        return GroupService.retrieveGroupInfo(group_id);
+        return GroupService.getGroupbyId(group_id);
     }, 'Retrieve group info', 'Group info retrieved successfully');
 });
 
@@ -79,7 +79,7 @@ router.post(
         Sanitizer.validateContent('type', 0, 50, true), 
         Sanitizer.validateContent('topics', 0, 500, true)
     ], 
-    Sanitizer.handleValidationErrors,
+    Sanitizer.handleValidationErrors('updateGroup'),
     async (req, res) => {
     
     
@@ -112,7 +112,7 @@ router.post(
 router.post(
     '/removeGroup', 
     [Sanitizer.validateId('group_id')], 
-    Sanitizer.handleValidationErrors,
+    Sanitizer.handleValidationErrors('removeGroup'),
     async (req, res) => {
     
     

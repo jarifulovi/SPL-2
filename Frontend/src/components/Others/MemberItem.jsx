@@ -16,7 +16,7 @@ const onSelectMember = (member, navigate) => {
   if(currentUserId === profileUserId) {
     navigate("/profile");
   } else {
-    navigate("/othersProfile", {
+    navigate(`/othersProfile/${profileUserId}`, {
       state: { profileUserId },
     });
   }

@@ -17,7 +17,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 router.put(
     '/updateProfile', 
     upload.single("profile_picture"), 
-    Sanitizer.handleValidationErrors,
+    Sanitizer.handleValidationErrors('updateProfile'),
     async (req, res) => {
         const profileData = req.body;
         const file = req.file;
@@ -48,7 +48,7 @@ router.put(
 router.post(
     '/getProfileInfo', 
     [Sanitizer.validateId('user_id'), Sanitizer.validateId('currentUserId')], 
-    Sanitizer.handleValidationErrors,
+    Sanitizer.handleValidationErrors('getProfileInfo'),
     async (req, res) => {
         const { user_id, currentUserId } = req.body;
         await RouterUtils.handleBasicRequest(req, res, async () => {
@@ -60,7 +60,7 @@ router.post(
 router.post(
     '/getProfile', 
     [Sanitizer.validateId('user_id')], 
-    Sanitizer.handleValidationErrors,
+    Sanitizer.handleValidationErrors('getProfile'),
     async (req, res) => {
         const { user_id } = req.body;
         await RouterUtils.handleBasicRequest(req, res, async () => {
@@ -73,7 +73,7 @@ router.post(
     '/updateProfile', 
     [Sanitizer.validateId('user_id'), Sanitizer.validateContent('name', 0, 50, true),
         Sanitizer.validateContent('bio', 0, 500, false), Sanitizer.validateEmail], 
-    Sanitizer.handleValidationErrors,
+    Sanitizer.handleValidationErrors('updateProfile'),
     async (req, res) => {
         const { user_id, name, bio, email } = req.body;
         await RouterUtils.handleBasicRequest(req, res, async () => {
@@ -85,7 +85,7 @@ router.post(
 router.post(
     '/updateProfilePicture', 
     [Sanitizer.validateId('user_id')], 
-    Sanitizer.handleValidationErrors,
+    Sanitizer.handleValidationErrors('updateProfilePicture'),
     async (req, res) => {
         const { user_id } = req.body;
         await RouterUtils.handleBasicRequest(req, res, async () => {
@@ -97,7 +97,7 @@ router.post(
 router.post(
     '/deleteProfile', 
     [Sanitizer.validateId('user_id')], 
-    Sanitizer.handleValidationErrors,
+    Sanitizer.handleValidationErrors('deleteProfile'),
     async (req, res) => {
         const { user_id } = req.body;
         await RouterUtils.handleBasicRequest(req, res, async () => {

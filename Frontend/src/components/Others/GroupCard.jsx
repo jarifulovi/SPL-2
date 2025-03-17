@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 // group is a object of class
 const defaultOnClick = (group, navigate) => {
-  navigate("/groupDetails", {
+  navigate(`/groupDetails/${group.group_id}`, {
     state: {
       group,
     }
@@ -51,7 +51,7 @@ const GroupCard = ({ group = {}, onClick, handleJoin = ()=>{}, isUserInGroup = f
             <Text>Members: {group.group_size}</Text>
           </HStack>
 
-          {isUserInGroup ? null : <Button width="full" onClick={handleJoin}>Join</Button>}
+          {group && isUserInGroup === false && <Button width="full" onClick={handleJoin}>Join</Button>}
  
         </VStack>
        

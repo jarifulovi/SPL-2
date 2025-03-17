@@ -20,7 +20,7 @@ router.post(
     '/uploadFile', 
     upload.single('file'),
     [Sanitizer.validateId('user_id'), Sanitizer.validateId('group_id')], 
-    Sanitizer.handleValidationErrors,
+    Sanitizer.handleValidationErrors('uploadFile'),
     async (req, res) => {
     
     try {
@@ -72,7 +72,7 @@ router.post(
 router.post(
     '/saveFile', 
     [Sanitizer.validateId('user_id')], 
-    Sanitizer.handleValidationErrors,
+    Sanitizer.handleValidationErrors('saveFile'),
     async (req, res) => {
         const { user_id, fileMetadata } = req.body;
         await RouterUtils.handleBasicRequest(req, res, async () => {
@@ -85,7 +85,7 @@ router.post(
 router.post(
     '/getFileUrl', 
     [Sanitizer.validateId('file_id')], 
-    Sanitizer.handleValidationErrors,
+    Sanitizer.handleValidationErrors('getFileUrl'),
     async (req, res) => {
     
     try {
@@ -110,7 +110,7 @@ router.post(
 router.post(
     '/retrieveFile', 
     [Sanitizer.validateId('file_id')], 
-    Sanitizer.handleValidationErrors,
+    Sanitizer.handleValidationErrors('retrieveFile'),
     async (req, res) => {
         const { file_id } = req.body;
         await RouterUtils.handleBasicRequest(req, res, async () => {

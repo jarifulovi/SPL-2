@@ -8,7 +8,7 @@ const router = express.Router();
 router.post(
     '/isMember', 
     [Sanitizer.validateId('user_id'), Sanitizer.validateId('group_id')], 
-    Sanitizer.handleValidationErrors,
+    Sanitizer.handleValidationErrors('isMember'),
     async (req, res) => {
         const { user_id, group_id } = req.body;
         await RouterUtils.handleBasicRequest(req, res, async () => {
@@ -20,7 +20,7 @@ router.post(
 router.post(
     '/addMember', 
     [Sanitizer.validateId('user_id'), Sanitizer.validateId('group_id'), Sanitizer.validateRole], 
-    Sanitizer.handleValidationErrors,
+    Sanitizer.handleValidationErrors('addMember'),
     async (req, res) => {
         const { user_id, group_id, role } = req.body;
         await RouterUtils.handleBasicRequest(req, res, async () => {
@@ -32,7 +32,7 @@ router.post(
 router.post(
     '/addAdmin', 
     [Sanitizer.validateId('user_id'), Sanitizer.validateId('group_id')], 
-    Sanitizer.handleValidationErrors,
+    Sanitizer.handleValidationErrors('addAdmin'),
     async (req, res) => {
         const { user_id, group_id } = req.body;
         await RouterUtils.handleBasicRequest(req, res, async () => {
@@ -44,7 +44,7 @@ router.post(
 router.post(
     '/removeMember', 
     [Sanitizer.validateId('user_id'), Sanitizer.validateId('group_id')], 
-    Sanitizer.handleValidationErrors,
+    Sanitizer.handleValidationErrors('removeMember'),
     async (req, res) => {
         const { user_id, group_id } = req.body;
         await RouterUtils.handleBasicRequest(req, res, async () => {
@@ -56,7 +56,7 @@ router.post(
 router.post(
     '/getAllGroupMembers', 
     [Sanitizer.validateId('group_id')], 
-    Sanitizer.handleValidationErrors,
+    Sanitizer.handleValidationErrors('getAllGroupMembers'),
     async (req, res) => {
         const { group_id } = req.body;
         await RouterUtils.handleBasicRequest(req, res, async () => {
@@ -68,7 +68,7 @@ router.post(
 router.post(
     '/getAllGroupsOfMember', 
     [Sanitizer.validateId('user_id')], 
-    Sanitizer.handleValidationErrors,
+    Sanitizer.handleValidationErrors('getAllGroupsOfMember'),
     async (req, res) => {
         const { user_id } = req.body;
         await RouterUtils.handleBasicRequest(req, res, async () => {
@@ -80,7 +80,7 @@ router.post(
 router.post(
     '/getAllGroupAdmins', 
     [Sanitizer.validateId('group_id')], 
-    Sanitizer.handleValidationErrors,
+    Sanitizer.handleValidationErrors('getAllGroupAdmins'),
     async (req, res) => {
         const { group_id } = req.body;
         await RouterUtils.handleBasicRequest(req, res, async () => {
@@ -92,7 +92,7 @@ router.post(
 router.post(
     '/getUserRole', 
     [Sanitizer.validateId('user_id'), Sanitizer.validateId('group_id')], 
-    Sanitizer.handleValidationErrors,
+    Sanitizer.handleValidationErrors('getUserRole'),
     async (req, res) => {
         const { user_id, group_id } = req.body;
         await RouterUtils.handleBasicRequest(req, res, async () => {
@@ -104,7 +104,7 @@ router.post(
 router.post(
     '/updateMemberRole', 
     [Sanitizer.validateId('user_id'), Sanitizer.validateId('group_id'), Sanitizer.validateRole], 
-    Sanitizer.handleValidationErrors,
+    Sanitizer.handleValidationErrors('updateMemberRole'),
     async (req, res) => {
         const { user_id, group_id, role } = req.body;
         await RouterUtils.handleBasicRequest(req, res, async () => {

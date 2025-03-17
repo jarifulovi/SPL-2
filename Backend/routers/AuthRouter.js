@@ -9,7 +9,7 @@ const router = express.Router();
 router.post(
     '/isAuthenticated',
     [Sanitizer.validateEmail, Sanitizer.validateTokenInCookie('sessionToken')],
-    Sanitizer.handleValidationErrors,
+    Sanitizer.handleValidationErrors('isAuthenticated', false),
     async (req, res) => {
         const { email } = req.body;
         const sessionToken = req.cookies.sessionToken;
@@ -22,7 +22,7 @@ router.post(
 router.post(
     '/login', 
     [Sanitizer.validateEmail, Sanitizer.validatePassword('password')], 
-    Sanitizer.handleValidationErrors,
+    Sanitizer.handleValidationErrors('Login'),
     async (req, res) => {
 
     try {
@@ -55,7 +55,7 @@ router.post(
 router.post(
     '/register', 
     [Sanitizer.validateContent('name', 3, 50), Sanitizer.validateEmail, Sanitizer.validatePassword('password')], 
-    Sanitizer.handleValidationErrors,
+    Sanitizer.handleValidationErrors('Register'),
     async (req, res) => {
         const { name, email, password } = req.body;
         await RouterUtils.handleBasicRequest(req, res, async () => {
@@ -68,7 +68,7 @@ router.post(
 router.post(
     '/logout', 
     [Sanitizer.validateEmail],
-    Sanitizer.handleValidationErrors,
+    Sanitizer.handleValidationErrors('Logout'),
     async (req, res) => {
 
         res.clearCookie('sessionToken', {
@@ -86,7 +86,7 @@ router.post(
 router.post(
     '/updatePassword', 
     [Sanitizer.validateEmail, Sanitizer.validatePassword('old_password'), Sanitizer.validatePassword('new_password')], 
-    Sanitizer.handleValidationErrors,
+    Sanitizer.handleValidationErrors('UpdatePassword'),
     async (req, res) => {
         const { email, old_password, new_password } = req.body;
         await RouterUtils.handleBasicRequest(req, res, async () => {
@@ -99,7 +99,7 @@ router.post(
 router.post(
     '/forgotPassword', 
     [Sanitizer.validateEmail], 
-    Sanitizer.handleValidationErrors,
+    Sanitizer.handleValidationErrors('ForgotPassword'),
     async (req, res) => {
         const { email } = req.body;
         await RouterUtils.handleBasicRequest(req, res, async () => {
@@ -112,7 +112,7 @@ router.post(
 router.post(
     '/resetPassword', 
     [Sanitizer.validateEmail, Sanitizer.validatePassword('new_password'), Sanitizer.validateTokenInBody('token')],
-    Sanitizer.handleValidationErrors,
+    Sanitizer.handleValidationErrors('ResetPassword'),
     async (req, res) => {
         const { email, new_password, token } = req.body;
         await RouterUtils.handleBasicRequest(req, res, async () => {

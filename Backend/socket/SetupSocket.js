@@ -138,6 +138,7 @@ const SetupSocket = (io) => {
         // Only joined user gets notification
         // Retrieve group name if needed 
         socket.on('groupJoin', async (user_id, group_id, role, user_name, group_name) => {
+            console.log('groupJoin : ',user_id, group_id, role, user_name, group_name);
             const errors = SocketSanitizer.handleValidationErrors([
                 { field: "user_id", value: user_id, validator: SocketSanitizer.validateId, message: "Invalid user ID" },
                 { field: "group_id", value: group_id, validator: SocketSanitizer.validateId, message: "Invalid group ID" },

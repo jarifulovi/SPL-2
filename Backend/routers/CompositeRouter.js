@@ -16,7 +16,7 @@ const router = express.Router();
 router.post(
     '/loadGroupDetails', 
     [Sanitizer.validateId('user_id'), Sanitizer.validateId('group_id'), Sanitizer.validateId('created_by')], 
-    Sanitizer.handleValidationErrors,
+    Sanitizer.handleValidationErrors('loadGroupDetails'),
     async (req, res) => {
     
     try {
@@ -59,7 +59,7 @@ router.post(
 router.post(
     '/retrieveAllFiles', 
     [Sanitizer.validateId('user_id')], 
-    Sanitizer.handleValidationErrors,
+    Sanitizer.handleValidationErrors('retrieveAllFiles'),
     async (req, res) => {
     
     try {
