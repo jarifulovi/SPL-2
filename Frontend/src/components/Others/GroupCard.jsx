@@ -1,5 +1,8 @@
 import { Button, Card, Image, Text, HStack, VStack } from "@chakra-ui/react"
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+
+import { AuthContext } from "../../utils/AuthContext";
 
 
 // group is a object of class
@@ -15,6 +18,7 @@ const defaultOnClick = (group, navigate) => {
 const GroupCard = ({ group = {}, onClick, handleJoin = ()=>{}, isUserInGroup = false }) => {
   
   const navigate = useNavigate();
+  const { isAuthenticated } = useContext(AuthContext);
 
   // Set a default onClick if not provided
   const handleClick = onClick || (() => defaultOnClick(group, navigate));
@@ -51,7 +55,7 @@ const GroupCard = ({ group = {}, onClick, handleJoin = ()=>{}, isUserInGroup = f
             <Text>Members: {group.group_size}</Text>
           </HStack>
 
-          {group && isUserInGroup === false && <Button width="full" onClick={handleJoin}>Join</Button>}
+          {isAuthenticated && isUserInGroup === false && <Button width="full" onClick={handleJoin}>Join</Button>}
  
         </VStack>
        

@@ -5,6 +5,10 @@ const isMember = async (user_id, group_id) => {
     return await Fetch.fetchData(Fetch.baseUrl + '/isMember', 'POST', { user_id, group_id});
 }
 
+const isAdmin = async (user_id, group_id) => {
+    return await Fetch.fetchData(Fetch.baseUrl + '/isAdmin', 'POST', {user_id, group_id});
+}
+
 const addMember = async (user_id, group_id) => {
     return await Fetch.fetchData(Fetch.baseUrl + '/addMember', 'POST', {user_id, group_id, role: 'member'});
 }
@@ -39,6 +43,7 @@ const updateMemberRole = async (user_id, group_id, role) => {
 
 export default {
     isMember,
+    isAdmin,
     addMember,
     addAdmin,
     removeMember,

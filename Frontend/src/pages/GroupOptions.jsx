@@ -1,7 +1,7 @@
-import { useLocation, useNavigate } from "react-router-dom";
-import { useState, useEffect, useContext, useRef } from "react"
+import { useNavigate, useParams } from "react-router-dom";
+import { useState, useEffect, useContext } from "react"
 import { Button } from "../components/ui/button"
-import { Flex, Box, Text, Input, VStack, HStack, IconButton } from "@chakra-ui/react"
+import { Flex, Box, Text, Input, VStack } from "@chakra-ui/react"
 import { useColorModeValue } from "../components/ui/color-mode";
 import { toaster } from "../components/ui/toaster";
 
@@ -150,13 +150,11 @@ const GroupOptions = () => {
 
   const containerColor = useColorModeValue('gray.200', 'gray.800');
 
-  const location = useLocation();
   const navigate = useNavigate();
   const user_id = localStorage.getItem('user_id');
   const name = localStorage.getItem('name');
-  const { group } = location.state || {};
-  const group_id = group?.group_id;
-  const group_name = group?.group_name;
+  const { id: group_id } = useParams();
+  const [groupData, setGroupData] = useState(null);
   const [members, setMembers] = useState([]);
   const { onEvent, emitEvent } = useContext(SocketContext);
   const [ invitationMember, setInvitationMember ] = useState("");
@@ -167,8 +165,16 @@ const GroupOptions = () => {
       navigate('/');
       return false;
     }
-    await checkAdminStatus(user_id, group_id, navigate);
-    await retrieveGroupMembers(group_id, setMembers, navigate);
+    try {
+      const result = await GroupApi.retrieveGroupInfo(group_id);
+      setGroupData(result.data);
+      await checkAdminStatus(user_id, group_id, navigate);
+      await retrieveGroupMembers(group_id, setMembers, navigate);
+    } catch (error) {
+      console.error(error.message);
+      navigate('/');
+    }
+    
 
     return true;
   };
@@ -202,7 +208,7 @@ const GroupOptions = () => {
     if (!member) {
       
       console.log(`Inviting member with user_id: ${invitationMember}`);
-      emitEvent("groupInvite", invitationMember, group_id, user_id, name, group_name);
+      emitEvent("groupInvite", invitationMember, group_id, user_id, name, groupData.group_name);
     } else {
       toaster.create({
         description: "User is already in the group",
@@ -267,7 +273,7 @@ const GroupOptions = () => {
             <VStack align="start" spacing={3}>
               <Button 
                 width="100%" 
-                onClick={() => navigate("/updateGroup",{ state: {group_id} })} 
+                onClick={() => navigate(`/updateGroup/${group_id}`)} 
                 colorPalette='teal'
               >Update Group</Button>
               <Input
@@ -304,4 +310,4 @@ export default GroupOptions;
 
 
 // Task to do letter
-// Update rendering after udpdating 
+// replace fetch with a single composite api fetch

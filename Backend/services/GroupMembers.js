@@ -18,6 +18,19 @@ export async function isMemberOfGroup(user_id, group_id) {
     }
 }
 
+export async function isAdminOfGroup(user_id, group_id) {
+    try {
+        const membership = await UserGroup.findOne({
+            user_id: user_id,
+            group_id: group_id,
+            role: 'admin',
+        });
+        return !!membership;
+    } catch (error) {
+        throw new Error("Unable to check group admin status");
+    }
+}
+
 export async function addAdmin(user_id, group_id) {
     return joinMember(user_id, group_id, 'admin');
 }

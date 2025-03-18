@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from 'react';
 import { Box, Flex, Spinner,  useBreakpointValue } from '@chakra-ui/react';
 import { toaster } from '../components/ui/toaster';
@@ -11,22 +11,32 @@ import ProfileApi from '../services/ProfileApi';
 
 
 // This component heavily dependent on otherUser ( true if other user viewing profile )
+// Do not work for own user_id
 const OthersProfilePage = () => {
 
   const [profileData, setProfileData] = useState(null);
   const [imageUrl, setImageUrl] = useState('');
   const user_id = localStorage.getItem('user_id');
-  const location = useLocation();
   const navigate = useNavigate();
-  const { profileUserId } = location.state || {};
+  const { id: profileUserId } = useParams();
   const otherUser = profileUserId !== user_id;
 
   
   const retrieveData = async () => {
     try {
+      if(profileUserId === user_id){
+        navigate("/profile");
+        return;
+      }
       
       const result = await ProfileApi.getOthersProfileData(profileUserId, user_id);
-      console.log(result.data);
+      if(!result.success){
+        toaster.create({
+          description: result.message,
+          type: "error"
+        });
+        return;
+      }
       const profileData = result.data;
 
       setProfileData(profileData || {});

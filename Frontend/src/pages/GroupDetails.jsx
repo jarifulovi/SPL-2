@@ -24,7 +24,7 @@ import GroupApi from "../services/GroupApi";
 
 
 const GroupDetails = () => {
-  const { id } = useParams();
+  const { id: group_id } = useParams();
   const user_id = localStorage.getItem('user_id');
   const name = localStorage.getItem('name');
   const { emitEvent } = useContext(SocketContext);
@@ -38,13 +38,14 @@ const GroupDetails = () => {
 
   useEffect(() => {
     const load = async () => {
-      if (!id || !user_id) return;
+      if (!group_id) return;
+      console.log("id", group_id);
 
       try {
-        const result1 = await GroupApi.retrieveGroupInfo(id);
+        const result1 = await GroupApi.retrieveGroupInfo(group_id);
         setGroupData(result1.data);
         
-        if (result1.success) {
+        if (result1.success && user_id) {
           const result2 = await CompositeApi.loadGroupDetails(user_id, result1.data);
           if(result2.success) {
             setIsMember(result2.data?.isMember);
@@ -61,7 +62,7 @@ const GroupDetails = () => {
     }
     
     load();
-  }, [id, user_id]);
+  }, [group_id, user_id]);
   
   const handleGroupJoin = async () => {
     if(groupData && user_id) {

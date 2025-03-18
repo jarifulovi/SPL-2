@@ -18,6 +18,18 @@ router.post(
 );
 
 router.post(
+    '/isAdmin',
+    [Sanitizer.validateId('user_id'), Sanitizer.validateId('group_id')],
+    Sanitizer.handleValidationErrors('isAdmin'),
+    async (req, res) => {
+        const { user_id, group_id } = req.body;
+        await RouterUtils.handleBasicRequest(req, res, async () => {
+            return GroupMembers.isAdminOfGroup(user_id, group_id);
+        }, 'Check group admin status', 'Admin status check completed successfully');
+    }
+);
+
+router.post(
     '/addMember', 
     [Sanitizer.validateId('user_id'), Sanitizer.validateId('group_id'), Sanitizer.validateRole], 
     Sanitizer.handleValidationErrors('addMember'),

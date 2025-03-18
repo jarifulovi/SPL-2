@@ -2,7 +2,7 @@
 
 const baseUrl = "http://localhost:3000";
 
-const fetchData = async (url, method, data = null, credentials = false) => {
+const fetchData = async (url, method, data = null, credentials = true) => {
     try {
         const response = await fetch(url, {
             method: method,
