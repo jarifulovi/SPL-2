@@ -21,11 +21,12 @@ const NotificationItem = ({ notification }) => {
   const handleAction = async (actionType) => {
     try {
       if (actionType === 'accept') {
-        const groupData = await GroupApi.retrieveGroupInfo(notification.group_id);
+        const result = await GroupApi.retrieveGroupInfo(notification.group_id);
+        const groupData = result.data;
         if (notification.type === 'join_request') {
-          emitEvent('groupJoin', notification.sender, notification.group_id, 'member', name, groupData.name);
+          emitEvent('groupJoin', notification.sender, notification.group_id, 'member', name, groupData.group_name);
         } else if (notification.type === 'invitation' && notification.group_id) {
-          emitEvent('groupJoin', user_id, notification.group_id, 'member', name, groupData.name);
+          emitEvent('groupJoin', user_id, notification.group_id, 'member', name, groupData.group_name);
         }
       }
       await NotificationApi.deleteNotification(user_id, notification.content, notification.receive_date);

@@ -40,7 +40,7 @@ const OthersProfilePage = () => {
       const profileData = result.data;
 
       setProfileData(profileData || {});
-      setImageUrl(profileData?.profile?.profilePicUrl || '');
+      setImageUrl(profileData?.profile?.profile_picture || '');
       
     } catch (error) {
       toaster.create({
@@ -78,7 +78,7 @@ const OthersProfilePage = () => {
       {profileData ? (
           <ProfileCard
             profilePicUrl={imageUrl}
-            user_id={user_id}
+            user_id={profileData.user_id}
             name={profileData.name || 'Loading...'}
             email={profileData.email || 'Loading...'}
             bio={profileData.profile ? profileData.profile.bio : '' }

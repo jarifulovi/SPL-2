@@ -1,15 +1,15 @@
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiAlignJustify } from "react-icons/fi";
-import { Box, IconButton, Flex, Text, Button } from "@chakra-ui/react";
+import { Box, IconButton, Flex, Button } from "@chakra-ui/react";
 import { DrawerTrigger } from '../../components/ui/drawer';
-import { Avatar } from '../../components/ui/avatar';
 import PopOver from '../Buttons/PopOver';
 import DropDown from '../Buttons/DropDown';
 import { IoIosArrowDropdown } from "react-icons/io";
 import { IoMdNotificationsOutline } from "react-icons/io";
 
 import CustomAvatar from '../Others/CustomAvatar';
+import ColorModeToggle from '../Buttons/ColorModeToggle';
 import NotificationItem from '../Others/NotificationItem';
 import NavBarContainer from './NavBarContainer';
 import StudySyncText from '../Fragments/StudySyncText';
@@ -59,6 +59,7 @@ const NavBar = ({ profilePicUrl, notifications = [] }) => {
       </Flex>
 
       <Flex gap={4}>
+        <ColorModeToggle />
         <PopOver trigger={<IconButton><IoMdNotificationsOutline/></IconButton>}>
           {/* Extract all notifications here */}
           

@@ -34,11 +34,13 @@ const checkAdminStatus = async (user_id, group_id, navigate) => {
     const result = await GroupMemberApi.getUserRole(user_id, group_id);
     if (!result.data.isAdmin) {
       navigate('/');
+      return;
     }
     console.log('admin checked');
   } catch (error) {
     console.error(error.message);
     navigate('/');
+    return;
   }
 };
 
@@ -167,6 +169,10 @@ const GroupOptions = () => {
     }
     try {
       const result = await GroupApi.retrieveGroupInfo(group_id);
+      if(!result.success){
+        navigate('/');
+        return false;
+      }
       setGroupData(result.data);
       await checkAdminStatus(user_id, group_id, navigate);
       await retrieveGroupMembers(group_id, setMembers, navigate);
@@ -174,9 +180,7 @@ const GroupOptions = () => {
       console.error(error.message);
       navigate('/');
     }
-    
-
-    return true;
+    return false;
   };
 
   // Utility to perform operations with validation

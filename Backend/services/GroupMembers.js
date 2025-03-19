@@ -124,15 +124,22 @@ export async function retrieveAllAdmins(group_id) {
 
 export async function getAllGroupsOfMember(user_id) {
     try {
-        const groups = await UserGroup.find({ user_id: user_id });
-        if (groups.length === 0) {
+        const memberShips = await UserGroup.find({ user_id: user_id });
+        if (memberShips.length === 0) {
             return [];
         }
 
-        const groupIds = groups.map(group => group.group_id);
-        const groupDetails = await Group.find({ group_id: { $in: groupIds } });
+        const groupIds = memberShips.map(memberShip => memberShip.group_id);
+        let allGroupDetails = await Group.find({ group_id: { $in: groupIds } });
+        allGroupDetails = allGroupDetails.map(group => group.toObject());
+        // attack role to allGroupDetails
+        memberShips.forEach(memberShip => {
+            const group = allGroupDetails.find(g => g.group_id === memberShip.group_id);
+            group.role = memberShip.role;
+        });
+
+        return allGroupDetails;
         
-        return groupDetails;
     } catch (error) {          
         console.error(error.message || 'Error during fetching groups of the member');
         return [];

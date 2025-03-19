@@ -61,7 +61,7 @@ const SideBar = () => {
   // Listening for new notifications
   useEffect(() => {
     const handleNewNotification = (newNotification) => {
-      setNotifications((prev) => [...prev, newNotification]);
+      setNotifications((prev) => [newNotification, ...prev]);
     };
 
     onEvent('notification', handleNewNotification);

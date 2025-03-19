@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Box, HStack, Flex, VStack, Text, IconButton, Input } from '@chakra-ui/react';
+import { Box, HStack, Flex, VStack, Text, Input } from '@chakra-ui/react';
 import { Button } from '../components/ui/button';
 import GroupItem from '../components/Others/GroupItem';
 import ChatItem from '../components/Others/ChatItem';
@@ -25,8 +25,9 @@ const GroupChatPage = () => {
   // States of hooks
   const {groupsData, selectedGroup, setSelectedGroup} = useGroupData(user_id);
   const { groupMembersMap, isAdmin, retAndUpdateGroupMembers } = useGroupMembers(selectedGroup?.group_id, user_id);
+
   const { 
-    messages, 
+    messages,
     setMessages, 
     retAndUpdateChats, 
     sendChatMessage 
@@ -61,7 +62,7 @@ const GroupChatPage = () => {
       
       if (groupsData && groupsData.length > 0) {
         // Select default group
-        console.log(groupsData);
+        //console.log(groupsData);
         const initialMessages = await retAndUpdateChats(groupsData[0].group_id); 
         await retAndUpdateGroupMembers(groupsData[0].group_id);
         checkActiveDiscussion(initialMessages);
