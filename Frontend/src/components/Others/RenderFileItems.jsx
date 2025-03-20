@@ -1,18 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Text, Flex, Box, VStack, HStack, Button, Icon } from '@chakra-ui/react';
+import { Text, Flex, Box, VStack, HStack, Button, Icon, FormatByte } from '@chakra-ui/react';
 import { useColorModeValue } from '../../components/ui/color-mode';
 
 import useFileRetrieve from '../../hooks/useFileRetrieve';
 
 
 
-const formatFileSize = (size) => {
-    if (size < 1024) {
-        return `${size} bytes`;
-    } else {
-        return `${(size / 1024).toFixed(2)} KB`;
-    }
-};
 
 const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
@@ -52,7 +45,7 @@ const FileItem = ({ file, onClick, onDownLoad }) => {
                     {file.file_name}
                 </Text>
                 <Flex justify="flex-end" ml={3}>
-                    <Text>{formatFileSize(file.file_size)}</Text>
+                    <FormatByte value={file.file_size} />
                     <Text ml={3}>{formatDate(file.uploaded_at)}</Text>
                 </Flex>
             </Flex>

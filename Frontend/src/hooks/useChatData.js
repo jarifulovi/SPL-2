@@ -3,7 +3,8 @@ import GroupChatApi from '../services/GroupChatApi';
 import { SocketContext } from '../utils/SocketContext';
 
 
-
+// collect all user profile pictures
+// attach them to the messages by user_id
 const useChatData = (group_id) => {
   const [messages, setMessages] = useState([]);
   const { onEvent, offEvent, emitEvent } = useContext(SocketContext);

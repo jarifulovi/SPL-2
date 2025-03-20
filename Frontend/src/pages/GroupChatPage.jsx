@@ -24,7 +24,7 @@ const GroupChatPage = () => {
   
   // States of hooks
   const {groupsData, selectedGroup, setSelectedGroup} = useGroupData(user_id);
-  const { groupMembersMap, isAdmin, retAndUpdateGroupMembers } = useGroupMembers(selectedGroup?.group_id, user_id);
+  const { groupMembersMap, groupMembersProPicMap, isAdmin, retAndUpdateGroupMembers } = useGroupMembers(selectedGroup?.group_id, user_id);
 
   const { 
     messages,
@@ -101,7 +101,7 @@ const GroupChatPage = () => {
     <Flex height="100%">
       {/* Left Panel: Group List */}
       <Box 
-        width={{ base: '100%', md: '30%' }} 
+        width={{ base: '100%', md: '25%' }} 
         p={4} 
         boxShadow="md" 
         overflowY="auto"
@@ -125,7 +125,7 @@ const GroupChatPage = () => {
 
       {/* Right Panel: Chat */}
       <Box 
-        width={{ base: '100%', md: '70%' }} 
+        width={{ base: '100%', md: '75%' }} 
         p={4} 
         boxShadow="md"
         display="flex"
@@ -143,7 +143,11 @@ const GroupChatPage = () => {
         >
         {messages.length > 0 ? (
           messages.slice().reverse().map((msg, index) => (
-            <ChatItem key={msg.chat_id} message={msg} groupMembersMap={groupMembersMap} />
+            <ChatItem 
+              key={msg.chat_id} 
+              message={msg} 
+              groupMembersMap={groupMembersMap} 
+              groupMembersProPicMap={groupMembersProPicMap} />
           ))
         ) : (
           <Text>No messages yet</Text>
@@ -154,18 +158,19 @@ const GroupChatPage = () => {
 
         <HStack width="100%">
           <Input 
-              flex="1"
-              variant="subtle" 
-              placeholder="Type a message..." 
-              value={sendMessage}
-              onChange={(e) => setSendMessage(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  handleSendMessage();
-                }
-              }}
-            />
+            flex="1"
+            variant="subtle" 
+            placeholder="Type a message..." 
+            value={sendMessage}
+            onChange={(e) => setSendMessage(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleSendMessage();
+              }
+            }}
+          />
            
+          { groupsData.length > 0 && (
             <CustomDialog
               triggerButton={<Button colorPalette="purple"><HiUpload /></Button>}
               dialogTitle='Upload a file'
@@ -188,9 +193,10 @@ const GroupChatPage = () => {
               onConfirm={() => handleFileUpload(selectedGroup)}
               onCancel={onClearFile}
             />
+          )}
 
        
-          { isAdmin ? (
+          { groupsData.length > 0 && isAdmin && (
             isActiveDiscussion ? (
               <Button
                 colorPalette="blue"
@@ -214,9 +220,7 @@ const GroupChatPage = () => {
                 onConfirm={handlePostDiscussion}
               />
             )
-          ) : 
-            (<></>)
-          }
+          )}
           
         </HStack>
       
