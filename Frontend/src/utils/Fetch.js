@@ -1,6 +1,7 @@
 
 
-const baseUrl = "http://localhost:3000";
+//const baseUrl = "http://localhost:3000";
+const baseUrl = "https://study-sync-backend.onrender.com";
 
 const fetchData = async (url, method, data = null, credentials = true) => {
     try {

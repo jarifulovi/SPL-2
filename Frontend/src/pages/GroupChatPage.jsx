@@ -3,6 +3,7 @@ import { Box, HStack, Flex, VStack, Text, Input } from '@chakra-ui/react';
 import { Button } from '../components/ui/button';
 import GroupItem from '../components/Others/GroupItem';
 import ChatItem from '../components/Others/ChatItem';
+import DiscussionStartItem from '../components/Others/DiscussionStartItem';
 import CustomDialog from '../components/Buttons/CustomDialog';
 import UploadFile from '../components/Others/UploadFile';
 import { HiUpload } from "react-icons/hi"
@@ -26,12 +27,26 @@ const GroupChatPage = () => {
   const {groupsData, selectedGroup, setSelectedGroup} = useGroupData(user_id);
   const { groupMembersMap, groupMembersProPicMap, isAdmin, retAndUpdateGroupMembers } = useGroupMembers(selectedGroup?.group_id, user_id);
 
+  // First initialize discussion data
+  const {
+    discussionTopic,
+    isActiveDiscussion,
+    activeDiscussionId,
+    setDiscussionTopic,
+    handlePostDiscussion,
+    handleCloseDiscussion,
+    checkActiveDiscussion,
+    handleNewMessage
+  } = useDiscussionData(user_id, name, selectedGroup);
+
+  // Then pass the discussion message handler to useChatData
   const { 
     messages,
     setMessages, 
+    discussionMap,
     retAndUpdateChats, 
     sendChatMessage 
-  } = useChatData(selectedGroup?.group_id);
+  } = useChatData(selectedGroup?.group_id, handleNewMessage);
 
   const [sendMessage, setSendMessage] = useState('');
   const {
@@ -44,35 +59,19 @@ const GroupChatPage = () => {
   } = useFileUpload();
 
   const { containerRef, handleScroll } = useScroll([messages]);
-  
-  const {
-    discussionTopic,
-    isActiveDiscussion,
-    setDiscussionTopic,
-    handlePostDiscussion,
-    handleCloseDiscussion,
-    checkActiveDiscussion,
-  } = useDiscussionData(user_id, name, selectedGroup);
-
-
 
   // Fetch data when the component mounts
   useEffect(() => {
     const fetchGroups = async () => {
-      
       if (groupsData && groupsData.length > 0) {
         // Select default group
-        //console.log(groupsData);
-        const initialMessages = await retAndUpdateChats(groupsData[0].group_id); 
+        const initialMessages = await retAndUpdateChats(groupsData[0].group_id);
         await retAndUpdateGroupMembers(groupsData[0].group_id);
         checkActiveDiscussion(initialMessages);
       }
     };
     fetchGroups();
   }, [user_id, groupsData, setMessages]);
-
-
-
 
   // When a group is clicked
   const onSelectGroup = async (group) => {
@@ -84,16 +83,19 @@ const GroupChatPage = () => {
     checkActiveDiscussion(updatedMessages);
   };
 
-
   // Function to handle sending the message
   const handleSendMessage = async () => {
     if (groupsData.length > 0) {
-      sendChatMessage(selectedGroup.group_id, user_id, sendMessage);
+      if(isActiveDiscussion) {
+        console.log('activeDiscussionId : ', activeDiscussionId);
+        sendChatMessage(selectedGroup.group_id, user_id, sendMessage, { discussion_id: activeDiscussionId });
+      } else {
+        sendChatMessage(selectedGroup.group_id, user_id, sendMessage);
+      }
       setSendMessage('');
     }
   };
 
-  
 
 
 
@@ -143,11 +145,22 @@ const GroupChatPage = () => {
         >
         {messages.length > 0 ? (
           messages.slice().reverse().map((msg, index) => (
-            <ChatItem 
-              key={msg.chat_id} 
-              message={msg} 
-              groupMembersMap={groupMembersMap} 
-              groupMembersProPicMap={groupMembersProPicMap} />
+            msg.type === 'discussion_topic' && msg.discussionStatus === 'open' ? (
+              <DiscussionStartItem
+                key={msg.chat_id}
+                message={msg} 
+                groupMembersMap={groupMembersMap}
+                groupMembersProPicMap={groupMembersProPicMap}
+                discussionThreadChats={discussionMap[msg.chat_id]}
+              />
+            ) : (
+              <ChatItem 
+                key={msg.chat_id} 
+                message={msg} 
+                groupMembersMap={groupMembersMap} 
+                groupMembersProPicMap={groupMembersProPicMap} 
+              />
+            )
           ))
         ) : (
           <Text>No messages yet</Text>

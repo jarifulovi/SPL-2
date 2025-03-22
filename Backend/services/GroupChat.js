@@ -33,6 +33,9 @@ export async function postMessage(group_id, sender, content, type = 'text_messag
             }
             chatData.file_id = additionalFields.file_id;
         }
+        if(additionalFields?.discussion_id){
+            chatData.discussion_id = additionalFields.discussion_id;
+        }
 
         const newChat = new Chat(chatData);
         const savedChat = await newChat.save();

@@ -83,13 +83,13 @@ const FileChatItem = ({
   );
 };
 
-const ChatItem = ({ message, groupMembersMap, groupMembersProPicMap }) => {
+const ChatItem = ({ message, groupMembersMap, groupMembersProPicMap, isClickable = false, onClick = () => {} }) => {
   const user_id = localStorage.getItem('user_id');
   const isUserMessage = message.sender === user_id;
   const [file, setFile] = useState({});
 
   // Color tokens
-  const userMessageBg = useColorModeValue('blue.50', 'blue.900');
+  const userMessageBg = useColorModeValue('blue.100', 'blue.900');
   const otherMessageBg = useColorModeValue('gray.100', 'gray.700');
   const senderColor = useColorModeValue('gray.700', 'gray.200');
   const timestampColor = useColorModeValue('gray.500', 'gray.400');
@@ -191,6 +191,8 @@ const ChatItem = ({ message, groupMembersMap, groupMembersProPicMap }) => {
         _dark={{
           borderColor: isUserMessage ? 'blue.700' : 'gray.600'
         }}
+        onClick={isClickable ? onClick : undefined}
+        cursor={isClickable ? 'pointer' : 'default'}
       >
         <HStack mb={1}>
           <Text 

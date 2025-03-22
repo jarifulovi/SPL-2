@@ -2,9 +2,9 @@ import * as GroupChat from '../services/GroupChat.js';
 
 
 
-export async function postMessage(io, group_id, sender, content, type = 'text_message') {
+export async function postMessage(io, group_id, sender, content, type = 'text_message', additionalData = {}) {
     try {
-        const savedMessage = await GroupChat.postMessage(group_id, sender, content, type);
+        const savedMessage = await GroupChat.postMessage(group_id, sender, content, type, additionalData);
         io.to(group_id).emit('chatMessage', savedMessage);
     } catch (error) {
         console.error('Error storing or emitting message:', error.message);

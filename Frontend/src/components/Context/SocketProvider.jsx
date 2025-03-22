@@ -2,6 +2,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { SocketContext } from '../../utils/SocketContext';
 import io from 'socket.io-client';
+import Fetch from '../../utils/Fetch';
 
 
 let socket;
@@ -12,7 +13,7 @@ const SocketProvider = ({ children }) => {
   // Connect socket
   const connectSocket = useCallback(() => {
     if (!socket || !socket.connected) {
-      socket = io('http://localhost:3000');
+      socket = io(Fetch.baseUrl);
       setSocketInstance(socket);
       console.log('Socket connected');
     }

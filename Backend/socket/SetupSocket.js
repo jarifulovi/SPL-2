@@ -29,7 +29,8 @@ const SetupSocket = (io) => {
         });
   
   
-        socket.on('chatMessage', async (group_id, sender, content, type = 'text_message') => {
+        socket.on('chatMessage', async (group_id, sender, content, type = 'text_message', additionalData = {}) => {
+
             const errors = SocketSanitizer.handleValidationErrors([
                 { field: "group_id", value: group_id, validator: SocketSanitizer.validateId, message: "Invalid group ID" },
                 { field: "sender", value: sender, validator: SocketSanitizer.validateId, message: "Invalid sender ID" },
@@ -42,7 +43,7 @@ const SetupSocket = (io) => {
             }
             
 
-            await ChatHandler.postMessage(io, group_id, sender, content, type);
+            await ChatHandler.postMessage(io, group_id, sender, content, type, additionalData);
         });
   
         // New discussion thread handling

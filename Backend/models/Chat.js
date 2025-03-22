@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 const ChatSchema = new Schema({
   chat_id: { type: String, default: uuidv4 },
+  discussion_id: { type: String }, // optional for dicussion thread
   type: { 
     type: String, 
     enum: ['text_message', 'link', 'discussion_topic', 'files', 'video_conferencing', 'join_group', 'leave_group'], 
