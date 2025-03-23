@@ -10,7 +10,7 @@ import DetailArrayField from "../components/Fragments/DetailArrayField";
 import MemberItem from "../components/Others/MemberItem";
 import CustomSpinner from "../components/Others/CustomSpinnner";
 
-import CompositeApi from "../services/compositeApi";
+import CompositeApi from '../services/CompositeApi';
 import { SocketContext } from '../utils/SocketContext';
 import GroupApi from "../services/GroupApi";
 
