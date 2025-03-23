@@ -1,7 +1,6 @@
 
 
-//const baseUrl = "http://localhost:3000";
-const baseUrl = "https://study-sync-backend.onrender.com";
+const baseUrl = import.meta.env.VITE_BACKEND_URL;
 
 const fetchData = async (url, method, data = null, credentials = true) => {
     try {

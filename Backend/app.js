@@ -10,7 +10,7 @@ import cookieParser from 'cookie-parser';
 import storageConfig from './storageConfig.js';
 
 
-const allowedOrigin = 'http://localhost:5173';
+const allowedOrigin = process.env.FRONTEND_URL;
 
 // ----------------------------
 // Environment Variables Setup
@@ -33,7 +33,7 @@ const port = process.env.PORT || 3000;
 app.use(cors({
   origin: allowedOrigin,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
 }));
 
@@ -53,9 +53,14 @@ app.use(express.urlencoded({ extended: true }));
 // ----------------------------
 // MongoDB Connection
 // ----------------------------
-mongoose.connect(process.env.MONGODB_URI)
+mongoose.connect(process.env.MONGODB_URI, {
+  serverSelectionTimeoutMS: 5000, // Keep trying to send operations for 5 seconds
+  socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
+})
   .then(() => console.log('MongoDB connected successfully'))
   .catch(err => console.error('MongoDB connection error:', err));
+
+
 
 // ----------------------------
 // HTTP Server and Socket.IO Setup
