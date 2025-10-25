@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { getInitials } from "@/utils/formatter";
+
 export interface GroupCardProps {
   id: string;
   name: string;
@@ -9,11 +11,6 @@ export interface GroupCardProps {
   status: string;
 }
 
-function getInitials(name: string) {
-  const words = name.split(" ");
-  const initials = words.map((word) => word.charAt(0).toUpperCase()).join("");
-  return initials.slice(0, 2);
-}
 
 export default function GroupCard({
   id,
