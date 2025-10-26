@@ -20,7 +20,7 @@ export default function Page() {
               Sign In
             </Link>
             <Link
-              href="/auth/registration"
+              href="/auth/register"
               className="rounded-lg bg-primary px-5 py-2.5 text-base font-medium text-primary-foreground transition-all hover:opacity-90 hover:shadow-md"
             >
               Get Started
@@ -44,16 +44,16 @@ export default function Page() {
           </p>
           <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:justify-center">
             <Link
-              href="/auth/registration"
-              className="rounded-lg bg-primary px-8 py-3 font-medium text-primary-foreground transition-all hover:opacity-90 hover:shadow-lg"
+              href="/auth/register"
+              className="relative overflow-hidden rounded-lg bg-blue-600 px-8 py-3 font-medium text-white shadow-2xl transition-all duration-300 before:absolute before:inset-0 before:border-0 before:border-white before:duration-100 before:ease-linear hover:bg-white hover:text-blue-600 hover:shadow-blue-600 hover:before:border-[25px]"
             >
-              Start Your Journey
+              <span className="relative z-10">Start Your Journey</span>
             </Link>
             <Link
               href="#features"
-              className="rounded-lg border border-border bg-card px-8 py-3 font-medium text-card-foreground transition-all hover:bg-accent"
+              className="relative overflow-hidden rounded-lg border border-blue-600 bg-blue-600 px-8 py-3 font-medium text-white shadow-2xl transition-all duration-300 before:absolute before:inset-0 before:border-0 before:border-white before:duration-100 before:ease-linear hover:bg-white hover:text-blue-600 hover:shadow-blue-600 hover:before:border-[25px]"
             >
-              Explore Features
+              <span className="relative z-10">Explore Features</span>
             </Link>
           </div>
         </div>
