@@ -1,3 +1,9 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { getInitials } from "@/utils/formatter";
+
 interface GroupsBarProps {
   groups: Array<{
     id: string;
@@ -7,23 +13,14 @@ interface GroupsBarProps {
     lastMessage?: string;
     unreadCount?: number;
   }>;
-  selectedGroupId: string | null;
-  onSelectGroup: (groupId: string) => void;
+  currentGroupId: string;
 }
 
 export default function GroupsBar({
   groups,
-  selectedGroupId,
-  onSelectGroup,
+  currentGroupId,
 }: GroupsBarProps) {
-  const getInitials = (name: string) => {
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
-  };
+  const pathname = usePathname();
 
   return (
     <div className="flex w-80 flex-col border-r border-gray-200 bg-white">
@@ -36,11 +33,11 @@ export default function GroupsBar({
       {/* Group List - Scrollable */}
       <div className="flex-1 overflow-y-auto">
         {groups.map((group) => (
-          <button
+          <Link
             key={group.id}
-            onClick={() => onSelectGroup(group.id)}
+            href={`/groups/${group.id}/chat`}
             className={`group relative flex w-full items-center gap-3 border-b border-gray-100 px-6 py-4 text-left transition-all duration-200 hover:bg-blue-50 ${
-              selectedGroupId === group.id
+              currentGroupId === group.id
                 ? "bg-blue-50 border-l-4 border-l-blue-600"
                 : "border-l-4 border-l-transparent"
             }`}
@@ -87,7 +84,7 @@ export default function GroupsBar({
                 <p className="text-xs text-gray-500 truncate">{group.lastMessage}</p>
               )}
             </div>
-          </button>
+          </Link>
         ))}
       </div>
     </div>

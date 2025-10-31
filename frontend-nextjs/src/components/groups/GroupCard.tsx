@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 import { getInitials } from "@/utils/formatter";
 
 export interface GroupCardProps {
@@ -21,8 +19,7 @@ export default function GroupCard({
   status,
 }: GroupCardProps) {
   return (
-    <Link
-      href={`/groups/${id}/details`}
+    <div
       className="group relative block overflow-hidden rounded-xl border border-gray-200 bg-white transition-all duration-300 hover:border-blue-400 hover:shadow-xl hover:shadow-blue-500/10 hover:-translate-y-1 focus:outline-none focus:border-blue-500 focus:shadow-lg focus:shadow-blue-500/20 active:border-blue-600"
     >
       {/* Blue line indicator on focus/active */}
@@ -76,6 +73,6 @@ export default function GroupCard({
           </span>
         </div>
       </div>
-    </Link>
+    </div>
   );
 }
