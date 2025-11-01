@@ -1,5 +1,6 @@
 import { groupsBar } from "@/utils/data/groups";
 import ChatPanel from "@/components/chat/ChatPanel";
+import GroupsBar from "@/components/chat/GroupsBar";
 import { notFound } from "next/navigation";
 
 interface ChatPageProps {
@@ -17,5 +18,13 @@ export default async function ChatPage({ params }: ChatPageProps) {
     notFound();
   }
 
-  return <ChatPanel selectedGroup={selectedGroup} />;
+  return (
+    <div className="fixed inset-0 flex">
+      {/* Left Section - Groups Bar */}
+      <GroupsBar groups={groupsBar} currentGroupId={groupId} />
+      
+      {/* Right Section - Chat Panel */}
+      <ChatPanel selectedGroup={selectedGroup} />
+    </div>
+  );
 }
